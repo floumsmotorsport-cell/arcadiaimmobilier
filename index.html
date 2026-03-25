@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcadia Immobilier | Prestige & Excellence</title>
+    <title>Arcadia Immobilier | Réservations de Prestige</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap');
         body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
         .font-serif { font-family: 'Playfair Display', serif; }
         .hero-bg {
-            background: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.6)), 
+            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), 
                         url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80');
             background-size: cover; background-position: center; height: 50vh;
         }
@@ -19,42 +19,29 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         #adminBar { display: none; background: #0f172a; border-bottom: 2px solid #b45309; }
         .is-admin #adminBar { display: flex; }
-        .login-card { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); }
-        
         .music-player {
             position: fixed; bottom: 20px; right: 20px; z-index: 200;
             background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
-            padding: 12px 20px; border-radius: 50px; border: 1px solid rgba(0,0,0,0.1);
-            display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 10px 15px; border-radius: 50px; border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
 
-    <div class="music-player shadow-lg">
+    <div class="music-player flex items-center gap-4">
         <button id="playPauseBtn" class="bg-amber-600 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center transition hover:scale-110">
             <span id="musicIcon">▶</span>
         </button>
         <div class="flex flex-col">
-            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">Ambiance</span>
-            <span class="text-[11px] font-bold text-slate-700">Arcadia Prestige Mix</span>
+            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">Playlist Arcadia</span>
+            <select id="trackSelect" class="bg-transparent text-[11px] font-bold text-slate-700 outline-none cursor-pointer border-b border-slate-200">
+                <option value="rk_chopard">RK - Big Chopard</option>
+                <option value="lafouine_vision">La Fouine ft. Kaaris - Vision</option>
+                <option value="rnboi_bebe">RNBOI - Mon Bébé</option>
+            </select>
         </div>
-        <audio id="bgMusic" loop>
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-        </audio>
-    </div>
-
-    <div id="loginOverlay" class="fixed inset-0 z-[300] hidden flex items-center justify-center bg-slate-900/90 backdrop-blur-sm p-6">
-        <div class="login-card w-full max-w-md p-10 rounded-[3rem] shadow-2xl border border-slate-700 text-white text-center">
-            <h2 class="text-3xl font-serif font-bold mb-6">Espace Privé</h2>
-            <div class="space-y-4">
-                <input type="text" id="userLogin" placeholder="Identifiant" class="w-full bg-slate-800/50 p-4 rounded-2xl outline-none border border-slate-700">
-                <input type="password" id="passLogin" placeholder="Mot de passe" class="w-full bg-slate-800/50 p-4 rounded-2xl outline-none border border-slate-700">
-                <p id="loginError" class="text-red-500 text-[10px] font-bold hidden">Accès refusé.</p>
-                <button id="btnLoginAction" class="w-full bg-amber-600 py-4 rounded-2xl font-bold uppercase">Entrer</button>
-                <button onclick="closeLogin()" class="w-full text-slate-500 text-[10px] uppercase">Fermer</button>
-            </div>
-        </div>
+        <audio id="bgMusic" loop><source id="musicSource" src="" type="audio/mpeg"></audio>
     </div>
 
     <div id="adminBar" class="fixed top-0 w-full text-white py-3 px-8 z-[100] justify-between items-center text-[10px] font-bold uppercase tracking-widest">
@@ -67,50 +54,81 @@
     </div>
 
     <main id="publicContent" class="view-section active-view">
-        <section class="hero-bg flex items-center justify-center relative">
-            <h1 class="text-white text-5xl font-serif font-bold tracking-tight">Arcadia Prestige</h1>
-            <button onclick="openLogin()" class="absolute bottom-4 right-6 text-white/20 hover:text-white/60 text-[10px] uppercase font-bold">Accès Staff</button>
+        <section class="hero-bg flex flex-col items-center justify-center text-center px-6 relative">
+            <h1 class="text-white text-5xl font-serif font-bold tracking-tight mb-2">Arcadia Immobilier</h1>
+            <p class="text-amber-400 font-bold uppercase tracking-[0.3em] text-[10px]">Réservations & Expertise</p>
+            <button onclick="openLogin()" class="absolute bottom-4 right-6 text-white/20 hover:text-white/60 text-[10px] font-bold">STAFF ONLY</button>
         </section>
-        <section class="container mx-auto py-16 px-6">
+
+        <section class="container mx-auto -mt-20 px-6 relative z-10">
+            <div class="bg-white rounded-[3rem] shadow-2xl p-8 md:p-12 border border-slate-100 max-w-4xl mx-auto">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-serif font-bold">Réserver une visite privée</h2>
+                    <p class="text-slate-400 text-sm mt-2">Laissez vos coordonnées, nous vous rappelons sous 24h.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <input type="text" id="resName" placeholder="Votre Nom complet" class="bg-slate-50 p-4 rounded-2xl outline-none border border-transparent focus:border-amber-500 transition">
+                    <input type="tel" id="resPhone" placeholder="Numéro de téléphone" class="bg-slate-50 p-4 rounded-2xl outline-none border border-transparent focus:border-amber-500 transition">
+                    <select id="resType" class="bg-slate-50 p-4 rounded-2xl outline-none border border-transparent focus:border-amber-500 transition">
+                        <option value="Visite">Demande de visite</option>
+                        <option value="Création">Projet de création</option>
+                        <option value="Vente">Estimation de bien</option>
+                    </select>
+                    <input type="date" id="resDate" class="bg-slate-50 p-4 rounded-2xl outline-none border border-transparent focus:border-amber-500 transition">
+                </div>
+                <textarea id="resMsg" rows="3" placeholder="Détails de votre projet..." class="w-full bg-slate-50 p-4 rounded-2xl mt-6 outline-none border border-transparent focus:border-amber-500 transition"></textarea>
+                <button id="btnReserve" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase mt-8 hover:bg-amber-600 transition-all shadow-xl">Confirmer la demande</button>
+            </div>
+        </section>
+
+        <section class="py-20 container mx-auto px-6">
             <div id="allContent" class="grid grid-cols-1 md:grid-cols-3 gap-10"></div>
         </section>
     </main>
 
     <main id="adminPanel" class="view-section pt-24 pb-20 container mx-auto px-6">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            <div class="lg:col-span-7 bg-white p-10 rounded-[2.5rem] shadow-2xl border border-slate-100">
-                <div class="flex justify-between items-center mb-10">
-                    <div class="flex space-x-2">
-                        <button onclick="switchTab('V')" id="tabV" class="tab-btn px-6 py-3 rounded-xl font-bold bg-slate-900 text-white text-[10px]">🏠 VILLAS</button>
-                        <button onclick="switchTab('C')" id="tabC" class="tab-btn px-6 py-3 rounded-xl font-bold bg-slate-50 text-slate-400 text-[10px]">🛠 CRÉATIONS</button>
-                        <button onclick="switchTab('A')" id="tabA" class="tab-btn px-6 py-3 rounded-xl font-bold bg-slate-50 text-slate-400 text-[10px]">📰 ARTICLES</button>
-                    </div>
-                    <span id="editIndicator" class="hidden text-[10px] font-black text-amber-600 animate-pulse">MODE ÉDITION</span>
-                </div>
+        <div class="flex gap-4 mb-8 overflow-x-auto pb-2">
+            <button onclick="switchTab('V')" id="tabV" class="tab-btn px-6 py-3 rounded-xl font-bold bg-slate-900 text-white text-[10px]">🏠 VILLAS</button>
+            <button onclick="switchTab('C')" id="tabC" class="tab-btn px-6 py-3 rounded-xl font-bold bg-slate-50 text-slate-400 text-[10px]">🛠 CRÉATIONS</button>
+            <button onclick="switchTab('A')" id="tabA" class="tab-btn px-6 py-3 rounded-xl font-bold bg-slate-50 text-slate-400 text-[10px]">📰 ARTICLES</button>
+            <button onclick="switchTab('M')" id="tabM" class="tab-btn px-6 py-3 rounded-xl font-bold bg-amber-100 text-amber-700 text-[10px] relative">
+                📩 MESSAGES <span id="msgCount" class="hidden absolute -top-2 -right-2 bg-red-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">0</span>
+            </button>
+        </div>
+
+        <div id="adminContentContainer" class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div id="formSection" class="lg:col-span-7 bg-white p-10 rounded-[2.5rem] shadow-2xl border border-slate-100">
                 <div class="space-y-6">
-                    <div onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-slate-200 p-10 rounded-[2rem] text-center cursor-pointer hover:bg-slate-50 transition">
+                    <div onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-slate-200 p-10 rounded-[2rem] text-center cursor-pointer hover:bg-slate-50">
                         <input type="file" id="fileInput" class="hidden" accept="image/*">
-                        <p id="fileStatus" class="text-[10px] font-bold text-slate-400 uppercase">Modifier / Ajouter une photo</p>
+                        <p id="fileStatus" class="text-[10px] font-bold text-slate-400 uppercase">Image du bien</p>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="flex flex-col"><label class="text-[9px] font-bold text-slate-400 ml-2">TITRE</label><input type="text" id="inTitle" class="w-full bg-slate-50 p-4 rounded-xl border outline-none focus:border-amber-500"></div>
-                        <div class="flex flex-col"><label class="text-[9px] font-bold text-slate-400 ml-2">PRIX (€)</label><input type="number" id="inPrice" class="w-full bg-slate-50 p-4 rounded-xl border outline-none focus:border-amber-500"></div>
-                    </div>
-                    <div class="flex flex-col"><label class="text-[9px] font-bold text-slate-400 ml-2">DESCRIPTION</label><textarea id="inDesc" rows="5" class="w-full bg-slate-50 p-4 rounded-xl border outline-none focus:border-amber-500"></textarea></div>
-                    <div class="flex gap-4">
-                        <button id="btnPublish" class="flex-1 bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase shadow-lg hover:bg-black transition">Mettre en ligne</button>
-                        <button id="btnCancelEdit" class="hidden bg-slate-200 text-slate-600 px-8 rounded-2xl font-bold uppercase hover:bg-slate-300">Annuler</button>
-                    </div>
+                    <input type="text" id="inTitle" placeholder="Titre" class="w-full bg-slate-50 p-4 rounded-xl border outline-none">
+                    <input type="text" id="inPrice" placeholder="Prix / Info" class="w-full bg-slate-50 p-4 rounded-xl border outline-none">
+                    <textarea id="inDesc" rows="4" placeholder="Description" class="w-full bg-slate-50 p-4 rounded-xl border outline-none"></textarea>
+                    <button id="btnPublish" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase transition hover:bg-black">Publier</button>
                 </div>
             </div>
-            <div class="lg:col-span-5">
-                <div class="sticky top-24">
-                    <h3 class="text-[10px] font-black text-slate-400 uppercase mb-4">Gestion du catalogue</h3>
-                    <div id="adminList" class="bg-white p-6 rounded-3xl shadow-xl max-h-[500px] overflow-y-auto space-y-3 border border-slate-100"></div>
-                </div>
+
+            <div id="listSection" class="lg:col-span-5">
+                <div id="adminList" class="space-y-4"></div>
+            </div>
+
+            <div id="messagesSection" class="hidden lg:col-span-12">
+                <div id="messagesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             </div>
         </div>
     </main>
+
+    <div id="loginOverlay" class="fixed inset-0 z-[300] hidden flex items-center justify-center bg-slate-900/90 backdrop-blur-sm p-6">
+        <div class="bg-slate-800 p-10 rounded-[3rem] text-white text-center w-full max-w-md">
+            <h2 class="text-3xl font-serif font-bold mb-6">Staff Access</h2>
+            <input type="text" id="userLogin" placeholder="Identifiant" class="w-full bg-slate-700 p-4 rounded-2xl mb-4 outline-none">
+            <input type="password" id="passLogin" placeholder="Mot de passe" class="w-full bg-slate-700 p-4 rounded-2xl mb-6 outline-none">
+            <button id="btnLoginAction" class="w-full bg-amber-600 py-4 rounded-2xl font-bold uppercase">Entrer</button>
+            <button onclick="closeLogin()" class="mt-4 text-slate-500 text-xs uppercase tracking-widest">Retour</button>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -129,14 +147,9 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // --- AUTH & NAV ---
         const ACCOUNTS = { "Axel": "Axel30", "Alden": "Alden30" };
         let currentUser = sessionStorage.getItem('arcadia_user');
-        let currentMode = 'V';
-        let currentImg = "";
-        let editModeId = null;
-        let globalData = { villas: {}, creations: {}, articles: {} };
-
-        // --- GLOBAL EXPORTS (pour onclick) ---
         window.openLogin = () => document.getElementById('loginOverlay').classList.remove('hidden');
         window.closeLogin = () => document.getElementById('loginOverlay').classList.add('hidden');
         window.logout = () => { sessionStorage.removeItem('arcadia_user'); location.reload(); };
@@ -145,127 +158,107 @@
             document.getElementById(id).classList.add('active-view');
         };
 
-        // --- MUSIQUE ---
-        const audio = document.getElementById('bgMusic');
-        const playBtn = document.getElementById('playPauseBtn');
-        const musicIcon = document.getElementById('musicIcon');
-
-        playBtn.onclick = () => {
-            if (audio.paused) {
-                audio.play();
-                musicIcon.innerText = "⏸";
-            } else {
-                audio.pause();
-                musicIcon.innerText = "▶";
-            }
-        };
-
-        // --- LOGIN ---
         document.getElementById('btnLoginAction').onclick = () => {
             const u = document.getElementById('userLogin').value;
             const p = document.getElementById('passLogin').value;
-            if (ACCOUNTS[u] === p) {
-                sessionStorage.setItem('arcadia_user', u);
-                location.reload();
-            } else {
-                document.getElementById('loginError').classList.remove('hidden');
-            }
+            if (ACCOUNTS[u] === p) { sessionStorage.setItem('arcadia_user', u); location.reload(); }
         };
 
-        // --- GESTION TABS ---
-        window.switchTab = (m) => {
-            window.cancelEdit();
-            currentMode = m;
-            document.querySelectorAll('.tab-btn').forEach(b => {
-                b.classList.remove('bg-slate-900', 'text-white');
-                b.classList.add('bg-slate-50', 'text-slate-400');
+        // --- SYSTÈME DE RÉSERVATION (CÔTÉ CLIENT) ---
+        document.getElementById('btnReserve').onclick = () => {
+            const res = {
+                name: document.getElementById('resName').value,
+                phone: document.getElementById('resPhone').value,
+                type: document.getElementById('resType').value,
+                date: document.getElementById('resDate').value,
+                msg: document.getElementById('resMsg').value,
+                timestamp: Date.now()
+            };
+
+            if(!res.name || !res.phone) return alert("Veuillez remplir au moins le nom et le téléphone.");
+
+            push(ref(db, 'messages'), res).then(() => {
+                alert("Votre demande a été envoyée avec succès à Arcadia.");
+                document.querySelectorAll('input, textarea').forEach(i => i.value = "");
             });
-            const active = document.getElementById('tab' + m);
-            active.classList.replace('bg-slate-50', 'bg-slate-900');
-            active.classList.replace('text-slate-400', 'text-white');
-            refreshAdminList();
         };
 
-        // --- IMAGES ---
+        // --- GESTION MUSIQUE ---
+        const audio = document.getElementById('bgMusic');
+        const playBtn = document.getElementById('playPauseBtn');
+        const musicIcon = document.getElementById('musicIcon');
+        const trackSelect = document.getElementById('trackSelect');
+        const musicSource = document.getElementById('musicSource');
+        const playlist = {
+            rk_chopard: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+            lafouine_vision: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+            rnboi_bebe: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+        };
+
+        function loadTrack(k) { musicSource.src = playlist[k]; audio.load(); if(!audio.paused) audio.play(); }
+        loadTrack(trackSelect.value);
+        trackSelect.onchange = (e) => { loadTrack(e.target.value); audio.play(); musicIcon.innerText = "⏸"; };
+        playBtn.onclick = () => {
+            if (audio.paused) { audio.play(); musicIcon.innerText = "⏸"; } 
+            else { audio.pause(); musicIcon.innerText = "▶"; }
+        };
+
+        // --- LOGIQUE ADMIN ---
+        let currentMode = 'V';
+        let currentImg = "";
+        let globalData = {};
+
+        window.switchTab = (m) => {
+            currentMode = m;
+            const isMsg = m === 'M';
+            document.getElementById('formSection').style.display = isMsg ? 'none' : 'block';
+            document.getElementById('listSection').style.display = isMsg ? 'none' : 'block';
+            document.getElementById('messagesSection').classList.toggle('hidden', !isMsg);
+            
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('bg-slate-900', 'text-white'));
+            const active = document.getElementById('tab' + m);
+            active.classList.add('bg-slate-900', 'text-white');
+            
+            if(isMsg) refreshMessages();
+            else refreshAdminList();
+        };
+
         document.getElementById('fileInput').onchange = (e) => {
             const reader = new FileReader();
-            reader.onload = (ev) => {
-                currentImg = ev.target.result;
-                document.getElementById('fileStatus').innerText = "✅ Image chargée";
-            };
+            reader.onload = (ev) => { currentImg = ev.target.result; document.getElementById('fileStatus').innerText = "✅ Image OK"; };
             reader.readAsDataURL(e.target.files[0]);
         };
 
-        // --- PUBLIER / MODIFIER ---
         document.getElementById('btnPublish').onclick = () => {
             const types = { 'V': 'villas', 'C': 'creations', 'A': 'articles' };
-            const typeKey = types[currentMode];
-            const title = document.getElementById('inTitle').value;
-            const price = document.getElementById('inPrice').value;
-            const desc = document.getElementById('inDesc').value;
-
-            if(!title) return alert("Titre manquant !");
-
-            const itemData = { title, price: price || 0, desc, type: typeKey, date: Date.now() };
-            
-            // Gestion image : on garde l'ancienne si on édite sans changer
-            if (currentImg) {
-                itemData.img = currentImg;
-            } else if (editModeId && globalData[typeKey][editModeId]) {
-                itemData.img = globalData[typeKey][editModeId].img;
-            } else {
-                return alert("Image requise !");
-            }
-
-            if (editModeId) {
-                set(ref(db, `content/${typeKey}/${editModeId}`), itemData).then(() => {
-                    alert("Modifié avec succès !");
-                    window.cancelEdit();
-                });
-            } else {
-                push(ref(db, `content/${typeKey}`), itemData).then(() => {
-                    alert("Publié !");
-                    window.cancelEdit();
-                });
-            }
-        };
-
-        // --- FONCTIONS ADMIN ---
-        window.startEdit = (type, key) => {
-            const item = globalData[type][key];
-            editModeId = key;
-            document.getElementById('inTitle').value = item.title;
-            document.getElementById('inPrice').value = item.price;
-            document.getElementById('inDesc').value = item.desc;
-            document.getElementById('btnPublish').innerText = "Enregistrer";
-            document.getElementById('btnCancelEdit').classList.remove('hidden');
-            document.getElementById('editIndicator').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-
-        window.cancelEdit = () => {
-            editModeId = null;
-            document.getElementById('inTitle').value = "";
-            document.getElementById('inPrice').value = "";
-            document.getElementById('inDesc').value = "";
-            currentImg = "";
-            document.getElementById('btnPublish').innerText = "Mettre en ligne";
-            document.getElementById('btnCancelEdit').classList.add('hidden');
-            document.getElementById('editIndicator').classList.add('hidden');
-            document.getElementById('fileStatus').innerText = "Modifier / Ajouter une photo";
-        };
-
-        window.deleteItem = (type, key) => {
-            if(confirm("Supprimer définitivement ?")) {
-                remove(ref(db, `content/${type}/${key}`));
-            }
+            const data = {
+                title: document.getElementById('inTitle').value,
+                price: document.getElementById('inPrice').value,
+                desc: document.getElementById('inDesc').value,
+                img: currentImg,
+                type: types[currentMode]
+            };
+            if(!data.title || !data.img) return alert("Titre et image obligatoires.");
+            push(ref(db, `content/${types[currentMode]}`), data).then(() => {
+                alert("Publié !");
+                location.reload();
+            });
         };
 
         // --- SYNC DATA ---
         onValue(ref(db, 'content'), (snap) => {
-            globalData = snap.val() || { villas: {}, creations: {}, articles: {} };
+            globalData = snap.val() || {};
             renderPublic();
             refreshAdminList();
+        });
+
+        onValue(ref(db, 'messages'), (snap) => {
+            const msgs = snap.val() || {};
+            const count = Object.keys(msgs).length;
+            const badge = document.getElementById('msgCount');
+            if(count > 0) { badge.innerText = count; badge.classList.remove('hidden'); }
+            else { badge.classList.add('hidden'); }
+            if(currentMode === 'M') refreshMessages(msgs);
         });
 
         function renderPublic() {
@@ -273,21 +266,21 @@
             let html = "";
             ['villas', 'creations', 'articles'].forEach(cat => {
                 if(globalData[cat]) {
-                    Object.entries(globalData[cat]).forEach(([key, item]) => {
+                    Object.values(globalData[cat]).forEach(item => {
                         html += `
-                        <div class="bg-white rounded-[3rem] shadow-xl overflow-hidden border border-slate-100">
-                            <img src="${item.img}" class="h-72 w-full object-cover">
-                            <div class="p-10">
+                        <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100 transition hover:scale-[1.02]">
+                            <img src="${item.img}" class="h-64 w-full object-cover">
+                            <div class="p-8">
                                 <span class="text-[9px] font-black text-amber-600 uppercase tracking-widest">${item.type}</span>
-                                <h4 class="text-3xl font-serif font-bold text-slate-900">${item.title}</h4>
-                                ${item.price > 0 ? `<p class="font-bold text-amber-700 text-xl mt-2">${new Intl.NumberFormat().format(item.price)} €</p>` : ''}
-                                <p class="text-slate-500 text-sm mt-4 leading-relaxed">${item.desc}</p>
+                                <h4 class="text-2xl font-serif font-bold mt-1">${item.title}</h4>
+                                <p class="text-amber-700 font-bold mt-2">${item.price}</p>
+                                <p class="text-slate-500 text-sm mt-4">${item.desc}</p>
                             </div>
                         </div>`;
                     });
                 }
             });
-            container.innerHTML = html || `<p class="col-span-3 text-center text-slate-400 py-20">Catalogue vide.</p>`;
+            container.innerHTML = html;
         }
 
         function refreshAdminList() {
@@ -295,33 +288,49 @@
             const typeKey = types[currentMode];
             const list = globalData[typeKey] || {};
             const container = document.getElementById('adminList');
-            
-            let html = "";
+            container.innerHTML = "";
             Object.entries(list).forEach(([key, item]) => {
-                html += `
-                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col gap-3">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <img src="${item.img}" class="w-12 h-12 rounded-xl object-cover">
-                            <span class="text-[11px] font-bold text-slate-800 uppercase truncate max-w-[150px]">${item.title}</span>
-                        </div>
+                container.innerHTML += `
+                <div class="bg-white p-4 rounded-2xl shadow-sm border flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <img src="${item.img}" class="w-12 h-12 rounded-lg object-cover">
+                        <span class="text-xs font-bold truncate max-w-[100px]">${item.title}</span>
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="startEdit('${typeKey}', '${key}')" class="flex-1 bg-amber-50 text-amber-700 text-[9px] font-black py-2 rounded-lg hover:bg-amber-100 transition">ÉDITER</button>
-                        <button onclick="deleteItem('${typeKey}', '${key}')" class="flex-1 bg-red-50 text-red-600 text-[9px] font-black py-2 rounded-lg hover:bg-red-100 transition">SUPPRIMER</button>
+                    <button onclick="deleteItem('${typeKey}', '${key}')" class="text-red-500 text-[10px] font-bold">SUPPRIMER</button>
+                </div>`;
+            });
+        }
+
+        window.deleteItem = (type, key) => { if(confirm("Supprimer ?")) remove(ref(db, `content/${type}/${key}`)); };
+
+        function refreshMessages(msgsData) {
+            const container = document.getElementById('messagesList');
+            container.innerHTML = "";
+            const msgs = msgsData || {};
+            Object.entries(msgs).reverse().forEach(([key, m]) => {
+                container.innerHTML += `
+                <div class="bg-white p-6 rounded-[2rem] shadow-lg border-l-4 border-amber-500 relative">
+                    <button onclick="deleteMsg('${key}')" class="absolute top-4 right-4 text-slate-300 hover:text-red-500 text-xs font-black">✕</button>
+                    <span class="text-[9px] font-black text-amber-600 uppercase">${m.type}</span>
+                    <h3 class="text-lg font-bold text-slate-800 mt-1">${m.name}</h3>
+                    <p class="text-amber-700 font-bold text-sm">${m.phone}</p>
+                    <div class="mt-4 p-3 bg-slate-50 rounded-xl text-xs text-slate-600 italic">"${m.msg}"</div>
+                    <div class="mt-4 flex justify-between items-center">
+                        <span class="text-[9px] text-slate-400 font-bold uppercase">Date: ${m.date || 'Dès que possible'}</span>
+                        <a href="tel:${m.phone}" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-[10px] font-bold">APPELER</a>
                     </div>
                 </div>`;
             });
-            container.innerHTML = html || `<p class="text-center text-slate-400 text-[10px] py-10">Aucun élément ici.</p>`;
+            if(Object.keys(msgs).length === 0) container.innerHTML = "<p class='col-span-full text-center py-20 text-slate-400'>Aucun message reçu.</p>";
         }
 
-        // --- INIT ---
+        window.deleteMsg = (key) => { if(confirm("Supprimer ce message ?")) remove(ref(db, `messages/${key}`)); };
+
+        // INIT
         if (currentUser) {
             document.body.classList.add('is-admin');
             document.getElementById('activeUserDisplay').innerText = currentUser;
         }
-
-        document.getElementById('btnCancelEdit').onclick = () => window.cancelEdit();
     </script>
 </body>
 </html>
