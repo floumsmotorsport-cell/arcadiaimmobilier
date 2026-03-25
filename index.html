@@ -17,39 +17,56 @@
         .view-section { display: none; }
         .active-view { display: block; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
         #adminBar { display: none; background: #0f172a; border-bottom: 2px solid #b45309; }
         .is-admin #adminBar { display: flex; }
-        .heart-active { color: #ef4444; transform: scale(1.2); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .login-card { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); }
-        @media print { .no-print { display: none !important; } body { background: white; } }
+        
+        .music-player {
+            position: fixed; bottom: 20px; right: 20px; z-index: 200;
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            padding: 12px 20px; border-radius: 50px; border: 1px solid rgba(0,0,0,0.1);
+            display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
 
+    <div class="music-player shadow-lg">
+        <button id="playPauseBtn" class="bg-amber-600 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center transition hover:scale-110">
+            <span id="musicIcon">▶</span>
+        </button>
+        <div class="flex flex-col">
+            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">Ambiance</span>
+            <span class="text-[11px] font-bold text-slate-700">Arcadia Prestige Mix</span>
+        </div>
+        <audio id="bgMusic" loop>
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
     <div id="loginOverlay" class="fixed inset-0 z-[300] hidden flex items-center justify-center bg-slate-900/90 backdrop-blur-sm p-6">
-        <div class="login-card w-full max-w-md p-10 rounded-[3rem] shadow-2xl border border-slate-700 text-white">
-            <h2 class="text-3xl font-serif font-bold mb-2 text-center">Espace Privé</h2>
+        <div class="login-card w-full max-w-md p-10 rounded-[3rem] shadow-2xl border border-slate-700 text-white text-center">
+            <h2 class="text-3xl font-serif font-bold mb-6">Espace Privé</h2>
             <div class="space-y-4">
                 <input type="text" id="userLogin" placeholder="Identifiant" class="w-full bg-slate-800/50 p-4 rounded-2xl outline-none border border-slate-700">
                 <input type="password" id="passLogin" placeholder="Mot de passe" class="w-full bg-slate-800/50 p-4 rounded-2xl outline-none border border-slate-700">
-                <p id="loginError" class="text-red-500 text-[10px] font-bold text-center hidden">Accès refusé.</p>
-                <button onclick="attemptLogin()" class="w-full bg-amber-600 py-4 rounded-2xl font-bold uppercase">Entrer</button>
+                <p id="loginError" class="text-red-500 text-[10px] font-bold hidden">Accès refusé.</p>
+                <button id="btnLoginAction" class="w-full bg-amber-600 py-4 rounded-2xl font-bold uppercase">Entrer</button>
                 <button onclick="closeLogin()" class="w-full text-slate-500 text-[10px] uppercase">Fermer</button>
             </div>
         </div>
     </div>
 
-    <div id="adminBar" class="fixed top-0 w-full text-white py-3 px-8 z-[100] justify-between items-center text-[10px] font-bold uppercase tracking-widest no-print">
+    <div id="adminBar" class="fixed top-0 w-full text-white py-3 px-8 z-[100] justify-between items-center text-[10px] font-bold uppercase tracking-widest">
         <div class="flex items-center space-x-6">
-            <span class="text-amber-500">GESTION : <span id="activeUserDisplay"></span></span>
+            <span class="text-amber-500">SESSION : <span id="activeUserDisplay"></span></span>
             <button onclick="showView('adminPanel')">PANEL DE CONTRÔLE</button>
-            <button onclick="showView('publicContent')">VOIR LE SITE</button>
+            <button onclick="showView('publicContent')">VUE CLIENT</button>
         </div>
         <button onclick="logout()" class="bg-red-600 px-4 py-1 rounded-full">Déconnexion</button>
     </div>
 
-    <main id="publicContent" class="view-section active-view no-print">
+    <main id="publicContent" class="view-section active-view">
         <section class="hero-bg flex items-center justify-center relative">
             <h1 class="text-white text-5xl font-serif font-bold tracking-tight">Arcadia Prestige</h1>
             <button onclick="openLogin()" class="absolute bottom-4 right-6 text-white/20 hover:text-white/60 text-[10px] uppercase font-bold">Accès Staff</button>
@@ -59,165 +76,578 @@
         </section>
     </main>
 
-    <main id="adminPanel" class="view-section pt-24 pb-20 container mx-auto px-6 no-print">
+    <main id="adminPanel" class="view-section pt-24 pb-20 container mx-auto px-6">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
             <div class="lg:col-span-7 bg-white p-10 rounded-[2.5rem] shadow-2xl border border-slate-100">
-                <div class="flex space-x-2 mb-10">
-                    <button onclick="switchTab('V')" id="tabV" class="px-6 py-3 rounded-xl font-bold bg-slate-900 text-white text-[10px]">🏠 VILLAS</button>
-                    <button onclick="switchTab('C')" id="tabC" class="px-6 py-3 rounded-xl font-bold bg-slate-50 text-slate-400 text-[10px]">🛠 CRÉATIONS</button>
-                    <button onclick="switchTab('A')" id="tabA" class="px-6 py-3 rounded-xl font-bold bg-slate-50 text-slate-400 text-[10px]">📰 ARTICLES</button>
+                <div class="flex justify-between items-center mb-10">
+                    <div class="flex space-x-2">
+                        <button onclick="switchTab('V')" id="tabV" class="tab-btn px-6 py-3 rounded-xl font-bold bg-slate-900 text-white text-[10px]">🏠 VILLAS</button>
+                        <button onclick="switchTab('C')" id="tabC" class="tab-btn px-6 py-3 rounded-xl font-bold bg-slate-50 text-slate-400 text-[10px]">🛠 CRÉATIONS</button>
+                        <button onclick="switchTab('A')" id="tabA" class="tab-btn px-6 py-3 rounded-xl font-bold bg-slate-50 text-slate-400 text-[10px]">📰 ARTICLES</button>
+                    </div>
+                    <span id="editIndicator" class="hidden text-[10px] font-black text-amber-600 animate-pulse">MODE ÉDITION</span>
                 </div>
                 <div class="space-y-6">
-                    <div onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-slate-200 p-10 rounded-[2rem] text-center cursor-pointer">
-                        <input type="file" id="fileInput" class="hidden" accept="image/*" onchange="handleFiles(this.files)">
-                        <p id="fileStatus" class="text-[10px] font-bold text-slate-400 uppercase">Ajouter l'image</p>
+                    <div onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-slate-200 p-10 rounded-[2rem] text-center cursor-pointer hover:bg-slate-50 transition">
+                        <input type="file" id="fileInput" class="hidden" accept="image/*">
+                        <p id="fileStatus" class="text-[10px] font-bold text-slate-400 uppercase">Modifier / Ajouter une photo</p>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
-                        <input type="text" id="inTitle" oninput="updatePreview()" placeholder="Nom" class="w-full bg-slate-50 p-4 rounded-xl border">
-                        <input type="number" id="inPrice" oninput="updatePreview()" placeholder="Prix (€)" class="w-full bg-slate-50 p-4 rounded-xl border">
+                        <div class="flex flex-col"><label class="text-[9px] font-bold text-slate-400 ml-2">TITRE</label><input type="text" id="inTitle" class="w-full bg-slate-50 p-4 rounded-xl border outline-none focus:border-amber-500"></div>
+                        <div class="flex flex-col"><label class="text-[9px] font-bold text-slate-400 ml-2">PRIX (€)</label><input type="number" id="inPrice" class="w-full bg-slate-50 p-4 rounded-xl border outline-none focus:border-amber-500"></div>
                     </div>
-                    <textarea id="inDesc" oninput="updatePreview()" rows="5" placeholder="Description..." class="w-full bg-slate-50 p-4 rounded-xl border"></textarea>
-                    <button onclick="publish()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase">Mettre en ligne</button>
+                    <div class="flex flex-col"><label class="text-[9px] font-bold text-slate-400 ml-2">DESCRIPTION</label><textarea id="inDesc" rows="5" class="w-full bg-slate-50 p-4 rounded-xl border outline-none focus:border-amber-500"></textarea></div>
+                    <div class="flex gap-4">
+                        <button id="btnPublish" class="flex-1 bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase shadow-lg hover:bg-black transition">Mettre en ligne</button>
+                        <button id="btnCancelEdit" class="hidden bg-slate-200 text-slate-600 px-8 rounded-2xl font-bold uppercase hover:bg-slate-300">Annuler</button>
+                    </div>
                 </div>
             </div>
-
             <div class="lg:col-span-5">
                 <div class="sticky top-24">
-                    <h3 class="text-[10px] font-black text-slate-400 uppercase mb-4">Aperçu & Gestion</h3>
-                    <div id="realTimePreview" class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border opacity-50 mb-6">
-                        <div class="h-56 bg-slate-100 flex items-center justify-center">
-                            <img id="prevImg" src="" class="hidden w-full h-full object-cover">
-                            <span id="prevPlaceholder" class="text-slate-300 text-5xl">🖼️</span>
-                        </div>
-                        <div class="p-8">
-                            <h4 id="prevTitle" class="text-2xl font-serif font-bold text-slate-800">Titre</h4>
-                            <p id="prevPrice" class="text-amber-600 font-bold">0 €</p>
-                        </div>
-                    </div>
-                    <div id="adminList" class="bg-slate-900 text-white p-6 rounded-3xl max-h-64 overflow-y-auto space-y-2"></div>
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase mb-4">Gestion du catalogue</h3>
+                    <div id="adminList" class="bg-white p-6 rounded-3xl shadow-xl max-h-[500px] overflow-y-auto space-y-3 border border-slate-100"></div>
                 </div>
             </div>
         </div>
     </main>
 
-    <div class="fixed bottom-6 right-6 z-[200] no-print glass p-4 rounded-3xl shadow-2xl flex items-center space-x-4">
-        <button onclick="toggleMusic()" id="musicBtn" class="w-10 h-10 bg-slate-900 text-white rounded-xl">▶</button>
-        <audio id="bgMusic" loop src="musique1.mp3"></audio>
-        <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.5" oninput="adjustVolume()" class="w-24 accent-slate-900">
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, push, remove, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // === 1. COLLE TES CLÉS FIREBASE ICI ===
         const firebaseConfig = {
-            apiKey: "TON_API_KEY",
-            authDomain: "TON_PROJET.firebaseapp.com",
-            databaseURL: "https://TON_PROJET.europe-west1.firebasedatabase.app",
-            projectId: "TON_PROJET",
-            storageBucket: "TON_PROJET.appspot.com",
-            messagingSenderId: "ID",
-            appId: "APP_ID"
+            apiKey: "AIzaSyBg9JIb2XAFacftazyDcAXOnCpfvaQ2PYI",
+            authDomain: "arcadiaimmobilier-ee335.firebaseapp.com",
+            databaseURL: "https://arcadiaimmobilier-ee335-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "arcadiaimmobilier-ee335",
+            storageBucket: "arcadiaimmobilier-ee335.firebasestorage.app",
+            messagingSenderId: "718967628351",
+            appId: "1:718967628351:web:2c60b5bd68916773bdce8a"
         };
 
         const app = initializeApp(firebaseConfig);
-        const dbFirebase = getDatabase(app);
+        const db = getDatabase(app);
 
-        // === 2. VARIABLES ET AUTH ===
         const ACCOUNTS = { "Axel": "Axel30", "Alden": "Alden30" };
+        let currentUser = sessionStorage.getItem('arcadia_user');
         let currentMode = 'V';
         let currentImg = "";
-        let currentUser = sessionStorage.getItem('arcadia_user');
+        let editModeId = null;
+        let globalData = { villas: {}, creations: {}, articles: {} };
 
-        window.attemptLogin = () => {
-            const u = document.getElementById('userLogin').value;
-            const p = document.getElementById('passLogin').value;
-            if (ACCOUNTS[u] === p) { sessionStorage.setItem('arcadia_user', u); location.reload(); }
-            else { document.getElementById('loginError').classList.remove('hidden'); }
-        };
+        // --- GLOBAL EXPORTS (pour onclick) ---
+        window.openLogin = () => document.getElementById('loginOverlay').classList.remove('hidden');
+        window.closeLogin = () => document.getElementById('loginOverlay').classList.add('hidden');
         window.logout = () => { sessionStorage.removeItem('arcadia_user'); location.reload(); };
-
-        // === 3. SYNCHRO TEMPS RÉEL ===
-        onValue(ref(dbFirebase, 'content'), (snapshot) => {
-            const data = snapshot.val() || { villas: {}, creations: {}, articles: {} };
-            renderAll(data);
-        });
-
-        // === 4. FONCTIONS DE PUBLICATION ===
-        window.publish = () => {
-            const types = { 'V': 'villas', 'C': 'creations', 'A': 'articles' };
-            const title = document.getElementById('inTitle').value;
-            if(!title || !currentImg) return alert("Photo et titre requis !");
-
-            const newItem = {
-                id: Date.now(),
-                title: title,
-                price: Number(document.getElementById('inPrice').value),
-                desc: document.getElementById('inDesc').value,
-                img: currentImg,
-                type: types[currentMode]
-            };
-
-            push(ref(dbFirebase, 'content/' + types[currentMode]), newItem).then(() => {
-                alert("Publié !");
-                location.reload();
-            });
-        };
-
-        function renderAll(data) {
-            const container = document.getElementById('allContent');
-            const items = [...Object.values(data.villas||{}), ...Object.values(data.creations||{}), ...Object.values(data.articles||{})];
-            
-            container.innerHTML = items.map(item => `
-                <div class="bg-white rounded-[3rem] shadow-xl overflow-hidden border">
-                    <img src="${item.img}" class="h-72 w-full object-cover">
-                    <div class="p-10">
-                        <span class="text-[10px] font-black text-amber-600 uppercase">${item.type}</span>
-                        <h4 class="text-3xl font-serif font-bold">${item.title}</h4>
-                        <p class="font-bold text-xl mt-3">${new Intl.NumberFormat().format(item.price)} €</p>
-                    </div>
-                </div>
-            `).join('') || "Aucune annonce.";
-
-            // Liste admin
-            const typeKey = { 'V': 'villas', 'C': 'creations', 'A': 'articles' }[currentMode];
-            const list = data[typeKey] || {};
-            document.getElementById('adminList').innerHTML = Object.keys(list).map(key => `
-                <div class="flex justify-between p-2 border-b border-white/10 text-[10px]">
-                    <span>${list[key].title}</span>
-                    <button onclick="deleteItem('${typeKey}', '${key}')" class="text-red-500">SUPPRIMER</button>
-                </div>
-            `).join('');
-        }
-
-        window.deleteItem = (type, key) => {
-            if(confirm("Supprimer ?")) remove(ref(dbFirebase, `content/${type}/${key}`));
-        };
-
-        // === UTILS ===
-        window.handleFiles = (f) => {
-            const r = new FileReader();
-            r.onload = (e) => { 
-                currentImg = e.target.result; 
-                document.getElementById('prevImg').src = currentImg;
-                document.getElementById('prevImg').classList.remove('hidden');
-                document.getElementById('prevPlaceholder').classList.add('hidden');
-                document.getElementById('realTimePreview').style.opacity = "1";
-            };
-            r.readAsDataURL(f[0]);
-        };
         window.showView = (id) => {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
             document.getElementById(id).classList.add('active-view');
         };
-        window.switchTab = (m) => { currentMode = m; location.reload(); };
-        window.toggleMusic = () => { const a = document.getElementById('bgMusic'); if(a.paused) a.play(); else a.pause(); };
 
+        // --- MUSIQUE ---
+        const audio = document.getElementById('bgMusic');
+        const playBtn = document.getElementById('playPauseBtn');
+        const musicIcon = document.getElementById('musicIcon');
+
+        playBtn.onclick = () => {
+            if (audio.paused) {
+                audio.play();
+                musicIcon.innerText = "⏸";
+            } else {
+                audio.pause();
+                musicIcon.innerText = "▶";
+            }
+        };
+
+        // --- LOGIN ---
+        document.getElementById('btnLoginAction').onclick = () => {
+            const u = document.getElementById('userLogin').value;
+            const p = document.getElementById('passLogin').value;
+            if (ACCOUNTS[u] === p) {
+                sessionStorage.setItem('arcadia_user', u);
+                location.reload();
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        };
+
+        // --- GESTION TABS ---
+        window.switchTab = (m) => {
+            window.cancelEdit();
+            currentMode = m;
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('bg-slate-900', 'text-white');
+                b.classList.add('bg-slate-50', 'text-slate-400');
+            });
+            const active = document.getElementById('tab' + m);
+            active.classList.replace('bg-slate-50', 'bg-slate-900');
+            active.classList.replace('text-slate-400', 'text-white');
+            refreshAdminList();
+        };
+
+        // --- IMAGES ---
+        document.getElementById('fileInput').onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                currentImg = ev.target.result;
+                document.getElementById('fileStatus').innerText = "✅ Image chargée";
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+
+        // --- PUBLIER / MODIFIER ---
+        document.getElementById('btnPublish').onclick = () => {
+            const types = { 'V': 'villas', 'C': 'creations', 'A': 'articles' };
+            const typeKey = types[currentMode];
+            const title = document.getElementById('inTitle').value;
+            const price = document.getElementById('inPrice').value;
+            const desc = document.getElementById('inDesc').value;
+
+            if(!title) return alert("Titre manquant !");
+
+            const itemData = { title, price: price || 0, desc, type: typeKey, date: Date.now() };
+            
+            // Gestion image : on garde l'ancienne si on édite sans changer
+            if (currentImg) {
+                itemData.img = currentImg;
+            } else if (editModeId && globalData[typeKey][editModeId]) {
+                itemData.img = globalData[typeKey][editModeId].img;
+            } else {
+                return alert("Image requise !");
+            }
+
+            if (editModeId) {
+                set(ref(db, `content/${typeKey}/${editModeId}`), itemData).then(() => {
+                    alert("Modifié avec succès !");
+                    window.cancelEdit();
+                });
+            } else {
+                push(ref(db, `content/${typeKey}`), itemData).then(() => {
+                    alert("Publié !");
+                    window.cancelEdit();
+                });
+            }
+        };
+
+        // --- FONCTIONS ADMIN ---
+        window.startEdit = (type, key) => {
+            const item = globalData[type][key];
+            editModeId = key;
+            document.getElementById('inTitle').value = item.title;
+            document.getElementById('inPrice').value = item.price;
+            document.getElementById('inDesc').value = item.desc;
+            document.getElementById('btnPublish').innerText = "Enregistrer";
+            document.getElementById('btnCancelEdit').classList.remove('hidden');
+            document.getElementById('editIndicator').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.cancelEdit = () => {
+            editModeId = null;
+            document.getElementById('inTitle').value = "";
+            document.getElementById('inPrice').value = "";
+            document.getElementById('inDesc').value = "";
+            currentImg = "";
+            document.getElementById('btnPublish').innerText = "Mettre en ligne";
+            document.getElementById('btnCancelEdit').classList.add('hidden');
+            document.getElementById('editIndicator').classList.add('hidden');
+            document.getElementById('fileStatus').innerText = "Modifier / Ajouter une photo";
+        };
+
+        window.deleteItem = (type, key) => {
+            if(confirm("Supprimer définitivement ?")) {
+                remove(ref(db, `content/${type}/${key}`));
+            }
+        };
+
+        // --- SYNC DATA ---
+        onValue(ref(db, 'content'), (snap) => {
+            globalData = snap.val() || { villas: {}, creations: {}, articles: {} };
+            renderPublic();
+            refreshAdminList();
+        });
+
+        function renderPublic() {
+            const container = document.getElementById('allContent');
+            let html = "";
+            ['villas', 'creations', 'articles'].forEach(cat => {
+                if(globalData[cat]) {
+                    Object.entries(globalData[cat]).forEach(([key, item]) => {
+                        html += `
+                        <div class="bg-white rounded-[3rem] shadow-xl overflow-hidden border border-slate-100">
+                            <img src="${item.img}" class="h-72 w-full object-cover">
+                            <div class="p-10">
+                                <span class="text-[9px] font-black text-amber-600 uppercase tracking-widest">${item.type}</span>
+                                <h4 class="text-3xl font-serif font-bold text-slate-900">${item.title}</h4>
+                                ${item.price > 0 ? `<p class="font-bold text-amber-700 text-xl mt-2">${new Intl.NumberFormat().format(item.price)} €</p>` : ''}
+                                <p class="text-slate-500 text-sm mt-4 leading-relaxed">${item.desc}</p>
+                            </div>
+                        </div>`;
+                    });
+                }
+            });
+            container.innerHTML = html || `<p class="col-span-3 text-center text-slate-400 py-20">Catalogue vide.</p>`;
+        }
+
+        function refreshAdminList() {
+            const types = { 'V': 'villas', 'C': 'creations', 'A': 'articles' };
+            const typeKey = types[currentMode];
+            const list = globalData[typeKey] || {};
+            const container = document.getElementById('adminList');
+            
+            let html = "";
+            Object.entries(list).forEach(([key, item]) => {
+                html += `
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col gap-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <img src="${item.img}" class="w-12 h-12 rounded-xl object-cover">
+                            <span class="text-[11px] font-bold text-slate-800 uppercase truncate max-w-[150px]">${item.title}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="startEdit('${typeKey}', '${key}')" class="flex-1 bg-amber-50 text-amber-700 text-[9px] font-black py-2 rounded-lg hover:bg-amber-100 transition">ÉDITER</button>
+                        <button onclick="deleteItem('${typeKey}', '${key}')" class="flex-1 bg-red-50 text-red-600 text-[9px] font-black py-2 rounded-lg hover:bg-red-100 transition">SUPPRIMER</button>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html || `<p class="text-center text-slate-400 text-[10px] py-10">Aucun élément ici.</p>`;
+        }
+
+        // --- INIT ---
         if (currentUser) {
             document.body.classList.add('is-admin');
-            document.getElementById('activeUserDisplay').innerText = currentUser.toUpperCase();
+            document.getElementById('activeUserDisplay').innerText = currentUser;
         }
+
+        document.getElementById('btnCancelEdit').onclick = () => window.cancelEdit();
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcadia Immobilier | Prestige & Excellence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap');
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .hero-bg {
+            background: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.6)), 
+                        url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover; background-position: center; height: 50vh;
+        }
+        .view-section { display: none; }
+        .active-view { display: block; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        #adminBar { display: none; background: #0f172a; border-bottom: 2px solid #b45309; }
+        .is-admin #adminBar { display: flex; }
+        .login-card { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); }
+        
+        .music-player {
+            position: fixed; bottom: 20px; right: 20px; z-index: 200;
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            padding: 12px 20px; border-radius: 50px; border: 1px solid rgba(0,0,0,0.1);
+            display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <div class="music-player shadow-lg">
+        <button id="playPauseBtn" class="bg-amber-600 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center transition hover:scale-110">
+            <span id="musicIcon">▶</span>
+        </button>
+        <div class="flex flex-col">
+            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">Ambiance</span>
+            <span class="text-[11px] font-bold text-slate-700">Arcadia Prestige Mix</span>
+        </div>
+        <audio id="bgMusic" loop>
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <div id="loginOverlay" class="fixed inset-0 z-[300] hidden flex items-center justify-center bg-slate-900/90 backdrop-blur-sm p-6">
+        <div class="login-card w-full max-w-md p-10 rounded-[3rem] shadow-2xl border border-slate-700 text-white text-center">
+            <h2 class="text-3xl font-serif font-bold mb-6">Espace Privé</h2>
+            <div class="space-y-4">
+                <input type="text" id="userLogin" placeholder="Identifiant" class="w-full bg-slate-800/50 p-4 rounded-2xl outline-none border border-slate-700">
+                <input type="password" id="passLogin" placeholder="Mot de passe" class="w-full bg-slate-800/50 p-4 rounded-2xl outline-none border border-slate-700">
+                <p id="loginError" class="text-red-500 text-[10px] font-bold hidden">Accès refusé.</p>
+                <button id="btnLoginAction" class="w-full bg-amber-600 py-4 rounded-2xl font-bold uppercase">Entrer</button>
+                <button onclick="closeLogin()" class="w-full text-slate-500 text-[10px] uppercase">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminBar" class="fixed top-0 w-full text-white py-3 px-8 z-[100] justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+        <div class="flex items-center space-x-6">
+            <span class="text-amber-500">SESSION : <span id="activeUserDisplay"></span></span>
+            <button onclick="showView('adminPanel')">PANEL DE CONTRÔLE</button>
+            <button onclick="showView('publicContent')">VUE CLIENT</button>
+        </div>
+        <button onclick="logout()" class="bg-red-600 px-4 py-1 rounded-full">Déconnexion</button>
+    </div>
+
+    <main id="publicContent" class="view-section active-view">
+        <section class="hero-bg flex items-center justify-center relative">
+            <h1 class="text-white text-5xl font-serif font-bold tracking-tight">Arcadia Prestige</h1>
+            <button onclick="openLogin()" class="absolute bottom-4 right-6 text-white/20 hover:text-white/60 text-[10px] uppercase font-bold">Accès Staff</button>
+        </section>
+        <section class="container mx-auto py-16 px-6">
+            <div id="allContent" class="grid grid-cols-1 md:grid-cols-3 gap-10"></div>
+        </section>
+    </main>
+
+    <main id="adminPanel" class="view-section pt-24 pb-20 container mx-auto px-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div class="lg:col-span-7 bg-white p-10 rounded-[2.5rem] shadow-2xl border border-slate-100">
+                <div class="flex justify-between items-center mb-10">
+                    <div class="flex space-x-2">
+                        <button onclick="switchTab('V')" id="tabV" class="tab-btn px-6 py-3 rounded-xl font-bold bg-slate-900 text-white text-[10px]">🏠 VILLAS</button>
+                        <button onclick="switchTab('C')" id="tabC" class="tab-btn px-6 py-3 rounded-xl font-bold bg-slate-50 text-slate-400 text-[10px]">🛠 CRÉATIONS</button>
+                        <button onclick="switchTab('A')" id="tabA" class="tab-btn px-6 py-3 rounded-xl font-bold bg-slate-50 text-slate-400 text-[10px]">📰 ARTICLES</button>
+                    </div>
+                    <span id="editIndicator" class="hidden text-[10px] font-black text-amber-600 animate-pulse">MODE ÉDITION</span>
+                </div>
+                <div class="space-y-6">
+                    <div onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-slate-200 p-10 rounded-[2rem] text-center cursor-pointer hover:bg-slate-50 transition">
+                        <input type="file" id="fileInput" class="hidden" accept="image/*">
+                        <p id="fileStatus" class="text-[10px] font-bold text-slate-400 uppercase">Modifier / Ajouter une photo</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex flex-col"><label class="text-[9px] font-bold text-slate-400 ml-2">TITRE</label><input type="text" id="inTitle" class="w-full bg-slate-50 p-4 rounded-xl border outline-none focus:border-amber-500"></div>
+                        <div class="flex flex-col"><label class="text-[9px] font-bold text-slate-400 ml-2">PRIX (€)</label><input type="number" id="inPrice" class="w-full bg-slate-50 p-4 rounded-xl border outline-none focus:border-amber-500"></div>
+                    </div>
+                    <div class="flex flex-col"><label class="text-[9px] font-bold text-slate-400 ml-2">DESCRIPTION</label><textarea id="inDesc" rows="5" class="w-full bg-slate-50 p-4 rounded-xl border outline-none focus:border-amber-500"></textarea></div>
+                    <div class="flex gap-4">
+                        <button id="btnPublish" class="flex-1 bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase shadow-lg hover:bg-black transition">Mettre en ligne</button>
+                        <button id="btnCancelEdit" class="hidden bg-slate-200 text-slate-600 px-8 rounded-2xl font-bold uppercase hover:bg-slate-300">Annuler</button>
+                    </div>
+                </div>
+            </div>
+            <div class="lg:col-span-5">
+                <div class="sticky top-24">
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase mb-4">Gestion du catalogue</h3>
+                    <div id="adminList" class="bg-white p-6 rounded-3xl shadow-xl max-h-[500px] overflow-y-auto space-y-3 border border-slate-100"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, push, remove, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBg9JIb2XAFacftazyDcAXOnCpfvaQ2PYI",
+            authDomain: "arcadiaimmobilier-ee335.firebaseapp.com",
+            databaseURL: "https://arcadiaimmobilier-ee335-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "arcadiaimmobilier-ee335",
+            storageBucket: "arcadiaimmobilier-ee335.firebasestorage.app",
+            messagingSenderId: "718967628351",
+            appId: "1:718967628351:web:2c60b5bd68916773bdce8a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const ACCOUNTS = { "Axel": "Axel30", "Alden": "Alden30" };
+        let currentUser = sessionStorage.getItem('arcadia_user');
+        let currentMode = 'V';
+        let currentImg = "";
+        let editModeId = null;
+        let globalData = { villas: {}, creations: {}, articles: {} };
+
+        // --- GLOBAL EXPORTS (pour onclick) ---
+        window.openLogin = () => document.getElementById('loginOverlay').classList.remove('hidden');
+        window.closeLogin = () => document.getElementById('loginOverlay').classList.add('hidden');
+        window.logout = () => { sessionStorage.removeItem('arcadia_user'); location.reload(); };
+        window.showView = (id) => {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
+            document.getElementById(id).classList.add('active-view');
+        };
+
+        // --- MUSIQUE ---
+        const audio = document.getElementById('bgMusic');
+        const playBtn = document.getElementById('playPauseBtn');
+        const musicIcon = document.getElementById('musicIcon');
+
+        playBtn.onclick = () => {
+            if (audio.paused) {
+                audio.play();
+                musicIcon.innerText = "⏸";
+            } else {
+                audio.pause();
+                musicIcon.innerText = "▶";
+            }
+        };
+
+        // --- LOGIN ---
+        document.getElementById('btnLoginAction').onclick = () => {
+            const u = document.getElementById('userLogin').value;
+            const p = document.getElementById('passLogin').value;
+            if (ACCOUNTS[u] === p) {
+                sessionStorage.setItem('arcadia_user', u);
+                location.reload();
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        };
+
+        // --- GESTION TABS ---
+        window.switchTab = (m) => {
+            window.cancelEdit();
+            currentMode = m;
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('bg-slate-900', 'text-white');
+                b.classList.add('bg-slate-50', 'text-slate-400');
+            });
+            const active = document.getElementById('tab' + m);
+            active.classList.replace('bg-slate-50', 'bg-slate-900');
+            active.classList.replace('text-slate-400', 'text-white');
+            refreshAdminList();
+        };
+
+        // --- IMAGES ---
+        document.getElementById('fileInput').onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                currentImg = ev.target.result;
+                document.getElementById('fileStatus').innerText = "✅ Image chargée";
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+
+        // --- PUBLIER / MODIFIER ---
+        document.getElementById('btnPublish').onclick = () => {
+            const types = { 'V': 'villas', 'C': 'creations', 'A': 'articles' };
+            const typeKey = types[currentMode];
+            const title = document.getElementById('inTitle').value;
+            const price = document.getElementById('inPrice').value;
+            const desc = document.getElementById('inDesc').value;
+
+            if(!title) return alert("Titre manquant !");
+
+            const itemData = { title, price: price || 0, desc, type: typeKey, date: Date.now() };
+            
+            // Gestion image : on garde l'ancienne si on édite sans changer
+            if (currentImg) {
+                itemData.img = currentImg;
+            } else if (editModeId && globalData[typeKey][editModeId]) {
+                itemData.img = globalData[typeKey][editModeId].img;
+            } else {
+                return alert("Image requise !");
+            }
+
+            if (editModeId) {
+                set(ref(db, `content/${typeKey}/${editModeId}`), itemData).then(() => {
+                    alert("Modifié avec succès !");
+                    window.cancelEdit();
+                });
+            } else {
+                push(ref(db, `content/${typeKey}`), itemData).then(() => {
+                    alert("Publié !");
+                    window.cancelEdit();
+                });
+            }
+        };
+
+        // --- FONCTIONS ADMIN ---
+        window.startEdit = (type, key) => {
+            const item = globalData[type][key];
+            editModeId = key;
+            document.getElementById('inTitle').value = item.title;
+            document.getElementById('inPrice').value = item.price;
+            document.getElementById('inDesc').value = item.desc;
+            document.getElementById('btnPublish').innerText = "Enregistrer";
+            document.getElementById('btnCancelEdit').classList.remove('hidden');
+            document.getElementById('editIndicator').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.cancelEdit = () => {
+            editModeId = null;
+            document.getElementById('inTitle').value = "";
+            document.getElementById('inPrice').value = "";
+            document.getElementById('inDesc').value = "";
+            currentImg = "";
+            document.getElementById('btnPublish').innerText = "Mettre en ligne";
+            document.getElementById('btnCancelEdit').classList.add('hidden');
+            document.getElementById('editIndicator').classList.add('hidden');
+            document.getElementById('fileStatus').innerText = "Modifier / Ajouter une photo";
+        };
+
+        window.deleteItem = (type, key) => {
+            if(confirm("Supprimer définitivement ?")) {
+                remove(ref(db, `content/${type}/${key}`));
+            }
+        };
+
+        // --- SYNC DATA ---
+        onValue(ref(db, 'content'), (snap) => {
+            globalData = snap.val() || { villas: {}, creations: {}, articles: {} };
+            renderPublic();
+            refreshAdminList();
+        });
+
+        function renderPublic() {
+            const container = document.getElementById('allContent');
+            let html = "";
+            ['villas', 'creations', 'articles'].forEach(cat => {
+                if(globalData[cat]) {
+                    Object.entries(globalData[cat]).forEach(([key, item]) => {
+                        html += `
+                        <div class="bg-white rounded-[3rem] shadow-xl overflow-hidden border border-slate-100">
+                            <img src="${item.img}" class="h-72 w-full object-cover">
+                            <div class="p-10">
+                                <span class="text-[9px] font-black text-amber-600 uppercase tracking-widest">${item.type}</span>
+                                <h4 class="text-3xl font-serif font-bold text-slate-900">${item.title}</h4>
+                                ${item.price > 0 ? `<p class="font-bold text-amber-700 text-xl mt-2">${new Intl.NumberFormat().format(item.price)} €</p>` : ''}
+                                <p class="text-slate-500 text-sm mt-4 leading-relaxed">${item.desc}</p>
+                            </div>
+                        </div>`;
+                    });
+                }
+            });
+            container.innerHTML = html || `<p class="col-span-3 text-center text-slate-400 py-20">Catalogue vide.</p>`;
+        }
+
+        function refreshAdminList() {
+            const types = { 'V': 'villas', 'C': 'creations', 'A': 'articles' };
+            const typeKey = types[currentMode];
+            const list = globalData[typeKey] || {};
+            const container = document.getElementById('adminList');
+            
+            let html = "";
+            Object.entries(list).forEach(([key, item]) => {
+                html += `
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col gap-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <img src="${item.img}" class="w-12 h-12 rounded-xl object-cover">
+                            <span class="text-[11px] font-bold text-slate-800 uppercase truncate max-w-[150px]">${item.title}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="startEdit('${typeKey}', '${key}')" class="flex-1 bg-amber-50 text-amber-700 text-[9px] font-black py-2 rounded-lg hover:bg-amber-100 transition">ÉDITER</button>
+                        <button onclick="deleteItem('${typeKey}', '${key}')" class="flex-1 bg-red-50 text-red-600 text-[9px] font-black py-2 rounded-lg hover:bg-red-100 transition">SUPPRIMER</button>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html || `<p class="text-center text-slate-400 text-[10px] py-10">Aucun élément ici.</p>`;
+        }
+
+        // --- INIT ---
+        if (currentUser) {
+            document.body.classList.add('is-admin');
+            document.getElementById('activeUserDisplay').innerText = currentUser;
+        }
+
+        document.getElementById('btnCancelEdit').onclick = () => window.cancelEdit();
     </script>
 </body>
 </html>
