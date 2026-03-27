@@ -3,124 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcadia Studio | Management</title>
+    <title>Arcadia Studio | Management Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@200;300;400;500&display=swap');
+        :root { --gold: #b38e44; --dark: #0a0a0a; --panel: #111111; }
+
+        /* Global Style - Fusion Dark Luxury */
+        * { transition: all 0.25s ease; cursor: crosshair; }
+        ::selection { background: var(--gold); color: white; }
         
-        :root { --gold: #b38e44; --dark: #0f172a; --light: #fdfdfd; }
-        body { font-family: 'Montserrat', sans-serif; background: #f4f4f4; color: var(--dark); }
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background: var(--dark);
+            color: white; 
+            overflow-x: hidden;
+        }
         .font-serif { font-family: 'Cormorant Garamond', serif; }
 
-        /* Style Panel Pro */
-        .glass-panel { background: white; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
-        .input-pro { width: 100%; border: 1px solid #e5e7eb; padding: 12px; border-radius: 4px; outline: none; margin-bottom: 15px; font-size: 13px; transition: 0.3s; }
-        .input-pro:focus { border-color: var(--gold); ring: 1px solid var(--gold); }
-        
-        .preview-box { border: 2px dashed #ddd; border-radius: 8px; min-height: 200px; padding: 20px; background: white; }
-        
-        /* Badge Status */
-        .badge-star { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; padding: 2px 8px; font-size: 9px; font-weight: bold; border-radius: 10px; }
-        
-        /* Boutons */
-        .btn-action { padding: 8px 15px; font-size: 10px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; transition: 0.2s; border-radius: 4px; }
-        .btn-save { background: var(--dark); color: white; }
-        .btn-edit { background: #f3f4f6; color: #374151; }
-        .btn-del { background: #fee2e2; color: #b91c1c; }
+        /* Hero & Background Video */
+        .hero-mini { height: 40vh; position: relative; overflow: hidden; border-bottom: 1px solid rgba(179,142,68,0.3); }
+        .hero-mini video { position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0.4; }
+        .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, var(--dark)); }
 
-        /* Tab System */
-        .tab-btn { padding: 10px 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; border-bottom: 2px solid transparent; opacity: 0.5; }
-        .tab-btn.active { opacity: 1; border-bottom-color: var(--gold); color: var(--gold); }
+        /* Glass Panel Staff Edition */
+        .glass-panel {
+            background: var(--panel);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .glass-panel:hover { border-color: var(--gold); transform: translateY(-3px); }
+
+        /* Inputs Premium */
+        .input-pro { 
+            width: 100%; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            padding: 14px; 
+            border-radius: 8px; 
+            outline: none; 
+            margin-bottom: 15px; 
+            font-size: 13px; 
+            background: rgba(255,255,255,0.03);
+            color: white;
+        }
+        .input-pro:focus { border-color: var(--gold); background: rgba(255,255,255,0.07); }
         
-        .admin-section { display: none; animation: fadeIn 0.4s ease; }
-        .admin-section.active { display: block; }
+        /* Buttons */
+        .btn-save { 
+            background: var(--gold); 
+            color: black; 
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 10px;
+            padding: 12px;
+            border-radius: 4px;
+        }
+        .btn-save:hover { transform: scale(1.02); filter: brightness(1.2); box-shadow: 0 0 20px rgba(179,142,68,0.4); }
+
+        /* Animations Fade Up */
+        .fade-up { opacity: 0; transform: translateY(30px); transition: 0.8s; }
+        .fade-up.show { opacity: 1; transform: translateY(0); }
+
+        /* Tabs */
+        .tab-btn { position: relative; padding: 12px 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; opacity: 0.4; color: white; }
+        .tab-btn.active { opacity: 1; color: var(--gold); }
+        .tab-btn::after { content: ""; position: absolute; bottom: 0; left: 0; width: 0; height: 1px; background: var(--gold); transition: 0.3s; }
+        .tab-btn.active::after { width: 100%; }
+
+        .admin-section { display: none; }
+        .admin-section.active { display: block; animation: fadeIn 0.6s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Images Preview Grid */
-        .img-grid { display: grid; grid-template-cols: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
-        .img-preview { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; }
+        /* Scrollbar Luxe */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--dark); }
+        ::-webkit-scrollbar-thumb { background: var(--gold); }
     </style>
 </head>
-<body class="p-4 md:p-10">
+<body>
 
-    <div class="max-w-7xl mx-auto">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
-            <div>
-                <h1 class="font-serif text-5xl italic">Arcadia Studio</h1>
-                <p class="text-[10px] tracking-[5px] uppercase opacity-50 mt-2">Professional Management Suite</p>
+    <section class="hero-mini flex items-center justify-center">
+        <video autoplay muted loop playsinline>
+            <source src="https://cdn.coverr.co/videos/coverr-luxury-house-1574/1080p.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="relative text-center z-10">
+            <h1 class="font-serif text-5xl md:text-7xl italic fade-up show">Arcadia Studio</h1>
+            <p class="text-[10px] tracking-[10px] uppercase opacity-60 mt-4 fade-up show">Staff Management Suite</p>
+        </div>
+    </section>
+
+    <div class="max-w-7xl mx-auto px-6 -mt-20 relative z-20 pb-20">
+        
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
+            <div class="flex gap-6 border-b border-white/10 w-full md:w-auto">
+                <button onclick="openTab('secBiens', this)" class="tab-btn active">Collection</button>
+                <button onclick="openTab('secEdito', this)" class="tab-btn">Édito</button>
+                <button onclick="openTab('secMsg', this)" class="tab-btn">Messages</button>
             </div>
             <div class="flex items-center gap-4">
-                <span class="text-xs font-bold uppercase tracking-widest bg-white px-4 py-2 border rounded" id="userTag"></span>
-                <button onclick="window.location.href='index.html'" class="text-[10px] uppercase font-bold text-gold underline">Voir le site public</button>
+                <span class="text-[9px] font-bold uppercase tracking-widest bg-white/5 border border-white/10 px-4 py-2 rounded" id="userTag">Agent: Connecté</span>
+                <button onclick="window.location.href='index.html'" class="text-[9px] uppercase font-bold text-gold underline">Sortir du Studio</button>
             </div>
         </div>
 
-        <div class="flex gap-8 mb-8 border-b">
-            <button onclick="openTab('secBiens', this)" class="tab-btn active">Immobilier</button>
-            <button onclick="openTab('secEdito', this)" class="tab-btn">L'Édito / Articles</button>
-            <button onclick="openTab('secMessages', this)" class="tab-btn">Messages Recus</button>
-        </div>
-
-        <div id="secBiens" class="admin-section active grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <div class="glass-panel p-8">
-                <h3 class="font-serif text-2xl italic mb-6">Configuration de l'annonce</h3>
+        <div id="secBiens" class="admin-section active grid grid-cols-1 lg:grid-cols-2 gap-12">
+            
+            <div class="glass-panel p-8 fade-up show">
+                <h3 class="font-serif text-3xl italic mb-8 border-b border-white/5 pb-4">Configuration</h3>
                 <input type="hidden" id="edit_id_bien">
-                <input type="text" id="bTitle" placeholder="Nom de la villa (ex: The Rockford Palace)" class="input-pro" oninput="updatePreviewBien()">
+                
+                <input type="text" id="bTitle" placeholder="Nom de la propriété" class="input-pro" oninput="updatePreview()">
+                
                 <div class="grid grid-cols-2 gap-4">
-                    <input type="text" id="bPrice" placeholder="Prix (ex: $2.500.000)" class="input-pro" oninput="updatePreviewBien()">
-                    <select id="bCat" class="input-pro" onchange="updatePreviewBien()">
-                        <option value="Villa">Villa de Luxe</option>
-                        <option value="Penthouse">Penthouse</option>
-                        <option value="Appartement">Appartement</option>
-                        <option value="Manoir">Manoir</option>
+                    <input type="text" id="bPrice" placeholder="Prix (ex: 2 500 000€)" class="input-pro" oninput="updatePreview()">
+                    <select id="bCat" class="input-pro text-gray-400" onchange="updatePreview()">
+                        <option value="Villa">Villa Exclusive</option>
+                        <option value="Penthouse">Penthouse Skyline</option>
+                        <option value="Manoir">Manoir Royal</option>
                     </select>
                 </div>
-                <textarea id="bDesc" placeholder="Description courte et élégante..." class="input-pro h-24" oninput="updatePreviewBien()"></textarea>
-                <input type="file" id="bFiles" class="text-xs mb-6" multiple>
-                <div class="img-grid" id="bImgGrid"></div>
+
+                <textarea id="bDesc" placeholder="Description poétique et luxueuse..." class="input-pro h-32" oninput="updatePreview()"></textarea>
                 
-                <div class="flex gap-4 mt-8">
-                    <button id="btnPublishBien" class="btn-action btn-save flex-1">Publier l'annonce</button>
-                    <button onclick="resetBienForm()" class="btn-action btn-edit">Reset</button>
-                </div>
+                <label class="text-[9px] uppercase tracking-widest opacity-40 mb-4 block">Médias haute résolution</label>
+                <input type="file" id="bFiles" class="text-xs mb-6 text-gray-500" multiple>
+                <div id="bImgGrid" class="grid grid-cols-4 gap-2 mb-8"></div>
+                
+                <button id="btnPublish" class="btn-save w-full">Publier l'Annonce</button>
             </div>
 
-            <div>
-                <h3 class="text-[10px] font-bold uppercase tracking-widest mb-4 opacity-40 italic">Aperçu en direct</h3>
-                <div id="previewBien" class="preview-box">
-                    </div>
+            <div class="fade-up show" style="transition-delay: 0.2s;">
+                <h3 class="text-[10px] font-bold uppercase tracking-[4px] mb-6 opacity-40 italic">Aperçu du Catalogue</h3>
                 
-                <h3 class="text-[10px] font-bold uppercase tracking-widest mt-10 mb-4 opacity-40">Annonces Actives</h3>
+                <div id="livePreview">
+                    <div class="rounded-2xl overflow-hidden bg-[#111] border border-white/5 shadow-2xl">
+                        <div class="h-80 bg-cover bg-center" style="background-image:url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c')"></div>
+                        <div class="p-8">
+                            <span class="text-gold text-[10px] tracking-[3px] uppercase" id="preCat">Villa Exclusive</span>
+                            <h4 class="font-serif text-4xl mt-2 italic" id="preTitle">Villa Horizon</h4>
+                            <p class="text-sm opacity-50 mt-4 italic font-light leading-relaxed" id="preDesc">Le futur bien d'exception d'Arcadia...</p>
+                            <div class="mt-8 pt-6 border-t border-white/5 flex justify-between items-center">
+                                <span class="font-serif text-2xl" id="prePrice">2 500 000€</span>
+                                <div class="w-10 h-10 border border-gold/30 rounded-full flex items-center justify-center text-gold">→</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-[10px] font-bold uppercase tracking-[4px] mt-16 mb-6 opacity-40">Gestion du Portfolio</h3>
                 <div id="listBiensAdmin" class="space-y-4"></div>
             </div>
         </div>
 
-        <div id="secEdito" class="admin-section grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <div class="glass-panel p-8">
-                <h3 class="font-serif text-2xl italic mb-6">Rédiger un article</h3>
-                <input type="text" id="aTitle" placeholder="Titre de l'article" class="input-pro" oninput="updatePreviewArt()">
-                <textarea id="aContent" placeholder="Contenu de l'article..." class="input-pro h-48" oninput="updatePreviewArt()"></textarea>
-                <input type="file" id="aFile" class="text-xs mb-6">
-                <button id="btnPublishArt" class="btn-action btn-save w-full">Publier l'Edito</button>
-            </div>
-            <div>
-                <h3 class="text-[10px] font-bold uppercase tracking-widest mb-4 opacity-40">Aperçu Magazine</h3>
-                <div id="previewArt" class="preview-box"></div>
-                <div id="listArtAdmin" class="mt-10 space-y-4"></div>
-            </div>
-        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, push, remove, set, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = { databaseURL: "https://arcadiaimmobilier-ee335-default-rtdb.europe-west1.firebasedatabase.app" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const get = id => document.getElementById(id);
 
-        // --- TABS LOGIC ---
+        // --- TABS ---
         window.openTab = (id, btn) => {
             document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -128,97 +178,67 @@
             btn.classList.add('active');
         };
 
-        // --- LIVE PREVIEWS ---
-        window.updatePreviewBien = () => {
-            const title = get('bTitle').value || "Titre de l'annonce";
-            const price = get('bPrice').value || "Prix non défini";
-            const cat = get('bCat').value;
-            const desc = get('bDesc').value || "Description en attente...";
-            
-            get('previewBien').innerHTML = `
-                <div class="border rounded-lg overflow-hidden bg-slate-50">
-                    <div class="h-48 bg-slate-200 flex items-center justify-center text-xs text-slate-400">Image en attente</div>
-                    <div class="p-6">
-                        <span class="text-[9px] uppercase tracking-widest text-gold font-bold">${cat}</span>
-                        <h4 class="font-serif text-3xl italic mt-2">${title}</h4>
-                        <p class="text-xs mt-4 text-slate-500 italic">${desc}</p>
-                        <div class="mt-6 pt-4 border-t flex justify-between items-center">
-                            <span class="font-bold text-sm">${price}</span>
-                            <span class="text-[9px] uppercase tracking-widest opacity-40">Preview Arcadia</span>
-                        </div>
-                    </div>
-                </div>
-            `;
+        // --- LIVE PREVIEW ---
+        let currentImgs = [];
+        window.updatePreview = () => {
+            get('preTitle').innerText = get('bTitle').value || "Villa Horizon";
+            get('prePrice').innerText = get('bPrice').value || "Prix sur demande";
+            get('preCat').innerText = get('bCat').value;
+            get('preDesc').innerText = get('bDesc').value || "Le futur bien d'exception d'Arcadia...";
         };
 
-        window.updatePreviewArt = () => {
-            const title = get('aTitle').value || "Titre de l'article";
-            const content = get('aContent').value || "Contenu de l'article...";
-            get('previewArt').innerHTML = `
-                <div class="text-center">
-                    <span class="text-[8px] tracking-[4px] uppercase text-gold block mb-4">Édito Arcadia</span>
-                    <h2 class="font-serif text-4xl italic mb-6">${title}</h2>
-                    <p class="text-sm text-slate-500 font-light leading-relaxed text-justify">${content.substring(0,200)}...</p>
-                </div>
-            `;
-        };
-
-        // --- GESTION MEDIA ---
-        let bImgs = []; get('bFiles').onchange = (e) => {
-            bImgs = []; get('bImgGrid').innerHTML = "";
+        // --- IMAGES ---
+        get('bFiles').onchange = (e) => {
+            currentImgs = []; get('bImgGrid').innerHTML = "";
             Array.from(e.target.files).forEach(f => {
                 const r = new FileReader(); r.onload = ev => {
-                    bImgs.push(ev.target.result);
-                    get('bImgGrid').innerHTML += `<img src="${ev.target.result}" class="img-preview">`;
+                    currentImgs.push(ev.target.result);
+                    get('bImgGrid').innerHTML += `<img src="${ev.target.result}" class="w-full aspect-square object-cover rounded border border-white/10">`;
                 }; r.readAsDataURL(f);
             });
         };
 
-        // --- PUBLISH & MODIFIER ---
-        get('btnPublishBien').onclick = () => {
+        // --- CRUD FIREBASE ---
+        get('btnPublish').onclick = () => {
             const id = get('edit_id_bien').value;
             const data = {
                 title: get('bTitle').value,
                 price: get('bPrice').value,
                 cat: get('bCat').value,
                 desc: get('bDesc').value,
-                images: bImgs,
-                date: Date.now(),
-                featured: false
+                images: currentImgs,
+                date: Date.now()
             };
 
             if(id) {
-                update(ref(db, `listings/${id}`), data).then(() => { alert("Modifié !"); location.reload(); });
+                update(ref(db, `listings/${id}`), data).then(() => location.reload());
             } else {
-                push(ref(db, 'listings'), data).then(() => { alert("Publié !"); location.reload(); });
+                push(ref(db, 'listings'), data).then(() => location.reload());
             }
         };
 
-        // --- CHARGEMENT LISTES ADMIN ---
+        // Chargement liste Admin
         onValue(ref(db, 'listings'), (snap) => {
             let html = "";
             if(snap.val()) Object.entries(snap.val()).reverse().forEach(([id, it]) => {
                 html += `
-                <div class="glass-panel p-4 flex items-center gap-4">
-                    <img src="${it.images[0]}" class="w-16 h-16 rounded object-cover">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-bold">${it.title}</span>
-                            ${it.featured ? '<span class="badge-star">Vedette</span>' : ''}
+                <div class="glass-panel p-4 flex items-center justify-between border-l-2 border-l-gold">
+                    <div class="flex items-center gap-4">
+                        <img src="${it.images[0]}" class="w-12 h-12 rounded object-cover">
+                        <div>
+                            <p class="text-xs font-bold uppercase">${it.title}</p>
+                            <p class="text-[9px] text-gold tracking-widest">${it.price}</p>
                         </div>
-                        <p class="text-[9px] text-slate-400 uppercase tracking-widest">${it.price} - ${it.cat}</p>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="toggleFeature('${id}', ${it.featured})" class="btn-action bg-white border">⭐</button>
-                        <button onclick="editBien('${id}')" class="btn-action btn-edit">Edit</button>
-                        <button onclick="del('listings/${id}')" class="btn-action btn-del">Suppr</button>
+                        <button onclick="editBien('${id}')" class="text-[9px] border border-white/10 px-3 py-1 hover:bg-white/10 uppercase">Éditer</button>
+                        <button onclick="del('${id}')" class="text-[9px] border border-red-900/30 text-red-500 px-3 py-1 hover:bg-red-500/10 uppercase">Suppr</button>
                     </div>
                 </div>`;
             });
             get('listBiensAdmin').innerHTML = html;
         });
 
-        // --- FONCTIONS MODIF ---
         window.editBien = (id) => {
             onValue(ref(db, `listings/${id}`), (snap) => {
                 const it = snap.val();
@@ -227,27 +247,20 @@
                 get('bPrice').value = it.price;
                 get('bCat').value = it.cat;
                 get('bDesc').value = it.desc;
-                bImgs = it.images;
-                get('btnPublishBien').innerText = "Sauvegarder les modifications";
-                window.updatePreviewBien();
-                window.scrollTo({top: 0, behavior: 'smooth'});
+                currentImgs = it.images;
+                get('btnPublish').innerText = "Sauvegarder les modifications";
+                window.updatePreview();
+                window.scrollTo({top: 300, behavior: 'smooth'});
             }, {onlyOnce: true});
         };
 
-        window.toggleFeature = (id, current) => {
-            update(ref(db, `listings/${id}`), { featured: !current });
-        };
+        window.del = (id) => { if(confirm("Supprimer ce bien du catalogue ?")) remove(ref(db, `listings/${id}`)); };
 
-        window.del = (path) => { if(confirm("Confirmer la suppression ?")) remove(ref(db, path)); };
-        
-        window.resetBienForm = () => { location.reload(); };
-
-        // --- INIT ---
-        const user = localStorage.getItem('staff');
-        if(!user) window.location.href = 'index.html';
-        get('userTag').innerText = `Agent: ${user}`;
-        updatePreviewBien();
-        updatePreviewArt();
+        // Animation on scroll
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('show'); });
+        });
+        document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
     </script>
 </body>
 </html>
