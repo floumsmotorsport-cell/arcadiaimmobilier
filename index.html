@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcadia Prestige | Excellence Immobilière RP</title>
+    <title>Arcadia Immobilier | Excellence Immobilière RP</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -32,7 +32,6 @@
         .active-view { display: block; animation: fadeIn 0.8s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Style Preview */
         .preview-label { background: #d4af37; color: black; padding: 4px 12px; font-size: 10px; font-weight: 900; border-radius: 4px; display: inline-block; margin-bottom: 10px; text-transform: uppercase; }
     </style>
 </head>
@@ -42,7 +41,7 @@
     <div id="scrollProgress"></div>
 
     <nav id="mainNavbar">
-        <img src="logo_arcadia_immo.jpg" alt="Arcadia" class="h-10 cursor-pointer" onclick="showView('publicContent')">
+        <img src="https://image2url.com/r2/default/images/1774637280338-edb5fb97-c196-45e7-bdfa-1af5a2805830.png" alt="Arcadia" class="h-10 cursor-pointer" onclick="showView('publicContent')">
         <div class="flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-white">
             <button onclick="toggleDarkMode()" class="hover:text-amber-500 transition text-lg"><i class="fas fa-adjust"></i></button>
             <button onclick="showView('publicContent')" class="hover:text-amber-500 transition">Collection</button>
@@ -65,12 +64,12 @@
     <main id="publicContent" class="view-section active-view">
         <section class="h-[75vh] flex flex-col items-center justify-center text-center px-6 navy-gradient text-white relative">
             <h1 class="text-7xl md:text-[8rem] font-serif italic font-bold mb-4">Arcadia</h1>
-            <p class="text-amber-500 font-bold uppercase tracking-[0.8em] text-[10px] mb-10">L'Immobilier de Collection Arma 3</p>
-            <button onclick="document.getElementById('collection').scrollIntoView()" class="bg-white text-slate-900 px-12 py-4 rounded-full font-bold text-[10px] uppercase tracking-widest hover:gold-gradient hover:text-white transition mb-6">Découvrir</button>
+            <p class="text-amber-500 font-bold uppercase tracking-[0.8em] text-[10px] mb-10">L'Immobilier de Collection</p>
+            <button onclick="document.getElementById('collection').scrollIntoView()" class="bg-white text-slate-900 px-12 py-4 rounded-full font-bold text-[10px] uppercase tracking-widest hover:gold-gradient hover:text-white transition mb-8">Découvrir</button>
             
-            <div class="glass px-6 py-2 rounded-full border border-amber-500/30">
-                <p class="text-[9px] text-amber-500 font-bold uppercase tracking-widest">Ligne Privée Conciergerie (RP)</p>
-                <p class="text-xs font-mono text-white tracking-wider mt-1">Arcadia-Prestige-01</p>
+            <div class="glass px-8 py-3 rounded-full border border-amber-500/30">
+                <p class="text-[9px] text-amber-500 font-bold uppercase tracking-widest">Numéro de téléphone (RP)</p>
+                <p class="text-sm font-mono text-white tracking-widest mt-1">06 29 07 00 34</p>
             </div>
         </section>
 
@@ -162,7 +161,7 @@
         const db = getDatabase(app);
         const get = id => document.getElementById(id);
 
-        // --- NAVIGATION & UI ---
+        // --- NAVIGATION ---
         window.showView = (id) => {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
             get(id).classList.add('active-view');
@@ -173,22 +172,25 @@
         window.logout = () => { localStorage.removeItem('arcadia_staff'); location.reload(); };
         window.toggleDarkMode = () => document.body.classList.toggle('dark-mode');
 
-        // --- AUTH ---
+        // --- AUTHENTICATION ---
         get('btnLoginAction').onclick = () => {
             const STAFF = { "Axel": "Axel30", "Alden": "Alden30" };
-            if(STAFF[get('userLogin').value] === get('passLogin').value) {
-                localStorage.setItem('arcadia_staff', get('userLogin').value);
+            const user = get('userLogin').value;
+            const pass = get('passLogin').value;
+            if(STAFF[user] === pass) {
+                localStorage.setItem('arcadia_staff', user);
                 location.reload();
             } else alert("Erreur d'accès.");
         };
 
-        // --- PREVIEW LOGIC ---
+        // --- PREVIEWS ---
         let tempImgs = [], tempBlogImg = "";
         
         get('multiFileInput').onchange = (e) => {
             tempImgs = [];
             for(let f of e.target.files) {
-                const r = new FileReader(); r.onload = (ev) => { tempImgs.push(ev.target.result); updateListingPreview(); };
+                const r = new FileReader(); 
+                r.onload = (ev) => { tempImgs.push(ev.target.result); updateListingPreview(); };
                 r.readAsDataURL(f);
             }
         };
@@ -211,7 +213,8 @@
         };
 
         get('blogFileInput').onchange = (e) => {
-            const r = new FileReader(); r.onload = (ev) => { tempBlogImg = ev.target.result; updateBlogPreview(); };
+            const r = new FileReader(); 
+            r.onload = (ev) => { tempBlogImg = ev.target.result; updateBlogPreview(); };
             r.readAsDataURL(e.target.files[0]);
         };
 
@@ -229,20 +232,32 @@
             get('blogPreviewArea').classList.remove('opacity-60');
         };
 
-        // --- FIREBASE OPS ---
+        // --- FIREBASE WRITE ---
         get('btnPublish').onclick = () => {
-            const data = { title: get('inTitle').value, cat: get('inCat').value, price: get('inPrice').value, desc: get('inDesc').value, images: tempImgs, date: Date.now() };
+            const data = { 
+                title: get('inTitle').value, 
+                cat: get('inCat').value, 
+                price: get('inPrice').value, 
+                desc: get('inDesc').value, 
+                images: tempImgs, 
+                date: Date.now() 
+            };
             if(!data.title || tempImgs.length === 0) return alert("Champs manquants");
             push(ref(db, 'listings'), data).then(() => location.reload());
         };
 
         get('btnPublishBlog').onclick = () => {
-            const data = { title: get('blogTitle').value, body: get('blogBody').value, img: tempBlogImg, date: new Date().toLocaleDateString('fr-FR') };
+            const data = { 
+                title: get('blogTitle').value, 
+                body: get('blogBody').value, 
+                img: tempBlogImg, 
+                date: new Date().toLocaleDateString('fr-FR') 
+            };
             if(!data.title || !tempBlogImg) return alert("Champs manquants");
             push(ref(db, 'blog'), data).then(() => { alert("Article publié !"); showView('blogView'); });
         };
 
-        // --- RENDER DATA ---
+        // --- FIREBASE READ ---
         onValue(ref(db, 'listings'), (snap) => {
             let html = ""; const data = snap.val();
             if(data) Object.entries(data).reverse().forEach(([id, it]) => {
@@ -291,20 +306,40 @@
             get('msgCount').innerText = count;
         });
 
-        window.del = (p) => { if(confirm("Supprimer ?")) remove(ref(db, p)); };
+        window.del = (p) => { if(confirm("Supprimer définitivement ?")) remove(ref(db, p)); };
+        
         window.sendMessage = () => {
-            const d = { name: get('msgName').value, email: get('msgEmail').value, body: get('msgBody').value, date: new Date().toLocaleString() };
-            if(!d.name || !d.body) return alert("Champs requis");
-            push(ref(db, 'messages'), d).then(() => { alert("Transmis à la conciergerie."); location.reload(); });
+            const d = { 
+                name: get('msgName').value, 
+                email: get('msgEmail').value, 
+                body: get('msgBody').value, 
+                date: new Date().toLocaleString() 
+            };
+            if(!d.name || !d.body) return alert("Veuillez remplir votre nom et votre message.");
+            push(ref(db, 'messages'), d).then(() => { 
+                alert("Message transmis à la conciergerie."); 
+                get('msgName').value = ""; get('msgEmail').value = ""; get('msgBody').value = "";
+            });
         };
 
-        // --- INIT ---
+        // --- INITIALIZATION ---
         const user = localStorage.getItem('arcadia_staff');
-        if(user) { get('activeUserDisplay').innerText = user; document.body.classList.add('is-admin'); }
+        if(user) { 
+            get('activeUserDisplay').innerText = user; 
+            document.body.classList.add('is-admin'); 
+        }
+
         document.addEventListener('mousemove', e => {
             get('custom-cursor').style.left = e.clientX + 'px';
             get('custom-cursor').style.top = e.clientY + 'px';
         });
+
+        window.onscroll = () => {
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            get("scrollProgress").style.width = scrolled + "%";
+        };
     </script>
 </body>
 </html>
