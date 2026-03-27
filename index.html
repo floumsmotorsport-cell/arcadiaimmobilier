@@ -26,6 +26,9 @@
             padding: 10px 15px; border-radius: 50px; border: 1px solid rgba(0,0,0,0.1);
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
+        .chat-bubble { border-radius: 20px; padding: 10px 15px; margin-bottom: 10px; max-width: 85%; font-size: 12px; }
+        .chat-admin { background: #0f172a; color: white; margin-left: auto; border-bottom-right-radius: 2px; }
+        .chat-client { background: #f1f5f9; color: #1e293b; border-bottom-left-radius: 2px; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
@@ -37,9 +40,10 @@
         <div class="flex flex-col">
             <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">Playlist Arcadia</span>
             <select id="trackSelect" class="bg-transparent text-[11px] font-bold text-slate-700 outline-none cursor-pointer border-b border-slate-200">
-                <option value="rk_chopard">RK - Big Chopard</option>
-                <option value="lafouine_vision">La Fouine ft. Kaaris - Vision</option>
-                <option value="rnboi_bebe">RNBOI - Mon Bébé</option>
+                <option value="">Choisir un titre</option>
+                <option value="rk_chopard.mp3">RK - Big Chopard</option>
+                <option value="lafouine_vision.mp3">La Fouine ft. Kaaris - Vision</option>
+                <option value="rnboi_bebe.mp3">RNBOI - Mon Bébé</option>
             </select>
         </div>
         <audio id="bgMusic" loop><source id="musicSource" src="" type="audio/mpeg"></audio>
@@ -119,10 +123,7 @@
             </div>
 
             <div id="messagesSection" class="hidden lg:col-span-12">
-                <div id="msgHeaderAction" class="mb-6 flex justify-end">
-                    <button onclick="markAllAsRead()" class="text-[10px] font-black text-amber-600 border border-amber-200 px-6 py-2 rounded-full hover:bg-amber-50 transition">TOUT MARQUER COMME LU</button>
-                </div>
-                <div id="messagesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+                <div id="messagesList" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
             </div>
         </div>
     </main>
@@ -154,7 +155,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // AUTH
         const ACCOUNTS = { "Axel": "Axel30", "Alden": "Alden30" };
         let currentUser = sessionStorage.getItem('arcadia_user');
         let currentMode = 'V';
@@ -175,7 +175,6 @@
             if (ACCOUNTS[u] === p) { sessionStorage.setItem('arcadia_user', u); location.reload(); }
         };
 
-        // NAVIGATION TABS
         window.switchTab = (m) => {
             currentMode = m;
             const isMsg = m === 'M';
@@ -185,84 +184,97 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('bg-slate-900', 'text-white'));
             document.getElementById('tab' + m).classList.add('bg-slate-900', 'text-white');
             if(!isMsg) refreshAdminList();
-            else {
-                onValue(ref(db, 'messages'), (snap) => refreshMessages(snap.val()), {onlyOnce: true});
-            }
         };
 
-        // NOTIFICATIONS BADGE & REALTIME SYNC
+        // GESTION DES MESSAGES ET DU CHAT
         onValue(ref(db, 'messages'), (snap) => {
             const msgs = snap.val() || {};
             const badge = document.getElementById('msgCount');
             const unreadCount = Object.values(msgs).filter(m => m.status === 'unread').length;
-            
-            if(unreadCount > 0) { 
-                badge.innerText = unreadCount; 
-                badge.classList.remove('hidden'); 
-            } else { 
-                badge.classList.add('hidden'); 
-            }
-            
-            if(currentMode === 'M') refreshMessages(msgs);
+            badge.innerText = unreadCount;
+            badge.classList.toggle('hidden', unreadCount === 0);
+            if(currentMode === 'M') renderMessages(msgs);
         });
 
-        // MARK AS READ LOGIC
-        window.markAsRead = (key) => {
-            update(ref(db, `messages/${key}`), { status: 'read' });
+        window.sendChatReply = (key, clientEmail, clientName) => {
+            const replyText = document.getElementById(`replyInput-${key}`).value;
+            if(!replyText) return;
+
+            // 1. Sauvegarder la réponse dans Firebase pour l'historique
+            update(ref(db, `messages/${key}`), { 
+                adminReply: replyText,
+                status: 'read'
+            });
+
+            // 2. Préparer le mail ultra-personnalisé
+            const subject = encodeURIComponent(`Arcadia Prestige | Suite à votre demande de ${clientName}`);
+            const body = encodeURIComponent(
+                `Cher(e) ${clientName},\n\n` +
+                `Nous avons le plaisir de revenir vers vous concernant votre projet.\n\n` +
+                `NOTRE RÉPONSE :\n"${replyText}"\n\n` +
+                `Nous restons à votre entière disposition pour organiser une rencontre ou une visite privée.\n\n` +
+                `Cordialement,\n` +
+                `${currentUser} - Arcadia Prestige Luxury Service`
+            );
+            
+            window.location.href = `mailto:${clientEmail}?subject=${subject}&body=${body}`;
         };
 
-        window.markAllAsRead = () => {
-            if (!confirm("Marquer toutes les demandes comme lues ?")) return;
-            onValue(ref(db, 'messages'), (snap) => {
-                const msgs = snap.val() || {};
-                const updates = {};
-                Object.entries(msgs).forEach(([key, m]) => {
-                    if (m.status === 'unread') updates[`messages/${key}/status`] = 'read';
-                });
-                if (Object.keys(updates).length > 0) update(ref(db), updates);
-            }, { onlyOnce: true });
-        };
-
-        // MESSAGES RENDERING
-        function refreshMessages(msgsData) {
+        function renderMessages(msgs) {
             const container = document.getElementById('messagesList');
             container.innerHTML = "";
-            const msgs = msgsData || {};
-            
             Object.entries(msgs).reverse().forEach(([key, m]) => {
-                const isUnread = m.status === 'unread';
-                const subject = encodeURIComponent(`Arcadia Prestige - Confirmation ${m.type}`);
-                const body = encodeURIComponent(`Bonjour ${m.name},\n\nNous avons bien reçu votre demande pour le ${m.date}.\n\nCordialement,\nL'équipe Arcadia.`);
-                const mailtoLink = `mailto:${m.email}?subject=${subject}&body=${body}`;
-
                 container.innerHTML += `
-                <div class="bg-white p-6 rounded-[2.5rem] shadow-xl border-2 ${isUnread ? 'border-amber-500' : 'border-transparent opacity-60'} relative transition-all duration-500">
-                    ${isUnread ? '<span class="absolute -top-3 left-8 bg-amber-500 text-white text-[8px] px-3 py-1 rounded-full font-black uppercase shadow-lg">Nouveau</span>' : ''}
-                    <div class="flex justify-between items-start mb-4">
-                        <span class="text-[9px] font-black ${isUnread ? 'text-amber-600' : 'text-slate-400'} uppercase tracking-widest">${m.type}</span>
-                        <button onclick="deleteMsg('${key}')" class="text-slate-300 hover:text-red-500 transition">✕</button>
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100">
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="bg-amber-100 text-amber-700 text-[9px] px-3 py-1 rounded-full font-black uppercase">${m.type}</span>
+                        <button onclick="deleteMsg('${key}')" class="text-slate-300 hover:text-red-500">✕</button>
                     </div>
-                    <h3 class="text-xl font-serif font-bold text-slate-900">${m.name}</h3>
-                    <p class="text-slate-400 text-xs mb-4 font-medium">${m.email}</p>
-                    <div class="space-y-3">
-                        <div class="p-4 bg-slate-50 rounded-2xl text-xs text-slate-500 italic border border-slate-100">
-                            "${m.msg || 'Aucun message.'}"
+                    <div class="chat-container mb-6">
+                        <div class="chat-bubble chat-client">
+                            <p class="font-bold mb-1">${m.name} :</p>
+                            ${m.msg}
+                            <p class="text-[8px] mt-2 opacity-50">${m.date} à ${m.time}</p>
                         </div>
-                        <div class="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase">
-                            <span>📅 ${m.date}</span><span>•</span><span>⏰ ${m.time || '--:--'}</span>
-                        </div>
+                        ${m.adminReply ? `
+                        <div class="chat-bubble chat-admin">
+                            <p class="font-bold mb-1">Vous :</p>
+                            ${m.adminReply}
+                        </div>` : ''}
                     </div>
-                    <div class="mt-6">
-                        <a href="${mailtoLink}" onclick="markAsRead('${key}')" 
-                           class="block w-full text-center ${isUnread ? 'bg-slate-900' : 'bg-slate-200'} text-white py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] transition-all">
-                           ${isUnread ? 'Confirmer par Mail' : 'Répondre à nouveau'}
-                        </a>
+                    <div class="relative mt-4">
+                        <input type="text" id="replyInput-${key}" placeholder="Écrire une réponse..." class="w-full bg-slate-50 p-4 pr-32 rounded-2xl outline-none text-sm border border-slate-100 focus:border-amber-500">
+                        <button onclick="sendChatReply('${key}', '${m.email}', '${m.name}')" class="absolute right-2 top-2 bg-slate-900 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-amber-600 transition">Répondre</button>
                     </div>
                 </div>`;
             });
         }
 
-        // RESERVATION CLIENT
+        // RENDER CONTENT PUBLIC
+        onValue(ref(db, 'content'), (snap) => {
+            globalData = snap.val() || {};
+            const container = document.getElementById('allContent');
+            let html = "";
+            ['villas', 'creations', 'articles'].forEach(cat => {
+                if(globalData[cat]) Object.values(globalData[cat]).forEach(item => {
+                    html += `<div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100 transition hover:scale-[1.02]"><img src="${item.img}" class="h-64 w-full object-cover"><div class="p-8"><span class="text-[9px] font-black text-amber-600 uppercase tracking-widest">${item.type}</span><h4 class="text-2xl font-serif font-bold mt-1">${item.title}</h4><p class="text-amber-700 font-bold mt-2">${item.price}</p><p class="text-slate-500 text-sm mt-4">${item.desc}</p></div></div>`;
+                });
+            });
+            container.innerHTML = html;
+            refreshAdminList();
+        });
+
+        function refreshAdminList() {
+            const types = { 'V': 'villas', 'C': 'creations', 'A': 'articles' };
+            const list = globalData[types[currentMode]] || {};
+            const container = document.getElementById('adminList');
+            container.innerHTML = "";
+            Object.entries(list).forEach(([key, item]) => {
+                container.innerHTML += `<div class="bg-white p-4 rounded-2xl shadow-sm border flex items-center justify-between"><div class="flex items-center gap-4"><img src="${item.img}" class="w-12 h-12 rounded-lg object-cover"><span class="text-xs font-bold">${item.title}</span></div><button onclick="deleteItem('${types[currentMode]}', '${key}')" class="text-red-500 text-[10px] font-black">SUPPRIMER</button></div>`;
+            });
+        }
+
+        // FORMULAIRE RÉSERVATION
         document.getElementById('btnReserve').onclick = () => {
             const res = {
                 name: document.getElementById('resName').value,
@@ -281,34 +293,6 @@
             });
         };
 
-        // RENDER CONTENT
-        onValue(ref(db, 'content'), (snap) => {
-            globalData = snap.val() || {};
-            renderPublic();
-            refreshAdminList();
-        });
-
-        function renderPublic() {
-            const container = document.getElementById('allContent');
-            let html = "";
-            ['villas', 'creations', 'articles'].forEach(cat => {
-                if(globalData[cat]) Object.values(globalData[cat]).forEach(item => {
-                    html += `<div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100 transition hover:scale-[1.02]"><img src="${item.img}" class="h-64 w-full object-cover"><div class="p-8"><span class="text-[9px] font-black text-amber-600 uppercase tracking-widest">${item.type}</span><h4 class="text-2xl font-serif font-bold mt-1">${item.title}</h4><p class="text-amber-700 font-bold mt-2">${item.price}</p><p class="text-slate-500 text-sm mt-4">${item.desc}</p></div></div>`;
-                });
-            });
-            container.innerHTML = html;
-        }
-
-        function refreshAdminList() {
-            const types = { 'V': 'villas', 'C': 'creations', 'A': 'articles' };
-            const list = globalData[types[currentMode]] || {};
-            const container = document.getElementById('adminList');
-            container.innerHTML = "";
-            Object.entries(list).forEach(([key, item]) => {
-                container.innerHTML += `<div class="bg-white p-4 rounded-2xl shadow-sm border flex items-center justify-between"><div class="flex items-center gap-4"><img src="${item.img}" class="w-12 h-12 rounded-lg object-cover"><span class="text-xs font-bold">${item.title}</span></div><button onclick="deleteItem('${types[currentMode]}', '${key}')" class="text-red-500 text-[10px] font-black">SUPPRIMER</button></div>`;
-            });
-        }
-
         // UPLOAD & PUBLISH
         document.getElementById('fileInput').onchange = (e) => {
             const reader = new FileReader();
@@ -326,19 +310,27 @@
         window.deleteItem = (type, key) => { if(confirm("Supprimer ?")) remove(ref(db, `content/${type}/${key}`)); };
         window.deleteMsg = (key) => { if(confirm("Supprimer ce message ?")) remove(ref(db, `messages/${key}`)); };
 
-        // MUSIQUE
+        // MUSIQUE (CORRECTIF CHEMINS)
         const audio = document.getElementById('bgMusic');
         const playBtn = document.getElementById('playPauseBtn');
         const musicIcon = document.getElementById('musicIcon');
-        const playlist = {
-            rk_chopard: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-            lafouine_vision: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-            rnboi_bebe: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+
+        playBtn.onclick = () => { 
+            if (audio.paused) { 
+                if(!audio.src || audio.src === window.location.href) { alert("Choisissez une musique d'abord."); return; }
+                audio.play(); musicIcon.innerText = "⏸"; 
+            } else { 
+                audio.pause(); musicIcon.innerText = "▶"; 
+            } 
         };
-        playBtn.onclick = () => { if (audio.paused) { audio.play(); musicIcon.innerText = "⏸"; } else { audio.pause(); musicIcon.innerText = "▶"; } };
+        
         document.getElementById('trackSelect').onchange = (e) => { 
-            document.getElementById('musicSource').src = playlist[e.target.value]; 
-            audio.load(); audio.play(); musicIcon.innerText = "⏸"; 
+            if(e.target.value) {
+                document.getElementById('musicSource').src = e.target.value; 
+                audio.load(); 
+                audio.play(); 
+                musicIcon.innerText = "⏸"; 
+            }
         };
 
         if (currentUser) {
