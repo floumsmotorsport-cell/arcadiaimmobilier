@@ -28,14 +28,39 @@
         .card-hover { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .card-hover:hover { transform: translateY(-15px) scale(1.03); box-shadow: 0 30px 60px rgba(0,0,0,0.15); }
 
-        button { transition: transform 0.2s ease; }
-        button:hover { transform: scale(1.05); }
-
         #adminBar { display: none; background: #0f172a; border-bottom: 2px solid #b45309; }
         .is-admin #adminBar { display: flex; }
+
+        /* Music Player Enhanced */
+        #musicControl { 
+            position: fixed; bottom: 20px; left: 20px; z-index: 1000; 
+            display: flex; flex-direction: column; gap: 5px; 
+            background: rgba(15, 23, 42, 0.9); padding: 12px 18px; 
+            border-radius: 24px; color: white; backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            min-width: 200px;
+        }
+        #progressContainer { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; overflow: hidden; }
+        #progressBar { width: 0%; height: 100%; background: #d97706; transition: width 0.1s linear; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
+
+    <div id="musicControl">
+        <div class="flex items-center justify-between gap-4">
+            <div class="flex flex-col">
+                <span class="text-[8px] uppercase tracking-widest text-amber-500 font-bold">En écoute</span>
+                <span id="trackName" class="text-[10px] font-medium truncate w-32">Arcadia Silence</span>
+            </div>
+            <button onclick="toggleMusic()" id="musicBtn" class="bg-amber-600 hover:bg-amber-500 w-8 h-8 rounded-full flex items-center justify-center transition shadow-lg">
+                <span id="playIcon">▶</span>
+            </button>
+        </div>
+        <div id="progressContainer" onclick="seekAudio(event)">
+            <div id="progressBar"></div>
+        </div>
+        <audio id="bgAudio"></audio>
+    </div>
 
     <div id="adminBar" class="fixed top-0 w-full text-white py-3 px-8 z-[100] justify-between items-center text-[10px] font-bold uppercase tracking-widest">
         <div class="flex items-center space-x-6">
@@ -49,13 +74,11 @@
     <div id="detailModal" class="fixed inset-0 bg-black/90 z-[999] hidden flex items-center justify-center p-4 backdrop-blur-md">
         <div class="bg-white max-w-3xl w-full rounded-[2.5rem] overflow-hidden relative shadow-2xl">
             <button onclick="closeDetail()" class="absolute top-6 right-6 z-50 bg-white/80 w-10 h-10 rounded-full flex items-center justify-center font-bold">✕</button>
-            
             <div id="carousel" class="relative h-96 bg-slate-200">
                 <img id="carouselImg" class="w-full h-full object-cover">
                 <button onclick="prevImg()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 w-10 h-10 rounded-full flex items-center justify-center hover:bg-white transition">‹</button>
                 <button onclick="nextImg()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 w-10 h-10 rounded-full flex items-center justify-center hover:bg-white transition">›</button>
             </div>
-
             <div class="p-10">
                 <h2 id="detailTitle" class="text-4xl font-serif font-bold mb-4 italic"></h2>
                 <p id="detailPrice" class="text-amber-600 font-bold text-2xl mb-4"></p>
@@ -79,11 +102,13 @@
         </section>
 
         <section class="py-10 border-b border-slate-200 bg-white sticky top-0 z-40">
-            <div class="container mx-auto px-6 flex flex-wrap justify-center gap-6 md:gap-12 text-[10px] font-black uppercase tracking-[0.2em]">
+            <div class="container mx-auto px-6 flex flex-wrap justify-center items-center gap-6 md:gap-12 text-[10px] font-black uppercase tracking-[0.2em]">
                 <button onclick="renderAll()" class="hover:text-amber-600 transition">Tout</button>
                 <button onclick="filterCat('villas')" class="hover:text-amber-600 transition">Villas de Luxe</button>
                 <button onclick="filterCat('biens')" class="hover:text-amber-600 transition">Biens Rares</button>
                 <button onclick="filterCat('articles')" class="hover:text-amber-600 transition">Articles & News</button>
+                <div class="h-4 w-[1px] bg-slate-200 mx-2"></div>
+                <button onclick="sortByPrice()" class="text-amber-600 border border-amber-600 px-4 py-2 rounded-full hover:bg-amber-600 hover:text-white transition">Trier par prix ↑</button>
             </div>
         </section>
 
@@ -103,18 +128,14 @@
                         <option value="articles">Article / Actualité</option>
                     </select>
                     <input type="text" id="inTitle" placeholder="Titre" class="w-full p-4 bg-slate-100 rounded-2xl outline-none">
-                    <input type="text" id="inPrice" placeholder="Prix ou Date" class="w-full p-4 bg-slate-100 rounded-2xl outline-none">
+                    <input type="text" id="inPrice" placeholder="Prix (ex: 2 500 000 €)" class="w-full p-4 bg-slate-100 rounded-2xl outline-none">
                     <textarea id="inDesc" placeholder="Description..." class="w-full p-4 bg-slate-100 rounded-2xl h-48 outline-none"></textarea>
-                    
                     <div class="p-6 border-2 border-dashed border-slate-200 rounded-2xl text-center">
-                        <p class="text-[10px] font-bold uppercase mb-4 text-slate-400 text-center">Photos HD (Sélectionnez-en plusieurs)</p>
                         <input type="file" id="multiFileInput" multiple accept="image/*" class="text-xs">
                     </div>
-
                     <button id="btnPublish" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-amber-600">Mettre en ligne</button>
                 </div>
             </div>
-
             <div>
                 <h2 class="text-3xl font-serif font-bold mb-8 flex justify-between items-center">
                     Inbox <span id="msgCount" class="text-sm bg-amber-600 text-white px-4 py-1 rounded-full">0</span>
@@ -140,7 +161,7 @@
             <input id="clientEmail" placeholder="Email" class="w-full p-4 bg-slate-100 rounded-2xl mb-3 outline-none">
             <input id="clientPass" type="password" placeholder="Mot de passe" class="w-full p-4 bg-slate-100 rounded-2xl mb-6 outline-none">
             <button onclick="loginClient()" class="w-full bg-amber-600 text-white py-4 rounded-2xl font-bold uppercase text-xs">Connexion</button>
-            <button onclick="document.getElementById('clientSpace').classList.add('hidden')" class="mt-6 text-slate-400 text-[10px] uppercase font-bold block mx-auto">Fermer</button>
+            <button onclick="get('clientSpace').classList.add('hidden')" class="mt-6 text-slate-400 text-[10px] uppercase font-bold block mx-auto">Fermer</button>
         </div>
     </div>
 
@@ -170,12 +191,53 @@
         const db = getDatabase(app);
         const get = id => document.getElementById(id);
         
+        // --- MUSIQUE LOGIC ---
+        const playlist = [
+            { name: "La Fouine - Vision", file: "lafouine_vision.mp3" },
+            { name: "RK - Chopard", file: "rk_chopardrk_chopard.mp3" },
+            { name: "RNBOI - Bébé", file: "rnboi_bebe.mp3" }
+        ];
+        let currentTrack = 0;
+        const audio = get('bgAudio');
+        const progressBar = get('progressBar');
+
+        window.toggleMusic = () => {
+            if (audio.src === "" || audio.paused) {
+                if(audio.src === "") audio.src = playlist[currentTrack].file;
+                audio.play();
+                get('playIcon').innerText = "⏸";
+                get('trackName').innerText = playlist[currentTrack].name;
+            } else {
+                audio.pause();
+                get('playIcon').innerText = "▶";
+            }
+        };
+
+        audio.ontimeupdate = () => {
+            const pct = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = pct + "%";
+        };
+
+        window.seekAudio = (e) => {
+            const rect = get('progressContainer').getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            audio.currentTime = pos * audio.duration;
+        };
+
+        audio.onended = () => {
+            currentTrack = (currentTrack + 1) % playlist.length;
+            audio.src = playlist[currentTrack].file;
+            get('trackName').innerText = playlist[currentTrack].name;
+            audio.play();
+        };
+
+        // --- FIREBASE DATA & RENDER ---
         let globalData = {};
         let multiImages = [];
         let currentCarouselImages = [];
         let currentCarouselIndex = 0;
 
-        // --- NAVIGATION & UI ---
+        window.get = get;
         window.showView = (id) => {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
             get(id).classList.add('active-view');
@@ -187,7 +249,7 @@
         window.closeDevis = () => get('devisBox').classList.add('hidden');
         window.openClientSpace = () => get('clientSpace').classList.remove('hidden');
 
-        // --- CARROUSEL ---
+        // CARROUSEL
         window.openDetail = (item) => {
             currentCarouselImages = item.images || [item.img];
             currentCarouselIndex = 0;
@@ -197,125 +259,85 @@
             get('detailDesc').innerText = item.desc || "";
             get('detailModal').classList.remove('hidden');
         };
-
-        function updateCarousel() {
-            get('carouselImg').src = currentCarouselImages[currentCarouselIndex];
-        }
-
+        function updateCarousel() { get('carouselImg').src = currentCarouselImages[currentCarouselIndex]; }
         window.closeDetail = () => get('detailModal').classList.add('hidden');
-        window.nextImg = () => { 
-            currentCarouselIndex = (currentCarouselIndex + 1) % currentCarouselImages.length; 
-            updateCarousel(); 
-        };
-        window.prevImg = () => { 
-            currentCarouselIndex = (currentCarouselIndex - 1 + currentCarouselImages.length) % currentCarouselImages.length; 
-            updateCarousel(); 
+        window.nextImg = () => { currentCarouselIndex = (currentCarouselIndex + 1) % currentCarouselImages.length; updateCarousel(); };
+        window.prevImg = () => { currentCarouselIndex = (currentCarouselIndex - 1 + currentCarouselImages.length) % currentCarouselImages.length; updateCarousel(); };
+
+        // RENDU & TRI
+        window.renderAll = () => render();
+        window.filterCat = (cat) => render(cat);
+
+        window.sortByPrice = () => {
+            onValue(ref(db, 'content'), (snap) => {
+                let data = snap.val() || {};
+                let items = [];
+                Object.keys(data).forEach(cat => {
+                    Object.entries(data[cat]).forEach(([id, obj]) => items.push({ ...obj, id, cat }));
+                });
+                const getVal = (p) => {
+                    if(!p) return 0;
+                    let n = parseInt(p.replace(/[^0-9]/g, ''));
+                    return isNaN(n) ? 0 : n;
+                };
+                items.sort((a, b) => getVal(a.price) - getVal(b.price));
+                displayItems(items);
+            }, { onlyOnce: true });
         };
 
-        // --- ESPACE CLIENT LOGIC ---
-        window.loginClient = () => {
-            const email = get('clientEmail').value;
-            if(!email) return alert("Email requis");
-            localStorage.setItem('client', email);
-            alert('Bienvenue dans votre espace prestige');
-            get('clientSpace').classList.add('hidden');
-        };
-
-        // --- MESSAGES ---
-        window.sendDevis = () => {
-            const name = get('devisName').value, email = get('devisEmail').value, msg = get('devisMsg').value;
-            if(!name || !email || !msg) return alert("Veuillez remplir tous les champs.");
-            push(ref(db, 'messages'), { name, email, msg, date: new Date().toLocaleString('fr-FR') })
-                .then(() => { alert("Message envoyé."); closeDevis(); });
-        };
-
-        onValue(ref(db, 'messages'), (snap) => {
-            const messages = snap.val() || {};
-            const container = get('adminMessages');
-            if(!container) return;
-            let html = ""; let count = 0;
-            Object.entries(messages).reverse().forEach(([id, m]) => {
-                count++;
-                const replyLink = `mailto:${m.email}?subject=Arcadia Prestige - Réponse&body=Bonjour ${m.name},...`;
+        function displayItems(items) {
+            let html = "";
+            const isAdmin = document.body.classList.contains('is-admin');
+            items.forEach(item => {
+                const itemData = JSON.stringify(item).replace(/'/g, "&apos;");
                 html += `
-                <div class="bg-slate-100 p-8 rounded-[2.5rem] relative reveal border border-slate-200">
-                    <button onclick="deleteMsg('${id}')" class="absolute top-6 right-6 text-slate-300 hover:text-red-500 transition">✕</button>
-                    <span class="text-[9px] font-black bg-white px-3 py-1 rounded-full uppercase mb-2 inline-block">${m.date}</span>
-                    <h4 class="text-xl font-bold">${m.name}</h4>
-                    <p class="text-amber-600 text-xs font-bold mb-4">${m.email}</p>
-                    <p class="text-slate-600 text-sm italic mb-6">"${m.msg}"</p>
-                    <a href="${replyLink}" class="inline-block bg-slate-900 text-white px-8 py-3 rounded-full text-[10px] font-bold uppercase hover:bg-amber-600 transition">Répondre</a>
+                <div class="card-hover bg-white rounded-[2.5rem] shadow-xl overflow-hidden reveal cursor-pointer" onclick='openDetail(${itemData})'>
+                    <div class="h-80 overflow-hidden relative">
+                        <img src="${item.img}" class="w-full h-full object-cover">
+                        <span class="absolute top-4 left-4 bg-black/50 text-white text-[8px] font-black uppercase px-3 py-1 rounded-full backdrop-blur-md">${item.cat || 'bien'}</span>
+                    </div>
+                    <div class="p-8">
+                        <h4 class="text-2xl font-serif font-bold italic">${item.title}</h4>
+                        <p class="text-amber-600 font-bold mt-2">${item.price || ''}</p>
+                        ${isAdmin ? `<button onclick="event.stopPropagation(); deletePost('${item.cat}','${item.id}')" class="mt-6 text-red-500 text-[10px] font-bold uppercase hover:underline">Supprimer</button>` : ''}
+                    </div>
                 </div>`;
             });
-            container.innerHTML = html || "<p class='text-center text-slate-400'>Aucun message.</p>";
-            get('msgCount').innerText = count;
-        });
+            get('allContent').innerHTML = html || "<p class='text-center col-span-3 py-20 text-slate-400'>Aucun contenu.</p>";
+        }
 
-        // --- GESTION DU CONTENU (UPLOAD MULTIPLE) ---
+        function render(filter = null) {
+            onValue(ref(db, 'content'), (snap) => {
+                let data = snap.val() || {};
+                let items = [];
+                const cats = filter ? [filter] : ['villas','biens','articles'];
+                cats.forEach(c => {
+                    if(data[c]) Object.entries(data[c]).forEach(([id, obj]) => items.push({...obj, id, cat: c}));
+                });
+                displayItems(items);
+            }, { onlyOnce: true });
+        }
+
+        // ADMIN ACTIONS
         get('multiFileInput').onchange = (e) => {
             multiImages = [];
-            const files = Array.from(e.target.files);
-            let loaded = 0;
-            files.forEach(file => {
+            Array.from(e.target.files).forEach(file => {
                 const reader = new FileReader();
-                reader.onload = () => {
-                    multiImages.push(reader.result);
-                    loaded++;
-                };
+                reader.onload = () => multiImages.push(reader.result);
                 reader.readAsDataURL(file);
             });
         };
 
         get('btnPublish').onclick = () => {
             const title = get('inTitle').value, price = get('inPrice').value, cat = get('inCategory').value, desc = get('inDesc').value;
-            if(!title || multiImages.length === 0) return alert("Le titre et au moins une image sont requis.");
-            
-            // SAUVEGARDE FIREBASE AVEC TABLEAU D'IMAGES
-            push(ref(db, `content/${cat}`), { 
-                title, 
-                price, 
-                desc, 
-                img: multiImages[0], 
-                images: multiImages 
-            }).then(() => { 
-                alert("Publié sur Arcadia !"); 
-                location.reload(); 
-            });
+            if(!title || multiImages.length === 0) return alert("Titre et image requis.");
+            push(ref(db, `content/${cat}`), { title, price, desc, img: multiImages[0], images: multiImages })
+            .then(() => { alert("Publié !"); location.reload(); });
         };
 
-        // --- RENDU ---
-        window.renderAll = () => render();
-        window.filterCat = (cat) => render(cat);
+        window.deletePost = (cat, id) => { if(confirm("Supprimer ?")) remove(ref(db, `content/${cat}/${id}`)); };
 
-        function render(filter = null) {
-            onValue(ref(db, 'content'), (snap) => {
-                globalData = snap.val() || {};
-                let html = "";
-                const categories = filter ? [filter] : ['villas','biens','articles'];
-                
-                categories.forEach(cat => {
-                    if(globalData[cat]) Object.entries(globalData[cat]).forEach(([id, item]) => {
-                        const isAdmin = document.body.classList.contains('is-admin');
-                        const itemData = JSON.stringify(item).replace(/'/g, "&apos;");
-                        html += `
-                        <div class="card-hover bg-white rounded-[2.5rem] shadow-xl overflow-hidden reveal cursor-pointer" onclick='openDetail(${itemData})'>
-                            <div class="h-80 overflow-hidden relative">
-                                <img src="${item.img}" class="w-full h-full object-cover">
-                                <span class="absolute top-4 left-4 bg-black/50 text-white text-[8px] font-black uppercase px-3 py-1 rounded-full backdrop-blur-md">${cat}</span>
-                            </div>
-                            <div class="p-8">
-                                <h4 class="text-2xl font-serif font-bold italic">${item.title}</h4>
-                                <p class="text-amber-600 font-bold mt-2">${item.price || ''}</p>
-                                ${isAdmin ? `<button onclick="event.stopPropagation(); deletePost('${cat}','${id}')" class="mt-6 text-red-500 text-[10px] font-bold uppercase hover:underline">Supprimer</button>` : ''}
-                            </div>
-                        </div>`;
-                    });
-                });
-                get('allContent').innerHTML = html || "<p class='text-center col-span-3 py-20 text-slate-400'>Aucun contenu disponible.</p>";
-            }, { onlyOnce: true });
-        }
-
-        // --- AUTH STAFF ---
+        // AUTH
         const ACCOUNTS = { "Axel": "Axel30", "Alden": "Alden30" };
         get('btnLoginAction').onclick = () => {
             const u = get('userLogin').value, p = get('passLogin').value;
