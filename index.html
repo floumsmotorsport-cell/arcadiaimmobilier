@@ -11,15 +11,10 @@
         body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; transition: opacity 0.3s ease; }
         .font-serif { font-family: 'Playfair Display', serif; }
 
-        /* Animations & Glassmorphism */
-        @keyframes revealUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes revealUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .reveal { animation: revealUp 0.8s ease forwards; }
         
         .glass { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
-
         .hero-bg {
             background: linear-gradient(rgba(10, 15, 30, 0.85), rgba(10, 15, 30, 0.85)),
                         url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80');
@@ -36,7 +31,8 @@
         #adminBar { display: none; background: #0f172a; border-bottom: 2px solid #b45309; }
         .is-admin #adminBar { display: flex; }
         
-        .fav-badge { position: absolute; top: -5px; right: -5px; background: #b45309; color: white; font-size: 10px; padding: 2px 6px; border-radius: 50%; }
+        #adminMessages::-webkit-scrollbar { width: 4px; }
+        #adminMessages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
@@ -44,7 +40,7 @@
     <div id="adminBar" class="fixed top-0 w-full text-white py-3 px-8 z-[100] justify-between items-center text-[10px] font-bold uppercase tracking-widest">
         <div class="flex items-center space-x-6">
             <span class="text-amber-500 border-r border-white/20 pr-6">STAFF: <span id="activeUserDisplay"></span></span>
-            <button onclick="showView('adminPanel')" class="hover:text-amber-500 transition">GESTION CONTENT</button>
+            <button onclick="showView('adminPanel')" class="hover:text-amber-500 transition">GESTION & INBOX</button>
             <button onclick="showView('publicContent')" class="hover:text-amber-500 transition">RETOUR SITE</button>
         </div>
         <button id="btnLogout" class="bg-red-600 px-4 py-1 rounded-full hover:bg-red-700 transition">DECONNEXION</button>
@@ -53,41 +49,17 @@
     <div id="detailModal" class="fixed inset-0 bg-black/80 z-[999] hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white max-w-2xl w-full rounded-[2rem] overflow-hidden shadow-2xl relative">
             <button onclick="closeDetail()" class="absolute top-4 right-4 text-2xl z-20 bg-white/50 rounded-full w-10 h-10 flex items-center justify-center hover:bg-white transition">✕</button>
-            
             <div class="relative h-80 bg-slate-200">
                 <img id="carouselImg" class="w-full h-full object-cover">
-                <button onclick="prevImg()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white shadow-lg transition">‹</button>
-                <button onclick="nextImg()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white shadow-lg transition">›</button>
+                <button onclick="prevImg()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white transition">‹</button>
+                <button onclick="nextImg()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white transition">›</button>
             </div>
-
             <div class="p-8">
                 <h2 id="detailTitle" class="text-3xl font-serif font-bold mb-2 italic"></h2>
                 <p id="detailPrice" class="text-amber-600 font-bold text-xl mb-4"></p>
                 <p id="detailDesc" class="text-slate-600 text-sm leading-relaxed whitespace-pre-line h-32 overflow-y-auto"></p>
-                <button onclick="openDevis(); closeDetail();" class="mt-8 w-full bg-slate-900 text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-amber-600 transition">S'informer sur ce bien</button>
+                <button onclick="openDevis(); closeDetail();" class="mt-8 w-full bg-slate-900 text-white py-4 rounded-xl font-bold uppercase text-xs hover:bg-amber-600 transition">S'informer</button>
             </div>
-        </div>
-    </div>
-
-    <div id="clientSpace" class="hidden fixed inset-0 bg-slate-950/90 z-[999] flex items-center justify-center backdrop-blur-md">
-        <div class="bg-white p-12 rounded-[3rem] w-full max-w-md text-center">
-            <h3 class="text-3xl font-serif font-bold mb-4">Espace Client</h3>
-            <p class="text-slate-400 text-xs uppercase tracking-widest mb-8">Suivez vos favoris et vos demandes</p>
-            <input id="clientEmail" placeholder="Email" class="w-full p-4 bg-slate-100 rounded-2xl mb-3 outline-none focus:ring-2 ring-amber-500">
-            <input id="clientPass" type="password" placeholder="Mot de passe" class="w-full p-4 bg-slate-100 rounded-2xl mb-6 outline-none focus:ring-2 ring-amber-500">
-            <button onclick="loginClient()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold hover:bg-amber-600 transition shadow-lg">Connexion</button>
-            <button onclick="get('clientSpace').classList.add('hidden')" class="mt-6 text-[10px] text-slate-400 uppercase font-bold tracking-widest">Fermer</button>
-        </div>
-    </div>
-
-    <div id="devisBox" class="fixed inset-0 bg-slate-900/80 z-[999] hidden flex items-center justify-center backdrop-blur-md">
-        <div class="bg-white p-10 rounded-[3rem] w-full max-w-lg shadow-2xl mx-4">
-            <h3 class="text-3xl font-serif font-bold mb-8 text-center">Estimation Privée</h3>
-            <input id="devisName" placeholder="Votre Nom" class="w-full p-4 bg-slate-100 rounded-2xl mb-3 outline-none">
-            <input id="devisEmail" placeholder="Email" class="w-full p-4 bg-slate-100 rounded-2xl mb-3 outline-none">
-            <textarea id="devisMsg" placeholder="Votre projet..." class="w-full p-4 bg-slate-100 rounded-2xl mb-6 h-32 outline-none"></textarea>
-            <button onclick="sendDevis()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold hover:bg-amber-600 transition">Envoyer</button>
-            <button onclick="closeDevis()" class="mt-4 text-[10px] text-slate-400 w-full text-center font-bold uppercase">Fermer</button>
         </div>
     </div>
 
@@ -97,14 +69,14 @@
                 <h1 class="text-white text-6xl md:text-9xl font-serif font-bold mb-4">Arcadia</h1>
                 <p class="text-amber-500 font-bold uppercase tracking-widest text-[14px] mb-12">L'Art de Vivre d'Exception</p>
                 <div class="flex flex-col md:flex-row gap-6 justify-center">
-                    <button onclick="openDevis()" class="bg-amber-600 text-white px-10 py-4 rounded-full font-bold text-xs uppercase hover:bg-white hover:text-slate-900 transition-all shadow-2xl">Demander un Devis</button>
-                    <button onclick="get('clientSpace').classList.remove('hidden')" class="glass text-white px-10 py-4 rounded-full font-bold text-xs uppercase hover:bg-white hover:text-slate-900 transition-all">Espace Client</button>
+                    <button onclick="openDevis()" class="bg-amber-600 text-white px-10 py-4 rounded-full font-bold text-xs uppercase hover:bg-white transition shadow-2xl">Demander un Devis</button>
+                    <button onclick="get('clientSpace').classList.remove('hidden')" class="glass text-white px-10 py-4 rounded-full font-bold text-xs uppercase hover:bg-white hover:text-slate-900 transition">Espace Client</button>
                 </div>
             </div>
-            <button onclick="openLogin()" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/20 text-[10px] tracking-widest hover:text-white transition uppercase">Staff Privé</button>
+            <button onclick="openLogin()" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/20 text-[10px] hover:text-white transition uppercase">Staff Privé</button>
         </section>
 
-        <section id="portfolio" class="py-24">
+        <section class="py-24">
             <div id="allContent" class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12"></div>
         </section>
     </main>
@@ -112,25 +84,31 @@
     <main id="adminPanel" class="view-section pt-32 pb-24 container mx-auto px-6">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-slate-100 h-fit">
-                <h2 class="text-3xl font-serif font-bold mb-8">Ajouter une Propriété</h2>
+                <h2 class="text-3xl font-serif font-bold mb-8">Gestion de Propriété</h2>
                 <div class="space-y-4">
                     <select id="inCategory" class="w-full p-4 bg-slate-100 rounded-2xl outline-none">
                         <option value="villas">Villas en vente</option>
                         <option value="biens">Biens d'exception</option>
                     </select>
-                    <input type="text" id="inTitle" placeholder="Nom de la propriété" class="w-full p-4 bg-slate-100 rounded-2xl outline-none">
-                    <input type="text" id="inPrice" placeholder="Prix (ex: 2 500 000 €)" class="w-full p-4 bg-slate-100 rounded-2xl outline-none">
-                    <textarea id="inDesc" placeholder="Description..." class="w-full p-4 bg-slate-100 rounded-2xl h-32 outline-none"></textarea>
+                    <input type="text" id="inTitle" placeholder="Nom du bien" class="w-full p-4 bg-slate-100 rounded-2xl outline-none">
+                    <input type="text" id="inPrice" placeholder="Prix" class="w-full p-4 bg-slate-100 rounded-2xl outline-none">
+                    <textarea id="inDesc" placeholder="Description complète..." class="w-full p-4 bg-slate-100 rounded-2xl h-32 outline-none"></textarea>
                     
                     <div class="p-6 border-2 border-dashed border-slate-200 rounded-2xl text-center">
                         <p class="text-[10px] font-bold uppercase mb-4 text-slate-400">Sélectionner plusieurs photos HD</p>
                         <input type="file" id="multiFileInput" multiple accept="image/*" class="text-xs">
                     </div>
 
-                    <button id="btnPublish" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold hover:bg-amber-600 transition tracking-widest uppercase text-xs">Publier sur Arcadia</button>
+                    <button id="btnPublish" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold hover:bg-amber-600 transition uppercase text-xs">Publier sur Arcadia</button>
                 </div>
             </div>
-            <div id="adminMessages" class="space-y-6"></div>
+
+            <div class="flex flex-col">
+                <h2 class="text-3xl font-serif font-bold mb-8 flex items-center gap-4">
+                    Inbox <span id="msgCount" class="bg-amber-600 text-white text-xs px-3 py-1 rounded-full">0</span>
+                </h2>
+                <div id="adminMessages" class="space-y-6 max-h-[800px] overflow-y-auto pr-4"></div>
+            </div>
         </div>
     </main>
 
@@ -140,7 +118,18 @@
             <input type="text" id="userLogin" placeholder="Identifiant" class="w-full p-4 bg-slate-100 rounded-2xl mb-4 outline-none">
             <input type="password" id="passLogin" placeholder="Mot de passe" class="w-full p-4 bg-slate-100 rounded-2xl mb-8 outline-none">
             <button id="btnLoginAction" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold uppercase text-xs">Accéder</button>
-            <button onclick="closeLogin()" class="mt-6 text-[10px] text-slate-400 font-bold uppercase">Annuler</button>
+            <button onclick="closeLogin()" class="mt-6 text-slate-400 text-xs font-bold uppercase">Annuler</button>
+        </div>
+    </div>
+
+    <div id="devisBox" class="fixed inset-0 bg-slate-900/80 z-[999] hidden flex items-center justify-center backdrop-blur-md">
+        <div class="bg-white p-10 rounded-[3rem] w-full max-w-lg shadow-2xl">
+            <h3 class="text-3xl font-serif font-bold mb-8 text-center">Estimation Privée</h3>
+            <input id="devisName" placeholder="Nom" class="w-full p-4 bg-slate-100 rounded-2xl mb-3 outline-none">
+            <input id="devisEmail" placeholder="Email" class="w-full p-4 bg-slate-100 rounded-2xl mb-3 outline-none">
+            <textarea id="devisMsg" placeholder="Projet..." class="w-full p-4 bg-slate-100 rounded-2xl mb-6 h-32 outline-none"></textarea>
+            <button onclick="sendDevis()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold hover:bg-amber-600 transition">Envoyer</button>
+            <button onclick="closeDevis()" class="mt-4 text-slate-400 w-full text-center text-xs font-bold uppercase">Fermer</button>
         </div>
     </div>
 
@@ -148,7 +137,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // CONFIGURATION FIREBASE (À conserver telle quelle)
         const firebaseConfig = {
             apiKey: "AIzaSy...", 
             authDomain: "arcadiaimmobilier-ee335.firebaseapp.com",
@@ -165,11 +153,10 @@
         let currentCarouselImages = [];
         let currentCarouselIndex = 0;
 
-        // --- NAVIGATION & UI ---
+        // --- NAVIGATION ---
         window.showView = (id) => {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
             get(id).classList.add('active-view');
-            window.scrollTo(0,0);
         };
         window.openLogin = () => get('loginOverlay').classList.remove('hidden');
         window.closeLogin = () => get('loginOverlay').classList.add('hidden');
@@ -187,27 +174,16 @@
             get('detailModal').classList.remove('hidden');
         };
         window.closeDetail = () => get('detailModal').classList.add('hidden');
-        
-        window.updateCarousel = () => {
-            get('carouselImg').src = currentCarouselImages[currentCarouselIndex];
-        };
-        window.nextImg = () => {
-            currentCarouselIndex = (currentCarouselIndex + 1) % currentCarouselImages.length;
-            updateCarousel();
-        };
-        window.prevImg = () => {
-            currentCarouselIndex = (currentCarouselIndex - 1 + currentCarouselImages.length) % currentCarouselImages.length;
-            updateCarousel();
-        };
+        window.updateCarousel = () => get('carouselImg').src = currentCarouselImages[currentCarouselIndex];
+        window.nextImg = () => { currentCarouselIndex = (currentCarouselIndex + 1) % currentCarouselImages.length; updateCarousel(); };
+        window.prevImg = () => { currentCarouselIndex = (currentCarouselIndex - 1 + currentCarouselImages.length) % currentCarouselImages.length; updateCarousel(); };
 
-        // --- AUTH STAFF ---
+        // --- STAFF AUTH ---
         const ACCOUNTS = { "Axel": "Axel30", "Alden": "Alden30" };
         get('btnLoginAction').onclick = () => {
             const u = get('userLogin').value, p = get('passLogin').value;
-            if(ACCOUNTS[u] === p){
-                sessionStorage.setItem('arcadia_user', u);
-                location.reload();
-            } else alert("Accès refusé");
+            if(ACCOUNTS[u] === p){ sessionStorage.setItem('arcadia_user', u); location.reload(); }
+            else alert("Accès refusé");
         };
         if(sessionStorage.getItem('arcadia_user')){
             document.body.classList.add('is-admin');
@@ -215,17 +191,36 @@
         }
         get('btnLogout').onclick = () => { sessionStorage.removeItem('arcadia_user'); location.reload(); };
 
-        // --- LOGIN CLIENT ---
-        window.loginClient = () => {
-            const email = get('clientEmail').value;
-            if(email.includes('@')) {
-                localStorage.setItem('client_email', email);
-                alert('Bienvenue dans votre espace prestige.');
-                get('clientSpace').classList.add('hidden');
-            }
+        // --- INBOX : GESTION DES MESSAGES RESTAURÉE ---
+        window.sendDevis = () => {
+            const name = get('devisName').value, email = get('devisEmail').value, msg = get('devisMsg').value;
+            if(!name || !email || !msg) return alert("Champs vides.");
+            push(ref(db, 'messages'), { name, email, msg, date: new Date().toLocaleString('fr-FR') })
+                .then(() => { alert("Demande transmise."); closeDevis(); });
         };
 
-        // --- GESTION DES IMAGES (UPLOAD MULTIPLE) ---
+        onValue(ref(db, 'messages'), (snap) => {
+            const messages = snap.val() || {};
+            const container = get('adminMessages');
+            if(!container) return;
+            let html = ""; let count = 0;
+            Object.entries(messages).reverse().forEach(([id, m]) => {
+                count++;
+                html += `
+                <div class="bg-white p-6 rounded-[2rem] shadow-lg border border-slate-100 relative reveal">
+                    <button onclick="deleteMsg('${id}')" class="absolute top-6 right-6 text-slate-300 hover:text-red-500 transition">✕</button>
+                    <span class="text-[9px] bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-black uppercase">${m.date}</span>
+                    <h4 class="font-black text-lg mt-2">${m.name}</h4>
+                    <p class="text-amber-600 text-xs font-bold mb-3">${m.email}</p>
+                    <div class="bg-slate-50 p-4 rounded-2xl text-slate-700 italic text-sm">"${m.msg}"</div>
+                </div>`;
+            });
+            container.innerHTML = html || "<p class='text-center text-slate-400'>Aucun message.</p>";
+            get('msgCount').innerText = count;
+        });
+        window.deleteMsg = (id) => { if(confirm("Supprimer ce message ?")) remove(ref(db, `messages/${id}`)); };
+
+        // --- GESTION CONTENU (MULTI-IMAGES) ---
         get('multiFileInput').onchange = (e) => {
             multiImages = [];
             Array.from(e.target.files).forEach(file => {
@@ -233,27 +228,15 @@
                 reader.onload = () => multiImages.push(reader.result);
                 reader.readAsDataURL(file);
             });
-            alert("Photos prêtes pour l'envoi.");
         };
 
-        // --- FIREBASE : ENREGISTREMENT ---
         get('btnPublish').onclick = () => {
-            const title = get('inTitle').value, price = get('inPrice').value, 
-                  cat = get('inCategory').value, desc = get('inDesc').value;
-            
+            const title = get('inTitle').value, price = get('inPrice').value, cat = get('inCategory').value, desc = get('inDesc').value;
             if(!title || multiImages.length === 0) return alert("Titre et photos requis.");
-
-            push(ref(db, `content/${cat}`), { 
-                title, price, desc, 
-                img: multiImages[0], // Image principale
-                images: multiImages     // Galerie complète
-            }).then(() => {
-                alert("Propriété publiée avec succès !");
-                location.reload();
-            });
+            push(ref(db, `content/${cat}`), { title, price, desc, img: multiImages[0], images: multiImages })
+                .then(() => { alert("Publié !"); location.reload(); });
         };
 
-        // --- RENDER ---
         onValue(ref(db, 'content'), (snap) => {
             globalData = snap.val() || {};
             let html = "";
@@ -277,7 +260,7 @@
         });
 
         window.deletePost = (cat, id) => { if(confirm("Supprimer ?")) remove(ref(db, `content/${cat}/${id}`)); };
-        window.get = get; // Pour accès global si besoin
+        window.get = get;
     </script>
 </body>
 </html>
