@@ -3,260 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcadia | Luxury Real Estate & Editorial</title>
+    <title>Arcadia Studio | Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@200;300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@200;300;400;500&display=swap');
         
         :root { --gold: #b38e44; --dark: #0f172a; --light: #fdfdfd; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--light); color: var(--dark); scroll-behavior: smooth; }
+        body { font-family: 'Montserrat', sans-serif; background: #f4f4f4; color: var(--dark); }
         .font-serif { font-family: 'Cormorant Garamond', serif; }
 
-        /* Navbar */
-        #mainNavbar { position: fixed; top: 0; width: 100%; height: 90px; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; z-index: 1500; transition: 0.4s; }
-        #mainNavbar.scrolled { background: white; height: 70px; border-bottom: 1px solid #eee; }
-        .nav-link { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: white; transition: 0.3s; }
-        #mainNavbar.scrolled .nav-link { color: var(--dark); }
-
-        /* Hero */
-        .hero { height: 100vh; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070') center/cover no-repeat fixed; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
-
-        /* Parallaxe */
-        .px-card { position: relative; overflow: hidden; aspect-ratio: 16/10; }
-        .px-img { position: absolute; top: -10%; left: 0; width: 100%; height: 120%; object-fit: cover; will-change: transform; transition: transform 0.1s linear; }
-
-        /* Admin UI */
-        .admin-tab { display: none; }
-        .admin-tab.active { display: block; }
-        .input-pro { width: 100%; border: none; border-bottom: 1px solid #ddd; padding: 12px 0; outline: none; background: transparent; margin-bottom: 20px; font-size: 14px; }
-        .input-pro:focus { border-bottom-color: var(--gold); }
+        /* Style Panel Pro */
+        .glass-panel { background: white; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        .input-pro { width: 100%; border: 1px solid #e5e7eb; padding: 12px; border-radius: 4px; outline: none; margin-bottom: 15px; font-size: 13px; transition: 0.3s; }
+        .input-pro:focus { border-color: var(--gold); ring: 1px solid var(--gold); }
         
-        .btn-gold { background: var(--gold); color: white; padding: 12px 25px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; transition: 0.3s; }
-        .btn-gold:hover { background: var(--dark); }
+        .preview-box { border: 2px dashed #ddd; border-radius: 8px; min-height: 200px; padding: 20px; background: white; }
+        
+        /* Badge Status */
+        .badge-star { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; padding: 2px 8px; font-size: 9px; font-weight: bold; border-radius: 10px; }
+        
+        /* Boutons */
+        .btn-action { padding: 8px 15px; font-size: 10px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; transition: 0.2s; border-radius: 4px; }
+        .btn-save { background: var(--dark); color: white; }
+        .btn-edit { background: #f3f4f6; color: #374151; }
+        .btn-del { background: #fee2e2; color: #b91c1c; }
 
-        .view-section { display: none; }
-        .active-view { display: block; }
+        /* Tab System */
+        .tab-btn { padding: 10px 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; border-bottom: 2px solid transparent; opacity: 0.5; }
+        .tab-btn.active { opacity: 1; border-bottom-color: var(--gold); color: var(--gold); }
+        
+        .admin-section { display: none; animation: fadeIn 0.4s ease; }
+        .admin-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Images Preview Grid */
+        .img-grid { display: grid; grid-template-cols: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
+        .img-preview { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-10">
 
-    <div id="adminBar" class="hidden fixed top-0 w-full h-10 bg-black text-white z-[2000] flex items-center px-8 text-[9px] tracking-widest uppercase">
-        <span class="text-gold font-bold mr-10">Arcadia Staff: <span id="activeUser"></span></span>
-        <button onclick="showView('adminGlobal')" class="mr-6 hover:text-gold">Console de gestion</button>
-        <button onclick="logout()" class="ml-auto opacity-50">Déconnexion</button>
-    </div>
-
-    <nav id="mainNavbar">
-        <div class="flex gap-10 w-1/3">
-            <button onclick="showView('publicContent')" class="nav-link">Collection</button>
-            <button onclick="showView('blogView')" class="nav-link">L'Édito</button>
-        </div>
-        <img src="https://image2url.com/r2/default/images/1774637280338-edb5fb97-c196-45e7-bdfa-1af5a2805830.png" class="h-10 invert cursor-pointer" id="navLogo" onclick="showView('publicContent')">
-        <div class="flex gap-10 w-1/3 justify-end">
-            <button onclick="showView('contactView')" class="nav-link">Contact</button>
-            <button onclick="openLogin()" class="nav-link opacity-30">Privé</button>
-        </div>
-    </nav>
-
-    <main id="publicContent" class="view-section active-view">
-        <section class="hero">
-            <h1 class="font-serif text-8xl md:text-[10rem] italic font-light">Arcadia</h1>
-            <p class="uppercase tracking-[0.8em] text-[11px] opacity-80">Immobilier d'Art & Édito Luxe</p>
-        </section>
-
-        <section class="py-32 px-[10%] bg-white border-b">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-20">
-                <div class="text-center">
-                    <h4 class="font-serif text-2xl italic mb-4">Vente & Acquisition</h4>
-                    <p class="text-xs text-gray-400 leading-relaxed uppercase tracking-widest">Une sélection discrète de propriétés d'exception à Los Santos.</p>
-                </div>
-                <div class="text-center">
-                    <h4 class="font-serif text-2xl italic mb-4">Chasse Immobilière</h4>
-                    <p class="text-xs text-gray-400 leading-relaxed uppercase tracking-widest">Nous trouvons pour vous le bien off-market qui correspond à vos rêves.</p>
-                </div>
-                <div class="text-center">
-                    <h4 class="font-serif text-2xl italic mb-4">L'Édito</h4>
-                    <p class="text-xs text-gray-400 leading-relaxed uppercase tracking-widest">Découvrez les tendances architecture et design du moment.</p>
-                </div>
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+            <div>
+                <h1 class="font-serif text-5xl italic">Arcadia Studio</h1>
+                <p class="text-[10px] tracking-[5px] uppercase opacity-50 mt-2">Professional Management Suite</p>
             </div>
-        </section>
-
-        <section class="py-32 px-[5%] max-w-[1400px] mx-auto">
-            <div id="allListings" class="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-32">
-                </div>
-        </section>
-    </main>
-
-    <main id="blogView" class="view-section pt-40 px-[5%]">
-        <div class="max-w-4xl mx-auto text-center mb-32">
-            <h2 class="font-serif text-7xl italic mb-6">L'Édito Arcadia</h2>
-            <p class="uppercase tracking-[0.4em] text-[10px] text-gray-400">Journal de l'architecture et du design</p>
-        </div>
-        <div id="allArticles" class="grid grid-cols-1 gap-40 max-w-5xl mx-auto pb-40">
-            </div>
-    </main>
-
-    <main id="adminGlobal" class="view-section pt-40 px-[5%] bg-gray-50">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex gap-8 mb-16 border-b pb-4">
-                <button onclick="switchTab('tabBiens')" class="text-xs uppercase tracking-widest font-bold">Gestion des Biens</button>
-                <button onclick="switchTab('tabArticles')" class="text-xs uppercase tracking-widest font-bold opacity-40 hover:opacity-100">Gestion de l'Édito</button>
-            </div>
-
-            <div id="tabBiens" class="admin-tab active grid grid-cols-1 lg:grid-cols-3 gap-16">
-                <div class="bg-white p-10 shadow-sm">
-                    <h3 class="font-serif text-2xl mb-8 italic">Publier un Bien</h3>
-                    <input type="text" id="bTitle" placeholder="TITRE" class="input-pro">
-                    <input type="text" id="bPrice" placeholder="PRIX ($)" class="input-pro">
-                    <input type="file" id="bFiles" class="text-[10px] mb-8" multiple>
-                    <button id="btnPublishBien" class="btn-gold w-full">Mettre en ligne</button>
-                </div>
-                <div class="lg:col-span-2 space-y-4" id="listBiensAdmin"></div>
-            </div>
-
-            <div id="tabArticles" class="admin-tab grid grid-cols-1 lg:grid-cols-3 gap-16">
-                <div class="bg-white p-10 shadow-sm">
-                    <h3 class="font-serif text-2xl mb-8 italic">Rédiger un Article</h3>
-                    <input type="text" id="aTitle" placeholder="TITRE DE L'ARTICLE" class="input-pro">
-                    <textarea id="aContent" placeholder="TEXTE DE L'ARTICLE" class="input-pro h-40"></textarea>
-                    <input type="file" id="aFile" class="text-[10px] mb-8">
-                    <button id="btnPublishArt" class="btn-gold w-full">Publier l'Edito</button>
-                </div>
-                <div class="lg:col-span-2 space-y-4" id="listArtAdmin"></div>
+            <div class="flex items-center gap-4">
+                <span class="text-xs font-bold uppercase tracking-widest bg-white px-4 py-2 border rounded" id="userTag"></span>
+                <button onclick="window.location.href='index.html'" class="text-[10px] uppercase font-bold text-gold underline">Voir le site public</button>
             </div>
         </div>
-    </main>
 
-    <div id="loginOverlay" class="fixed inset-0 z-[3000] hidden bg-white flex items-center justify-center">
-        <div class="text-center w-full max-w-xs">
-            <h3 class="font-serif text-4xl italic mb-12">Identification</h3>
-            <input type="text" id="user" placeholder="ID" class="input-pro text-center">
-            <input type="password" id="pass" placeholder="CODE" class="input-pro text-center">
-            <button id="loginBtn" class="btn-gold w-full mt-8">Accéder</button>
-            <button onclick="closeLogin()" class="block w-full mt-6 text-[9px] uppercase opacity-30">Fermer</button>
+        <div class="flex gap-8 mb-8 border-b">
+            <button onclick="openTab('secBiens', this)" class="tab-btn active">Immobilier</button>
+            <button onclick="openTab('secEdito', this)" class="tab-btn">L'Édito / Articles</button>
+            <button onclick="openTab('secMessages', this)" class="tab-btn">Messages Recus</button>
+        </div>
+
+        <div id="secBiens" class="admin-section active grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="glass-panel p-8">
+                <h3 class="font-serif text-2xl italic mb-6">Configuration de l'annonce</h3>
+                <input type="hidden" id="edit_id_bien">
+                <input type="text" id="bTitle" placeholder="Nom de la villa (ex: The Rockford Palace)" class="input-pro" oninput="updatePreviewBien()">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="bPrice" placeholder="Prix (ex: $2.500.000)" class="input-pro" oninput="updatePreviewBien()">
+                    <select id="bCat" class="input-pro" onchange="updatePreviewBien()">
+                        <option value="Villa">Villa de Luxe</option>
+                        <option value="Penthouse">Penthouse</option>
+                        <option value="Appartement">Appartement</option>
+                        <option value="Manoir">Manoir</option>
+                    </select>
+                </div>
+                <textarea id="bDesc" placeholder="Description courte et élégante..." class="input-pro h-24" oninput="updatePreviewBien()"></textarea>
+                <input type="file" id="bFiles" class="text-xs mb-6" multiple>
+                <div class="img-grid" id="bImgGrid"></div>
+                
+                <div class="flex gap-4 mt-8">
+                    <button id="btnPublishBien" class="btn-action btn-save flex-1">Publier l'annonce</button>
+                    <button onclick="resetBienForm()" class="btn-action btn-edit">Reset</button>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-[10px] font-bold uppercase tracking-widest mb-4 opacity-40 italic">Aperçu en direct</h3>
+                <div id="previewBien" class="preview-box">
+                    </div>
+                
+                <h3 class="text-[10px] font-bold uppercase tracking-widest mt-10 mb-4 opacity-40">Annonces Actives</h3>
+                <div id="listBiensAdmin" class="space-y-4"></div>
+            </div>
+        </div>
+
+        <div id="secEdito" class="admin-section grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="glass-panel p-8">
+                <h3 class="font-serif text-2xl italic mb-6">Rédiger un article</h3>
+                <input type="text" id="aTitle" placeholder="Titre de l'article" class="input-pro" oninput="updatePreviewArt()">
+                <textarea id="aContent" placeholder="Contenu de l'article..." class="input-pro h-48" oninput="updatePreviewArt()"></textarea>
+                <input type="file" id="aFile" class="text-xs mb-6">
+                <button id="btnPublishArt" class="btn-action btn-save w-full">Publier l'Edito</button>
+            </div>
+            <div>
+                <h3 class="text-[10px] font-bold uppercase tracking-widest mb-4 opacity-40">Aperçu Magazine</h3>
+                <div id="previewArt" class="preview-box"></div>
+                <div id="listArtAdmin" class="mt-10 space-y-4"></div>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, push, remove, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, push, remove, set, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = { databaseURL: "https://arcadiaimmobilier-ee335-default-rtdb.europe-west1.firebasedatabase.app" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const get = id => document.getElementById(id);
 
-        // --- NAVIGATION ---
-        window.showView = (id) => {
-            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
-            get(id).classList.add('active-view');
-            const nav = get('mainNavbar');
-            if(id === 'publicContent') {
-                nav.classList.remove('scrolled');
-                get('navLogo').classList.add('invert');
-            } else {
-                nav.classList.add('scrolled');
-                get('navLogo').classList.remove('invert');
-            }
-            window.scrollTo(0,0);
-        };
-
-        window.switchTab = (id) => {
-            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+        // --- TABS LOGIC ---
+        window.openTab = (id, btn) => {
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             get(id).classList.add('active');
+            btn.classList.add('active');
         };
 
-        window.onscroll = () => {
-            const nav = get('mainNavbar');
-            if(window.scrollY > 80 || !get('publicContent').classList.contains('active-view')) {
-                nav.classList.add('scrolled');
-                get('navLogo').classList.remove('invert');
-            } else {
-                nav.classList.remove('scrolled');
-                get('navLogo').classList.add('invert');
-            }
-            // Parallax
-            document.querySelectorAll('.px-img').forEach(img => {
-                const rect = img.parentElement.getBoundingClientRect();
-                if(rect.top < window.innerHeight && rect.bottom > 0) {
-                    img.style.transform = `translateY(${(window.innerHeight - rect.top) * 0.12}px)`;
-                }
-            });
+        // --- LIVE PREVIEWS ---
+        window.updatePreviewBien = () => {
+            const title = get('bTitle').value || "Titre de l'annonce";
+            const price = get('bPrice').value || "Prix non défini";
+            const cat = get('bCat').value;
+            const desc = get('bDesc').value || "Description en attente...";
+            
+            get('previewBien').innerHTML = `
+                <div class="border rounded-lg overflow-hidden bg-slate-50">
+                    <div class="h-48 bg-slate-200 flex items-center justify-center text-xs text-slate-400">Image en attente</div>
+                    <div class="p-6">
+                        <span class="text-[9px] uppercase tracking-widest text-gold font-bold">${cat}</span>
+                        <h4 class="font-serif text-3xl italic mt-2">${title}</h4>
+                        <p class="text-xs mt-4 text-slate-500 italic">${desc}</p>
+                        <div class="mt-6 pt-4 border-t flex justify-between items-center">
+                            <span class="font-bold text-sm">${price}</span>
+                            <span class="text-[9px] uppercase tracking-widest opacity-40">Preview Arcadia</span>
+                        </div>
+                    </div>
+                </div>
+            `;
         };
 
-        // --- AUTH ---
-        get('loginBtn').onclick = () => {
-            if(get('pass').value === "Axel30" || get('pass').value === "Alden30") {
-                localStorage.setItem('staff', get('user').value);
-                location.reload();
-            }
+        window.updatePreviewArt = () => {
+            const title = get('aTitle').value || "Titre de l'article";
+            const content = get('aContent').value || "Contenu de l'article...";
+            get('previewArt').innerHTML = `
+                <div class="text-center">
+                    <span class="text-[8px] tracking-[4px] uppercase text-gold block mb-4">Édito Arcadia</span>
+                    <h2 class="font-serif text-4xl italic mb-6">${title}</h2>
+                    <p class="text-sm text-slate-500 font-light leading-relaxed text-justify">${content.substring(0,200)}...</p>
+                </div>
+            `;
         };
-        window.logout = () => { localStorage.removeItem('staff'); location.reload(); };
-        window.openLogin = () => get('loginOverlay').classList.remove('hidden');
-        window.closeLogin = () => get('loginOverlay').classList.add('hidden');
 
         // --- GESTION MEDIA ---
         let bImgs = []; get('bFiles').onchange = (e) => {
-            bImgs = []; Array.from(e.target.files).forEach(f => {
-                const r = new FileReader(); r.onload = ev => bImgs.push(ev.target.result); r.readAsDataURL(f);
+            bImgs = []; get('bImgGrid').innerHTML = "";
+            Array.from(e.target.files).forEach(f => {
+                const r = new FileReader(); r.onload = ev => {
+                    bImgs.push(ev.target.result);
+                    get('bImgGrid').innerHTML += `<img src="${ev.target.result}" class="img-preview">`;
+                }; r.readAsDataURL(f);
             });
         };
-        let aImg = ""; get('aFile').onchange = (e) => {
-            const r = new FileReader(); r.onload = ev => aImg = ev.target.result; r.readAsDataURL(e.target.files[0]);
-        };
 
-        // --- ACTIONS PUBLICATION ---
+        // --- PUBLISH & MODIFIER ---
         get('btnPublishBien').onclick = () => {
-            const d = { title: get('bTitle').value, price: get('bPrice').value, images: bImgs, date: Date.now() };
-            if(d.title && bImgs.length) push(ref(db, 'listings'), d).then(() => location.reload());
-        };
-        get('btnPublishArt').onclick = () => {
-            const d = { title: get('aTitle').value, content: get('aContent').value, image: aImg, date: Date.now() };
-            if(d.title && aImg) push(ref(db, 'articles'), d).then(() => location.reload());
+            const id = get('edit_id_bien').value;
+            const data = {
+                title: get('bTitle').value,
+                price: get('bPrice').value,
+                cat: get('bCat').value,
+                desc: get('bDesc').value,
+                images: bImgs,
+                date: Date.now(),
+                featured: false
+            };
+
+            if(id) {
+                update(ref(db, `listings/${id}`), data).then(() => { alert("Modifié !"); location.reload(); });
+            } else {
+                push(ref(db, 'listings'), data).then(() => { alert("Publié !"); location.reload(); });
+            }
         };
 
-        // --- AFFICHAGE DATA ---
+        // --- CHARGEMENT LISTES ADMIN ---
         onValue(ref(db, 'listings'), (snap) => {
-            let html = ""; let adm = "";
+            let html = "";
             if(snap.val()) Object.entries(snap.val()).reverse().forEach(([id, it]) => {
                 html += `
-                <div class="group cursor-pointer">
-                    <div class="px-card"><img src="${it.images[0]}" class="px-img"></div>
-                    <div class="py-6 flex justify-between border-b border-black/5">
-                        <h3 class="font-serif text-3xl italic">${it.title}</h3>
-                        <p class="font-light tracking-widest text-sm">${it.price}</p>
+                <div class="glass-panel p-4 flex items-center gap-4">
+                    <img src="${it.images[0]}" class="w-16 h-16 rounded object-cover">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold">${it.title}</span>
+                            ${it.featured ? '<span class="badge-star">Vedette</span>' : ''}
+                        </div>
+                        <p class="text-[9px] text-slate-400 uppercase tracking-widest">${it.price} - ${it.cat}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="toggleFeature('${id}', ${it.featured})" class="btn-action bg-white border">⭐</button>
+                        <button onclick="editBien('${id}')" class="btn-action btn-edit">Edit</button>
+                        <button onclick="del('listings/${id}')" class="btn-action btn-del">Suppr</button>
                     </div>
                 </div>`;
-                adm += `<div class="p-4 bg-white border flex justify-between items-center text-xs"><span>${it.title}</span><button onclick="del('listings/${id}')" class="text-red-500">SUPPRIMER</button></div>`;
             });
-            get('allListings').innerHTML = html;
-            get('listBiensAdmin').innerHTML = adm;
+            get('listBiensAdmin').innerHTML = html;
         });
 
-        onValue(ref(db, 'articles'), (snap) => {
-            let html = ""; let adm = "";
-            if(snap.val()) Object.entries(snap.val()).reverse().forEach(([id, it]) => {
-                html += `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                    <div class="px-card"><img src="${it.image}" class="px-img"></div>
-                    <div>
-                        <span class="text-[9px] tracking-[4px] uppercase text-gold block mb-6">Édito • ${new Date(it.date).toLocaleDateString()}</span>
-                        <h2 class="font-serif text-5xl italic mb-8 leading-tight">${it.title}</h2>
-                        <p class="text-gray-500 font-light leading-relaxed mb-8">${it.content}</p>
-                        <div class="w-10 h-[1px] bg-black"></div>
-                    </div>
-                </div>`;
-                adm += `<div class="p-4 bg-white border flex justify-between items-center text-xs"><span>${it.title}</span><button onclick="del('articles/${id}')" class="text-red-500">SUPPRIMER</button></div>`;
-            });
-            get('allArticles').innerHTML = html;
-            get('listArtAdmin').innerHTML = adm;
-        });
+        // --- FONCTIONS MODIF ---
+        window.editBien = (id) => {
+            onValue(ref(db, `listings/${id}`), (snap) => {
+                const it = snap.val();
+                get('edit_id_bien').value = id;
+                get('bTitle').value = it.title;
+                get('bPrice').value = it.price;
+                get('bCat').value = it.cat;
+                get('bDesc').value = it.desc;
+                bImgs = it.images;
+                get('btnPublishBien').innerText = "Sauvegarder les modifications";
+                window.updatePreviewBien();
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }, {onlyOnce: true});
+        };
 
-        window.del = (p) => { if(confirm("Supprimer ?")) remove(ref(db, p)); };
+        window.toggleFeature = (id, current) => {
+            update(ref(db, `listings/${id}`), { featured: !current });
+        };
 
-        // Init
+        window.del = (path) => { if(confirm("Confirmer la suppression ?")) remove(ref(db, path)); };
+        
+        window.resetBienForm = () => { location.reload(); };
+
+        // --- INIT ---
         const user = localStorage.getItem('staff');
-        if(user) { get('adminBar').classList.remove('hidden'); get('activeUser').innerText = user; document.body.style.paddingTop = "40px"; }
+        if(!user) window.location.href = 'index.html';
+        get('userTag').innerText = `Agent: ${user}`;
+        updatePreviewBien();
+        updatePreviewArt();
     </script>
 </body>
 </html>
