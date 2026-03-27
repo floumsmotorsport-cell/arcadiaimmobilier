@@ -16,7 +16,7 @@
         /* Login Screen Overlay */
         #loginOverlay {
             position: fixed; inset: 0; background: var(--dark); z-index: 9999;
-            display: flex; flex-col; justify-content: center; align-items: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
 
         .input-pro { 
@@ -34,7 +34,6 @@
 
         .glass-panel { background: var(--panel); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; }
         
-        /* Hide content initially */
         #mainContent { display: none; }
         #mainContent.authorized { display: block; }
     </style>
@@ -52,35 +51,48 @@
     </div>
 
     <div id="mainContent">
-        <section class="h-40 flex items-center justify-center relative overflow-hidden border-b border-gold/20">
-            <div class="relative text-center z-10">
+        <section class="h-40 flex items-center justify-between px-10 relative overflow-hidden border-b border-gold/20">
+            <div class="flex-1">
+                <a href="index.html" class="text-[9px] uppercase tracking-[3px] text-gold border border-gold/30 px-4 py-2 hover:bg-gold hover:text-black transition-all">
+                    ← Voir le site live
+                </a>
+            </div>
+            
+            <div class="text-center">
                 <h1 class="font-serif text-5xl italic">Management Suite</h1>
-                <button onclick="logout()" class="text-[9px] uppercase tracking-[3px] text-gold mt-2 opacity-50 hover:opacity-100">Déconnexion</button>
+            </div>
+
+            <div class="flex-1 text-right">
+                <button onclick="logout()" class="text-[9px] uppercase tracking-[3px] opacity-50 hover:opacity-100 hover:text-red-500 transition-all">
+                    Quitter la session
+                </button>
             </div>
         </section>
 
         <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div class="glass-panel p-8">
-                <h3 class="font-serif text-2xl italic mb-6 border-b border-white/5 pb-4">Nouvelle Propriété</h3>
+                <h3 class="font-serif text-2xl italic mb-6 border-b border-white/5 pb-4 text-gold">Nouvelle Propriété</h3>
                 <input type="hidden" id="edit_id_bien">
                 <input type="text" id="bTitle" placeholder="Nom du bien" class="input-pro">
                 <div class="grid grid-cols-2 gap-4">
-                    <input type="text" id="bPrice" placeholder="Prix" class="input-pro">
+                    <input type="text" id="bPrice" placeholder="Prix (ex: 1 200 000€)" class="input-pro">
                     <select id="bCat" class="input-pro">
-                        <option value="Villa">Villa</option>
-                        <option value="Penthouse">Penthouse</option>
-                        <option value="Manoir">Manoir</option>
+                        <option value="Villa">Villa Exclusive</option>
+                        <option value="Penthouse">Penthouse Skyline</option>
+                        <option value="Manoir">Manoir Royal</option>
                     </select>
                 </div>
-                <textarea id="bDesc" placeholder="Description..." class="input-pro h-32"></textarea>
-                <input type="file" id="bFiles" class="text-xs mb-4" multiple>
+                <textarea id="bDesc" placeholder="Description poétique et luxueuse..." class="input-pro h-32"></textarea>
+                <label class="text-[9px] uppercase tracking-widest opacity-40 mb-2 block">Médias haute résolution</label>
+                <input type="file" id="bFiles" class="text-xs mb-4 text-gray-500" multiple>
                 <div id="bImgGrid" class="grid grid-cols-4 gap-2 mb-6"></div>
-                <button id="btnPublish" class="btn-gold w-full">Enregistrer le bien</button>
+                <button id="btnPublish" class="btn-gold w-full">Enregistrer dans le Catalogue</button>
             </div>
 
             <div>
                 <h3 class="text-[10px] font-bold uppercase tracking-[4px] mb-6 opacity-40 italic">Catalogue Actuel</h3>
-                <div id="listBiensAdmin" class="space-y-4"></div>
+                <div id="listBiensAdmin" class="space-y-4">
+                    </div>
             </div>
         </div>
     </div>
@@ -93,8 +105,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- MOT DE PASSE ---
-        const MASTER_PASS = "Immo30"; // MODIFIE TON MOT DE PASSE ICI
+        // --- AUTHENTIFICATION ---
+        const MASTER_PASS = "Immo30"; 
 
         window.checkPass = () => {
             const val = document.getElementById('passInput').value;
@@ -115,13 +127,12 @@
 
         window.logout = () => {
             sessionStorage.removeItem('arcadia_auth');
-            location.reload();
+            window.location.href = 'index.html'; 
         };
 
-        // Garder la session au rafraîchissement
         showAdmin();
 
-        // --- LOGIQUE FIREBASE ---
+        // --- GESTION DES DONNÉES ---
         let currentImgs = [];
         const get = id => document.getElementById(id);
 
@@ -130,7 +141,7 @@
             Array.from(e.target.files).forEach(f => {
                 const r = new FileReader(); r.onload = ev => {
                     currentImgs.push(ev.target.result);
-                    get('bImgGrid').innerHTML += `<img src="${ev.target.result}" class="w-full aspect-square object-cover rounded">`;
+                    get('bImgGrid').innerHTML += `<img src="${ev.target.result}" class="w-full aspect-square object-cover rounded border border-white/10">`;
                 }; r.readAsDataURL(f);
             });
         };
@@ -138,32 +149,53 @@
         get('btnPublish').onclick = () => {
             const id = get('edit_id_bien').value;
             const data = {
-                title: get('bTitle').value, price: get('bPrice').value,
-                cat: get('bCat').value, desc: get('bDesc').value,
-                images: currentImgs, date: Date.now()
+                title: get('bTitle').value, 
+                price: get('bPrice').value,
+                cat: get('bCat').value, 
+                desc: get('bDesc').value,
+                images: currentImgs, 
+                date: Date.now()
             };
-            if(id) update(ref(db, `listings/${id}`), data).then(() => location.reload());
-            else push(ref(db, 'listings'), data).then(() => location.reload());
+
+            if(!data.title || currentImgs.length === 0) return alert("Veuillez remplir au moins le titre et une image.");
+
+            if(id) {
+                update(ref(db, `listings/${id}`), data).then(() => location.reload());
+            } else {
+                push(ref(db, 'listings'), data).then(() => location.reload());
+            }
         };
 
         onValue(ref(db, 'listings'), (snap) => {
             let html = "";
-            if(snap.val()) Object.entries(snap.val()).reverse().forEach(([id, it]) => {
-                html += `
-                <div class="glass-panel p-4 flex items-center justify-between border-l border-gold">
-                    <div class="flex items-center gap-4">
-                        <img src="${it.images[0]}" class="w-10 h-10 rounded object-cover">
-                        <span class="text-[10px] font-bold uppercase">${it.title}</span>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="del('${id}')" class="text-red-500 text-[9px] uppercase tracking-widest px-2 py-1 border border-red-900/20">Suppr</button>
-                    </div>
-                </div>`;
-            });
+            const data = snap.val();
+            if(data) {
+                Object.entries(data).reverse().forEach(([id, it]) => {
+                    html += `
+                    <div class="glass-panel p-4 flex items-center justify-between border-l-2 border-l-gold">
+                        <div class="flex items-center gap-4">
+                            <img src="${it.images[0]}" class="w-12 h-12 rounded object-cover border border-white/10">
+                            <div>
+                                <p class="text-[10px] font-bold uppercase">${it.title}</p>
+                                <p class="text-[9px] text-gold tracking-widest">${it.price}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="del('${id}')" class="text-red-500 text-[9px] uppercase tracking-widest px-3 py-1 border border-red-900/20 hover:bg-red-500/10 transition-colors">Suppr</button>
+                        </div>
+                    </div>`;
+                });
+            } else {
+                html = "<p class='opacity-20 text-xs italic uppercase tracking-widest'>Aucun bien en ligne</p>";
+            }
             get('listBiensAdmin').innerHTML = html;
         });
 
-        window.del = (id) => { if(confirm("Supprimer ?")) remove(ref(db, `listings/${id}`)); };
+        window.del = (id) => { 
+            if(confirm("Confirmer la suppression définitive de ce bien ?")) {
+                remove(ref(db, `listings/${id}`)); 
+            }
+        };
 
     </script>
 </body>
