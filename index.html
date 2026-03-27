@@ -47,6 +47,7 @@
             </select>
         </div>
         <audio id="bgMusic" loop><source id="musicSource" src="" type="audio/mpeg"></audio>
+        <audio id="notifSound"><source src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" type="audio/mpeg"></audio>
     </div>
 
     <div id="adminBar" class="fixed top-0 w-full text-white py-3 px-8 z-[100] justify-between items-center text-[10px] font-bold uppercase tracking-widest shadow-2xl">
@@ -65,7 +66,7 @@
             <button onclick="openLogin()" class="absolute bottom-4 right-6 text-white/20 hover:text-white/60 text-[10px] font-bold transition">STAFF ONLY</button>
         </section>
 
-        <section class="container mx-auto -mt-20 px-6 relative z-10 pb-20">
+        <section class="container mx-auto -mt-20 px-6 relative z-10 pb-10">
             <div class="bg-white rounded-[3rem] shadow-2xl p-8 md:p-12 border border-slate-100 max-w-5xl mx-auto">
                 <div class="text-center mb-10">
                     <h2 class="text-3xl font-serif font-bold">Réserver une visite privée</h2>
@@ -83,6 +84,17 @@
                 </div>
                 <textarea id="resMsg" rows="3" placeholder="Parlez-nous de votre projet..." class="w-full bg-slate-50 p-4 rounded-2xl mt-6 outline-none"></textarea>
                 <button id="btnReserve" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase mt-8 hover:bg-amber-600 transition-all">Confirmer la demande</button>
+            </div>
+        </section>
+
+        <section class="container mx-auto px-6 mb-20">
+            <div class="max-w-2xl mx-auto bg-slate-100 p-8 rounded-[2rem] border-2 border-dashed border-slate-200">
+                <h3 class="text-center font-serif font-bold text-xl mb-4">Suivre mon dossier</h3>
+                <div class="flex gap-2">
+                    <input type="email" id="checkEmail" placeholder="Entrez votre email" class="flex-1 p-4 rounded-xl outline-none text-sm">
+                    <button onclick="checkMyMessages()" class="bg-amber-600 text-white px-6 rounded-xl font-bold text-xs uppercase">Vérifier</button>
+                </div>
+                <div id="clientChatHistory" class="mt-8 space-y-4 hidden"></div>
             </div>
         </section>
 
@@ -117,14 +129,8 @@
                     <button id="btnPublish" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase transition hover:bg-amber-600 shadow-xl">Publier</button>
                 </div>
             </div>
-            
-            <div id="listSection" class="lg:col-span-5">
-                <div id="adminList" class="space-y-4"></div>
-            </div>
-
-            <div id="messagesSection" class="hidden lg:col-span-12">
-                <div id="messagesList" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
-            </div>
+            <div id="listSection" class="lg:col-span-5"><div id="adminList" class="space-y-4"></div></div>
+            <div id="messagesSection" class="hidden lg:col-span-12"><div id="messagesList" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div></div>
         </div>
     </main>
 
@@ -160,6 +166,7 @@
         let currentMode = 'V';
         let currentImg = "";
         let globalData = {};
+        let lastReplyCount = 0; // Pour la notif sonore
 
         window.openLogin = () => document.getElementById('loginOverlay').classList.remove('hidden');
         window.closeLogin = () => document.getElementById('loginOverlay').classList.add('hidden');
@@ -186,7 +193,49 @@
             if(!isMsg) refreshAdminList();
         };
 
-        // GESTION DES MESSAGES ET DU CHAT
+        // SUIVI CLIENT & NOTIFICATION
+        window.checkMyMessages = () => {
+            const email = document.getElementById('checkEmail').value.toLowerCase();
+            const historyDiv = document.getElementById('clientChatHistory');
+            if(!email) return alert("Entrez votre email");
+
+            onValue(ref(db, 'messages'), (snap) => {
+                const msgs = snap.val() || {};
+                let html = "";
+                let found = false;
+                let currentReplies = 0;
+
+                Object.values(msgs).forEach(m => {
+                    if(m.email.toLowerCase() === email) {
+                        found = true;
+                        if(m.adminReply) currentReplies++;
+                        html += `
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                            <p class="text-[10px] font-black text-amber-600 uppercase mb-2">Demande du ${m.date}</p>
+                            <div class="chat-bubble chat-client mb-2">"${m.msg}"</div>
+                            ${m.adminReply ? `
+                                <div class="chat-bubble chat-admin bg-slate-900 text-white ml-auto">
+                                    <p class="font-bold text-[10px] text-amber-400 mb-1">CONCIERGERIE :</p>
+                                    ${m.adminReply}
+                                </div>
+                            ` : `<p class="text-[10px] italic text-slate-400 text-right mt-2">En attente...</p>`}
+                        </div>`;
+                    }
+                });
+
+                if(found) {
+                    // Jouer son si nouvelle réponse
+                    if(currentReplies > lastReplyCount && lastReplyCount !== 0) {
+                        document.getElementById('notifSound').play();
+                    }
+                    lastReplyCount = currentReplies;
+                    historyDiv.innerHTML = html;
+                    historyDiv.classList.remove('hidden');
+                } else { alert("Aucun dossier trouvé."); }
+            });
+        };
+
+        // GESTION ADMIN MESSAGES
         onValue(ref(db, 'messages'), (snap) => {
             const msgs = snap.val() || {};
             const badge = document.getElementById('msgCount');
@@ -199,24 +248,10 @@
         window.sendChatReply = (key, clientEmail, clientName) => {
             const replyText = document.getElementById(`replyInput-${key}`).value;
             if(!replyText) return;
-
-            // 1. Sauvegarder la réponse dans Firebase pour l'historique
-            update(ref(db, `messages/${key}`), { 
-                adminReply: replyText,
-                status: 'read'
-            });
-
-            // 2. Préparer le mail ultra-personnalisé
-            const subject = encodeURIComponent(`Arcadia Prestige | Suite à votre demande de ${clientName}`);
-            const body = encodeURIComponent(
-                `Cher(e) ${clientName},\n\n` +
-                `Nous avons le plaisir de revenir vers vous concernant votre projet.\n\n` +
-                `NOTRE RÉPONSE :\n"${replyText}"\n\n` +
-                `Nous restons à votre entière disposition pour organiser une rencontre ou une visite privée.\n\n` +
-                `Cordialement,\n` +
-                `${currentUser} - Arcadia Prestige Luxury Service`
-            );
+            update(ref(db, `messages/${key}`), { adminReply: replyText, status: 'read' });
             
+            const subject = encodeURIComponent(`Arcadia Prestige | Suite à votre demande`);
+            const body = encodeURIComponent(`Cher(e) ${clientName},\n\nNous avons répondu à votre demande.\n\nNOTRE RÉPONSE :\n"${replyText}"\n\nConsultez votre suivi sur le site.\n\nCordialement,\nL'équipe Arcadia`);
             window.location.href = `mailto:${clientEmail}?subject=${subject}&body=${body}`;
         };
 
@@ -231,26 +266,18 @@
                         <button onclick="deleteMsg('${key}')" class="text-slate-300 hover:text-red-500">✕</button>
                     </div>
                     <div class="chat-container mb-6">
-                        <div class="chat-bubble chat-client">
-                            <p class="font-bold mb-1">${m.name} :</p>
-                            ${m.msg}
-                            <p class="text-[8px] mt-2 opacity-50">${m.date} à ${m.time}</p>
-                        </div>
-                        ${m.adminReply ? `
-                        <div class="chat-bubble chat-admin">
-                            <p class="font-bold mb-1">Vous :</p>
-                            ${m.adminReply}
-                        </div>` : ''}
+                        <div class="chat-bubble chat-client"><p class="font-bold mb-1">${m.name} :</p>${m.msg}</div>
+                        ${m.adminReply ? `<div class="chat-bubble chat-admin"><p class="font-bold mb-1">Vous :</p>${m.adminReply}</div>` : ''}
                     </div>
                     <div class="relative mt-4">
-                        <input type="text" id="replyInput-${key}" placeholder="Écrire une réponse..." class="w-full bg-slate-50 p-4 pr-32 rounded-2xl outline-none text-sm border border-slate-100 focus:border-amber-500">
-                        <button onclick="sendChatReply('${key}', '${m.email}', '${m.name}')" class="absolute right-2 top-2 bg-slate-900 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-amber-600 transition">Répondre</button>
+                        <input type="text" id="replyInput-${key}" placeholder="Répondre..." class="w-full bg-slate-50 p-4 pr-32 rounded-2xl outline-none text-sm border focus:border-amber-500">
+                        <button onclick="sendChatReply('${key}', '${m.email}', '${m.name}')" class="absolute right-2 top-2 bg-slate-900 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase">Répondre</button>
                     </div>
                 </div>`;
             });
         }
 
-        // RENDER CONTENT PUBLIC
+        // PUBLICATION CONTENU
         onValue(ref(db, 'content'), (snap) => {
             globalData = snap.val() || {};
             const container = document.getElementById('allContent');
@@ -274,26 +301,21 @@
             });
         }
 
-        // FORMULAIRE RÉSERVATION
         document.getElementById('btnReserve').onclick = () => {
+            const d = new Date();
             const res = {
                 name: document.getElementById('resName').value,
                 email: document.getElementById('resEmail').value,
                 type: document.getElementById('resType').value,
-                date: document.getElementById('resDate').value,
-                time: document.getElementById('resTime').value,
+                date: d.toLocaleDateString(),
+                time: d.toLocaleTimeString(),
                 msg: document.getElementById('resMsg').value,
-                status: 'unread',
-                timestamp: Date.now()
+                status: 'unread'
             };
             if(!res.name || !res.email) return alert("Nom et email requis.");
-            push(ref(db, 'messages'), res).then(() => {
-                alert("Demande envoyée !");
-                document.querySelectorAll('input, textarea').forEach(i => i.value = "");
-            });
+            push(ref(db, 'messages'), res).then(() => { alert("Envoyé !"); document.querySelectorAll('input, textarea').forEach(i => i.value = ""); });
         };
 
-        // UPLOAD & PUBLISH
         document.getElementById('fileInput').onchange = (e) => {
             const reader = new FileReader();
             reader.onload = (ev) => { currentImg = ev.target.result; document.getElementById('fileStatus').innerText = "✅ IMAGE PRÊTE"; };
@@ -307,36 +329,20 @@
             push(ref(db, `content/${types[currentMode]}`), data).then(() => { alert("Publié !"); location.reload(); });
         };
 
-        window.deleteItem = (type, key) => { if(confirm("Supprimer ?")) remove(ref(db, `content/${type}/${key}`)); };
-        window.deleteMsg = (key) => { if(confirm("Supprimer ce message ?")) remove(ref(db, `messages/${key}`)); };
+        window.deleteItem = (t, k) => { if(confirm("Supprimer ?")) remove(ref(db, `content/${t}/${k}`)); };
+        window.deleteMsg = (k) => { if(confirm("Supprimer ?")) remove(ref(db, `messages/${k}`)); };
 
-        // MUSIQUE (CORRECTIF CHEMINS)
+        // MUSIQUE
         const audio = document.getElementById('bgMusic');
         const playBtn = document.getElementById('playPauseBtn');
         const musicIcon = document.getElementById('musicIcon');
-
         playBtn.onclick = () => { 
-            if (audio.paused) { 
-                if(!audio.src || audio.src === window.location.href) { alert("Choisissez une musique d'abord."); return; }
-                audio.play(); musicIcon.innerText = "⏸"; 
-            } else { 
-                audio.pause(); musicIcon.innerText = "▶"; 
-            } 
+            if (audio.paused) { if(!audio.src || audio.src === window.location.href) return; audio.play(); musicIcon.innerText = "⏸"; } 
+            else { audio.pause(); musicIcon.innerText = "▶"; } 
         };
-        
-        document.getElementById('trackSelect').onchange = (e) => { 
-            if(e.target.value) {
-                document.getElementById('musicSource').src = e.target.value; 
-                audio.load(); 
-                audio.play(); 
-                musicIcon.innerText = "⏸"; 
-            }
-        };
+        document.getElementById('trackSelect').onchange = (e) => { if(e.target.value) { document.getElementById('musicSource').src = e.target.value; audio.load(); audio.play(); musicIcon.innerText = "⏸"; } };
 
-        if (currentUser) {
-            document.body.classList.add('is-admin');
-            document.getElementById('activeUserDisplay').innerText = currentUser;
-        }
+        if (currentUser) { document.body.classList.add('is-admin'); document.getElementById('activeUserDisplay').innerText = currentUser; }
     </script>
 </body>
 </html>
