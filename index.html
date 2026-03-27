@@ -3,266 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcadia Immobilier | Excellence Immobilière RP</title>
+    <title>Arcadia Immobilier | Luxury Real Estate</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@100;200;300;400&display=swap');
         
-        :root { 
-            --gold: #d4af37; 
-            --gold-light: #f1e5ac;
-            --dark: #020617; 
-            --slate-800: #1e293b;
-        }
+        :root { --gold: #c5a059; --dark: #121212; --light: #ffffff; }
 
-        body { 
-            font-family: 'Inter', sans-serif; 
-            scroll-behavior: smooth; 
-            background: #fdfdfd; 
-            color: var(--dark);
-            transition: background-color 0.5s ease;
-        }
+        body { font-family: 'Montserrat', sans-serif; background: var(--light); color: var(--dark); overflow-x: hidden; }
+        .font-serif { font-family: 'Cormorant Garamond', serif; }
 
-        .font-serif { font-family: 'Playfair Display', serif; }
-
-        /* Effets de Verre & Gradients */
-        .glass { 
-            background: rgba(255, 255, 255, 0.8); 
-            backdrop-filter: blur(12px); 
-            border: 1px solid rgba(212, 175, 55, 0.2); 
-        }
-        .gold-gradient { background: linear-gradient(135deg, #d4af37 0%, #f1e5ac 100%); }
-        .navy-gradient { background: linear-gradient(135deg, #020617 0%, #0f172a 100%); }
-        
-        /* Curseur & Progress */
-        #custom-cursor { 
-            width: 25px; height: 25px; border: 1px solid var(--gold); border-radius: 50%; 
-            position: fixed; pointer-events: none; z-index: 9999; 
-            transform: translate(-50%, -50%); transition: transform 0.15s ease-out, width 0.3s, height 0.3s; 
-            mix-blend-mode: difference; 
-        }
-        #scrollProgress { position: fixed; top: 0; left: 0; height: 3px; background: var(--gold); z-index: 2000; width: 0%; }
-
-        /* Dark Mode */
-        body.dark-mode { background-color: #020617; color: #f8fafc; }
-        .dark-mode .bg-white { background-color: #0f172a; color: white; }
-        .dark-mode .glass { background-color: rgba(15, 23, 42, 0.8); border-color: rgba(255,255,255,0.1); }
-        .dark-mode input, .dark-mode textarea, .dark-mode select { background: #1e293b; color: white; border: 1px solid #334155; }
-
-        /* Navbar Animée */
+        /* Navbar & Navigation */
         #mainNavbar { 
-            position: fixed; top: 0; width: 100%; height: 90px; 
+            position: fixed; top: 0; width: 100%; height: 100px; 
             display: flex; align-items: center; justify-content: space-between; 
-            padding: 0 60px; z-index: 1500; transition: all 0.4s ease;
+            padding: 0 5%; z-index: 1500; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             background: transparent;
         }
-        #mainNavbar.scrolled { height: 70px; background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(10px); }
+        #mainNavbar.scrolled { height: 75px; background: rgba(255, 255, 255, 0.98); border-bottom: 1px solid #f0f0f0; }
+        #mainNavbar.scrolled .nav-link { color: var(--dark); }
+        .nav-link { color: white; font-size: 10px; letter-spacing: 3px; font-weight: 300; text-transform: uppercase; transition: opacity 0.3s; }
+
+        /* Hero avec Parallaxe Fixe */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.2)), 
+                        url('https://images.unsplash.com/photo-1600607687940-477a28b6d080?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+            background-attachment: fixed; /* Parallaxe natif Hero */
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white;
+        }
+
+        /* Conteneur Parallaxe pour les cartes */
+        .parallax-container {
+            position: relative; overflow: hidden; height: 100%; width: 100%;
+            aspect-ratio: 16/10;
+        }
+        .parallax-img {
+            position: absolute; top: -15%; left: 0; width: 100%; height: 130%;
+            object-fit: cover; will-change: transform; transition: transform 0.1s linear;
+        }
+
+        /* Reveal Animation au scroll */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 1s cubic-bezier(0.2, 1, 0.3, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
 
         /* Admin Bar */
-        #adminBar { display: none; background: var(--gold); color: #000; position: fixed; top: 0; width: 100%; z-index: 1600; font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+        #adminBar { display: none; background: #000; color: #fff; position: fixed; top: 0; width: 100%; z-index: 2000; font-size: 9px; height: 30px; align-items: center; padding: 0 5%; letter-spacing: 2px; text-transform: uppercase; }
         .is-admin #adminBar { display: flex; }
-        .is-admin #mainNavbar { top: 36px; }
+        .is-admin #mainNavbar { top: 30px; }
 
-        /* Cartes de Biens */
-        .property-card {
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-        .property-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
+        /* Custom Cursor */
+        #cursor { width: 12px; height: 12px; border: 1px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transition: transform 0.15s ease-out; }
 
-        /* Views */
-        .view-section { display: none; opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
-        .active-view { display: block; opacity: 1; transform: translateY(0); padding-top: 120px; min-height: 100vh; }
-        
-        .hero-title {
-            text-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            letter-spacing: -0.02em;
-        }
+        .view-section { display: none; }
+        .active-view { display: block; }
 
-        .btn-luxury {
-            position: relative; overflow: hidden; transition: all 0.3s;
+        /* Boutons Kretz */
+        .btn-minimal {
+            border: 1px solid var(--dark); padding: 18px 45px; font-size: 10px; letter-spacing: 4px;
+            text-transform: uppercase; transition: 0.4s; position: relative;
         }
-        .btn-luxury:hover { letter-spacing: 0.2em; }
+        .btn-minimal:hover { background: var(--dark); color: white; padding-right: 55px; }
     </style>
 </head>
 <body>
 
-    <div id="custom-cursor"></div>
-    <div id="scrollProgress"></div>
-
-    <div id="adminBar" class="py-2 px-12 justify-between items-center shadow-xl">
-        <div class="flex items-center gap-8">
-            <span><i class="fas fa-crown mr-2"></i> AGENT : <span id="activeUserDisplay" class="uppercase"></span></span>
-            <div class="h-4 w-[1px] bg-black/20"></div>
-            <button onclick="showView('adminPanel')" class="hover:underline">Publier</button>
-            <button onclick="showView('adminBlog')" class="hover:underline">Édito</button>
-            <button onclick="showView('adminInbox')" class="hover:underline relative">
-                Conciergerie <span id="msgCount" class="bg-black text-white px-1.5 rounded-full text-[8px] ml-1">0</span>
-            </button>
+    <div id="cursor"></div>
+    <div id="adminBar">
+        <span>Arcadia Staff : <span id="activeUserDisplay" class="font-bold"></span></span>
+        <div class="ml-10 space-x-6">
+            <button onclick="showView('adminPanel')">Biens</button>
+            <button onclick="showView('adminBlog')">Édito</button>
+            <button onclick="showView('adminInbox')">Conciergerie</button>
         </div>
-        <button onclick="logout()" class="hover:bg-black/10 px-3 py-1 rounded transition">Déconnexion</button>
+        <button onclick="logout()" class="ml-auto opacity-50">Déconnexion</button>
     </div>
 
     <nav id="mainNavbar">
-        <div class="flex items-center gap-4 cursor-pointer" onclick="showView('publicContent')">
-            <img src="https://image2url.com/r2/default/images/1774637280338-edb5fb97-c196-45e7-bdfa-1af5a2805830.png" alt="Arcadia" class="h-12">
+        <div class="flex gap-12 w-1/3">
+            <button onclick="showView('publicContent')" class="nav-link">Collection</button>
+            <button onclick="showView('blogView')" class="nav-link">L'Édito</button>
         </div>
-        
-        <div class="hidden md:flex items-center gap-10 text-[11px] font-bold uppercase tracking-[0.2em] text-white">
-            <button onclick="showView('publicContent')" class="hover:text-amber-400 transition">Collection</button>
-            <button onclick="showView('blogView')" class="hover:text-amber-400 transition">L'Édito</button>
-            <button onclick="showView('contactView')" class="hover:text-amber-400 transition">Contact</button>
-            <button onclick="toggleDarkMode()" class="text-lg hover:rotate-12 transition"><i class="fas fa-moon"></i></button>
-            <button onclick="openLogin()" id="btnStaff" class="border border-amber-500/50 px-6 py-2 rounded-full hover:bg-amber-500 hover:text-slate-900 transition duration-500">Accès Staff</button>
+        <img src="https://image2url.com/r2/default/images/1774637280338-edb5fb97-c196-45e7-bdfa-1af5a2805830.png" 
+             alt="Arcadia" class="h-8 cursor-pointer invert" id="navLogo" onclick="showView('publicContent')">
+        <div class="flex gap-12 w-1/3 justify-end">
+            <button onclick="showView('contactView')" class="nav-link">Contact</button>
+            <button onclick="openLogin()" class="nav-link opacity-30">Staff</button>
         </div>
     </nav>
 
-    <main id="publicContent" class="view-section active-view !p-0">
-        <section class="h-[85vh] flex flex-col items-center justify-center text-center px-6 navy-gradient text-white relative overflow-hidden">
-            <div class="absolute inset-0 opacity-20" style="background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');"></div>
-            
-            <div class="relative z-10">
-                <span class="text-amber-500 font-bold uppercase tracking-[0.6em] text-[12px] mb-4 block animate-pulse">Prestige & Discrétion</span>
-                <h1 class="hero-title text-7xl md:text-[10rem] font-serif italic font-bold mb-6">Arcadia</h1>
-                <p class="max-w-2xl mx-auto text-slate-300 font-light text-lg mb-12 leading-relaxed">L'art de vivre l'exceptionnel. Découvrez notre sélection exclusive de propriétés hors-marché.</p>
-                
-                <div class="flex flex-col md:flex-row items-center justify-center gap-6">
-                    <button onclick="document.getElementById('collection').scrollIntoView()" class="btn-luxury bg-white text-slate-900 px-14 py-5 rounded-full font-extrabold text-[11px] uppercase tracking-widest shadow-2xl">
-                        Explorer le catalogue
-                    </button>
-                    <div class="glass px-8 py-3 rounded-2xl border border-amber-500/20">
-                        <p class="text-[9px] text-amber-500 font-bold uppercase tracking-widest mb-1">Ligne Privée</p>
-                        <p class="text-lg font-mono tracking-tighter">06 29 07 00 34</p>
-                    </div>
-                </div>
-            </div>
+    <main id="publicContent" class="view-section active-view">
+        <section class="hero">
+            <h1 class="font-serif text-8xl md:text-[10rem] italic font-light mb-2">Arcadia</h1>
+            <p class="uppercase tracking-[0.6em] text-[11px] font-light opacity-80">L'Excellence Immobilière</p>
         </section>
 
-        <section id="collection" class="py-32 container mx-auto px-6">
-            <div class="flex items-end justify-between mb-16 border-b border-slate-200 dark:border-slate-800 pb-8">
-                <div>
-                    <h2 class="text-5xl font-serif italic">La Collection</h2>
-                    <p class="text-slate-400 mt-2">Propriétés disponibles immédiatement</p>
+        <section class="py-40 px-[5%]">
+            <div id="allContent" class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-32">
                 </div>
-                <div class="text-right hidden md:block">
-                    <span class="text-[10px] font-bold uppercase tracking-widest opacity-40">Tri : Nouveautés</span>
-                </div>
-            </div>
-            <div id="allContent" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"></div>
         </section>
     </main>
 
-    <main id="blogView" class="view-section container mx-auto px-6">
-        <div class="max-w-4xl mx-auto text-center mb-24">
-            <h2 class="text-7xl font-serif italic mb-6">L'Édito</h2>
-            <div class="h-1 w-20 bg-amber-500 mx-auto mb-8"></div>
-            <p class="text-slate-500 italic">Tendances, architecture et art de vivre par Arcadia Immobilier.</p>
-        </div>
-        <div id="blogContent" class="grid grid-cols-1 md:grid-cols-2 gap-20 max-w-6xl mx-auto"></div>
-    </main>
-
-    <main id="contactView" class="view-section container mx-auto px-6">
-        <div class="max-w-5xl mx-auto glass p-8 md:p-20 rounded-[4rem] shadow-3xl flex flex-col md:flex-row gap-16">
-            <div class="flex-1">
-                <h2 class="text-5xl font-serif italic mb-8">Entrer en contact</h2>
-                <p class="text-slate-500 mb-8 leading-relaxed">Nos conseillers vous accompagnent dans vos projets les plus ambitieux. Discrétion absolue garantie.</p>
-                <div class="space-y-6">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full gold-gradient flex items-center justify-center text-slate-900 shadow-lg">
-                            <i class="fas fa-phone"></i>
-                        </div>
-                        <span class="font-mono">06 29 07 00 34</span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full navy-gradient flex items-center justify-center text-white shadow-lg">
-                            <i class="fas fa-paper-plane"></i>
-                        </div>
-                        <span>Radio : ARCADIA-SECURE</span>
-                    </div>
-                </div>
-            </div>
-            <div class="flex-1 bg-slate-50 dark:bg-slate-800/50 p-10 rounded-[2.5rem] space-y-4">
-                <input type="text" id="msgName" placeholder="Identité RP" class="w-full p-5 rounded-2xl bg-white dark:bg-slate-900 border-none outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm">
-                <input type="text" id="msgEmail" placeholder="Coordonnées de rappel" class="w-full p-5 rounded-2xl bg-white dark:bg-slate-900 border-none outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm">
-                <textarea id="msgBody" placeholder="Votre message..." class="w-full p-5 rounded-2xl bg-white dark:bg-slate-900 border-none outline-none focus:ring-2 focus:ring-amber-500 transition h-40 shadow-sm"></textarea>
-                <button onclick="sendMessage()" class="w-full navy-gradient text-white py-5 rounded-2xl font-bold uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] transition active:scale-95">Envoyer la demande</button>
+    <main id="contactView" class="view-section pt-40 px-[5%]">
+        <div class="max-w-4xl mx-auto py-20">
+            <h2 class="font-serif text-7xl italic mb-20 text-center">Une demande particulière ?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-20">
+                <input type="text" id="msgName" placeholder="NOM COMPLET" class="border-b border-black/10 p-4 outline-none uppercase text-[10px] tracking-widest">
+                <input type="text" id="msgEmail" placeholder="RADIO / COORDONNÉES" class="border-b border-black/10 p-4 outline-none uppercase text-[10px] tracking-widest">
+                <textarea id="msgBody" placeholder="VOTRE MESSAGE" class="md:col-span-2 border-b border-black/10 p-4 outline-none uppercase text-[10px] tracking-widest h-32"></textarea>
+                <button onclick="sendMessage()" class="btn-minimal md:col-span-2">Envoyer le message</button>
             </div>
         </div>
     </main>
 
-    <main id="adminPanel" class="view-section container mx-auto px-6">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
-            <div class="bg-white dark:bg-slate-900 p-10 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800">
-                <h2 class="text-3xl font-serif italic mb-8 flex items-center gap-3">
-                    <i class="fas fa-plus-circle text-amber-500"></i> Nouvelle Annonce
-                </h2>
-                <div class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="text" id="inTitle" oninput="updateListingPreview()" placeholder="Nom de la Villa" class="p-4 rounded-xl bg-slate-50 outline-none w-full">
-                        <input type="text" id="inPrice" oninput="updateListingPreview()" placeholder="Prix (ex: 4 500 000 $)" class="p-4 rounded-xl bg-slate-50 outline-none w-full">
-                    </div>
-                    <select id="inCat" onchange="updateListingPreview()" class="w-full p-4 rounded-xl bg-slate-50 outline-none">
-                        <option value="Villa">Villa d'Exception</option>
-                        <option value="Penthouse">Penthouse Signature</option>
-                        <option value="Domaine">Domaine Privé</option>
-                        <option value="Appartement">Appartement Noble</option>
-                    </select>
-                    <textarea id="inDesc" oninput="updateListingPreview()" placeholder="Description narrative du bien..." class="w-full p-4 rounded-xl bg-slate-50 h-32 outline-none"></textarea>
-                    
-                    <div class="p-8 border-2 border-dashed border-slate-200 rounded-2xl text-center">
-                        <input type="file" id="multiFileInput" class="hidden" multiple>
-                        <label for="multiFileInput" class="cursor-pointer text-amber-600 font-bold hover:text-amber-700">
-                            <i class="fas fa-cloud-upload-alt text-3xl mb-2 block"></i>
-                            Ajouter des photographies
-                        </label>
-                    </div>
-                    <button id="btnPublish" class="w-full navy-gradient text-white py-5 rounded-2xl font-bold uppercase tracking-widest shadow-lg">Mettre en ligne</button>
-                </div>
-            </div>
-            
-            <div class="sticky top-40 h-fit">
-                <span class="inline-block bg-amber-500 text-black px-4 py-1 rounded-full text-[10px] font-black uppercase mb-4">Rendu Public</span>
-                <div id="listingPreview" class="opacity-40 transition duration-500">
-                    <div class="bg-slate-100 h-[500px] rounded-[3rem] flex items-center justify-center italic text-slate-400">En attente de données...</div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <main id="adminBlog" class="view-section container mx-auto px-6">
-        <div class="max-w-4xl mx-auto bg-white p-12 rounded-[3rem] shadow-2xl">
-            <h2 class="text-3xl font-serif italic mb-8">Rédaction de l'Édito</h2>
-            <div class="space-y-6">
-                <input type="text" id="blogTitle" placeholder="Titre de l'article" class="w-full p-5 rounded-2xl bg-slate-50 outline-none text-2xl font-serif">
-                <textarea id="blogBody" placeholder="Écrivez votre article ici..." class="w-full p-5 rounded-2xl bg-slate-50 h-80 outline-none"></textarea>
-                <input type="file" id="blogFileInput" class="block w-full text-sm text-slate-500">
-                <button id="btnPublishBlog" class="w-full gold-gradient text-slate-900 py-5 rounded-2xl font-bold uppercase tracking-widest">Publier l'édito</button>
-            </div>
-        </div>
-    </main>
-
-    <main id="adminInbox" class="view-section container mx-auto px-6 max-w-4xl">
-        <div class="flex items-center justify-between mb-12">
-            <h2 class="text-4xl font-serif italic">Messages Conciergerie</h2>
-            <button onclick="location.reload()" class="text-amber-600 font-bold text-xs uppercase tracking-widest"><i class="fas fa-sync mr-2"></i> Actualiser</button>
-        </div>
-        <div id="messageList" class="grid gap-6"></div>
-    </main>
-
-    <div id="loginOverlay" class="fixed inset-0 z-[2500] hidden flex items-center justify-center bg-slate-950/95 backdrop-blur-2xl">
-        <div class="bg-white p-12 rounded-[4rem] w-full max-w-sm text-center shadow-3xl">
-            <div class="w-20 h-20 gold-gradient rounded-full mx-auto mb-8 flex items-center justify-center text-white text-3xl shadow-xl">
-                <i class="fas fa-key"></i>
-            </div>
-            <h3 class="text-3xl font-serif italic mb-2">Espace Privé</h3>
-            <p class="text-slate-400 text-sm mb-8">Identifiez-vous pour gérer la collection</p>
-            <input type="text" id="userLogin" placeholder="Identifiant" class="w-full p-5 bg-slate-50 rounded-2xl mb-4 border-none outline-none focus:ring-2 focus:ring-amber-500">
-            <input type="password" id="passLogin" placeholder="Mot de passe" class="w-full p-5 bg-slate-50 rounded-2xl mb-8 border-none outline-none focus:ring-2 focus:ring-amber-500">
-            <button id="btnLoginAction" class="w-full navy-gradient text-white py-5 rounded-2xl font-bold uppercase tracking-widest shadow-xl">Accéder au panel</button>
-            <button onclick="closeLogin()" class="mt-8 text-slate-400 text-[10px] font-bold uppercase tracking-widest hover:text-slate-600 transition">Retour au site</button>
+    <div id="loginOverlay" class="fixed inset-0 z-[3000] hidden bg-white flex items-center justify-center">
+        <div class="w-full max-w-xs text-center">
+            <h3 class="font-serif text-4xl italic mb-12">Privé</h3>
+            <input type="text" id="userLogin" placeholder="ID" class="w-full border-b mb-6 p-2 text-center">
+            <input type="password" id="passLogin" placeholder="CODE" class="w-full border-b mb-12 p-2 text-center">
+            <button id="btnLoginAction" class="btn-minimal w-full">Entrer</button>
+            <button onclick="closeLogin()" class="mt-8 text-[9px] uppercase tracking-widest opacity-40">Retour</button>
         </div>
     </div>
 
@@ -275,211 +136,92 @@
         const db = getDatabase(app);
         const get = id => document.getElementById(id);
 
-        // --- UI LOGIC ---
+        // --- GESTION PARALLAXE & REVEAL ---
+        window.addEventListener('scroll', () => {
+            const nav = get('mainNavbar');
+            const logo = get('navLogo');
+            const scrollPos = window.scrollY;
+
+            // Navbar
+            if(scrollPos > 80) {
+                nav.classList.add('scrolled');
+                logo.classList.remove('invert');
+            } else if(get('publicContent').classList.contains('active-view')) {
+                nav.classList.remove('scrolled');
+                logo.classList.add('invert');
+            }
+
+            // Animation Parallaxe des images
+            document.querySelectorAll('.parallax-img').forEach(img => {
+                const parent = img.parentElement;
+                const rect = parent.getBoundingClientRect();
+                if(rect.top < window.innerHeight && rect.bottom > 0) {
+                    const shift = (window.innerHeight - rect.top) * 0.12; // Vitesse parallaxe
+                    img.style.transform = `translateY(${shift}px)`;
+                }
+            });
+
+            // Animation Reveal
+            document.querySelectorAll('.reveal').forEach(el => {
+                if(el.getBoundingClientRect().top < window.innerHeight * 0.85) el.classList.add('visible');
+            });
+        });
+
+        // --- NAVIGATION ---
         window.showView = (id) => {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
-            const target = get(id);
-            target.classList.add('active-view');
-            
-            // Masquer la navbar en Hero public
-            if(id === 'publicContent') {
-                get('mainNavbar').style.background = 'transparent';
-                get('mainNavbar').classList.remove('scrolled');
-            } else {
-                get('mainNavbar').style.background = 'rgba(2, 6, 23, 0.98)';
-            }
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        };
-
-        window.toggleDarkMode = () => {
-            document.body.classList.toggle('dark-mode');
-            const icon = document.querySelector('.fa-moon, .fa-sun');
-            icon.classList.toggle('fa-moon');
-            icon.classList.toggle('fa-sun');
-        };
-
-        window.onscroll = () => {
-            const nav = get('mainNavbar');
-            if (window.scrollY > 50) nav.classList.add('scrolled');
-            else if(get('publicContent').classList.contains('active-view')) nav.classList.remove('scrolled');
-            
-            let winScroll = document.documentElement.scrollTop;
-            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            get("scrollProgress").style.width = (winScroll / height) * 100 + "%";
+            get(id).classList.add('active-view');
+            window.scrollTo(0,0);
+            window.dispatchEvent(new Event('scroll')); // Reset navbar style
         };
 
         window.openLogin = () => get('loginOverlay').classList.remove('hidden');
         window.closeLogin = () => get('loginOverlay').classList.add('hidden');
-        window.logout = () => { localStorage.removeItem('arcadia_staff'); location.reload(); };
-
-        // --- AUTH ---
-        get('btnLoginAction').onclick = () => {
-            const STAFF = { "Axel": "Axel30", "Alden": "Alden30" };
-            const user = get('userLogin').value;
-            const pass = get('passLogin').value;
-            if(STAFF[user] === pass) {
-                localStorage.setItem('arcadia_staff', user);
-                location.reload();
-            } else alert("Accès refusé.");
-        };
-
-        // --- IMAGES & PREVIEWS ---
-        let tempImgs = [], tempBlogImg = "";
-        get('multiFileInput').onchange = (e) => {
-            tempImgs = [];
-            Array.from(e.target.files).forEach(file => {
-                const r = new FileReader();
-                r.onload = (ev) => { tempImgs.push(ev.target.result); updateListingPreview(); };
-                r.readAsDataURL(file);
-            });
-        };
-
-        window.updateListingPreview = () => {
-            const title = get('inTitle').value || "Villa Nom-du-Bien";
-            const price = get('inPrice').value || "0 000 000 $";
-            const cat = get('inCat').value;
-            const img = tempImgs[0] || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1000";
-            
-            get('listingPreview').innerHTML = `
-                <div class="property-card bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl border border-amber-500/20">
-                    <div class="relative h-80">
-                        <img src="${img}" class="w-full h-full object-cover">
-                        <div class="absolute top-6 left-6 bg-white/90 backdrop-blur px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter">${cat}</div>
-                    </div>
-                    <div class="p-10">
-                        <h3 class="text-3xl font-serif italic mb-2">${title}</h3>
-                        <p class="text-xl font-bold text-amber-600">${price}</p>
-                    </div>
-                </div>`;
-            get('listingPreview').classList.remove('opacity-40');
-        };
-
-        get('blogFileInput').onchange = (e) => {
-            const r = new FileReader();
-            r.onload = (ev) => { tempBlogImg = ev.target.result; };
-            r.readAsDataURL(e.target.files[0]);
-        };
-
-        // --- DATA OPS ---
-        get('btnPublish').onclick = () => {
-            const data = { 
-                title: get('inTitle').value, cat: get('inCat').value, 
-                price: get('inPrice').value, desc: get('inDesc').value, 
-                images: tempImgs, date: Date.now() 
-            };
-            if(!data.title || tempImgs.length === 0) return alert("Données manquantes");
-            push(ref(db, 'listings'), data).then(() => location.reload());
-        };
-
-        get('btnPublishBlog').onclick = () => {
-            const data = { 
-                title: get('blogTitle').value, body: get('blogBody').value, 
-                img: tempBlogImg, date: new Date().toLocaleDateString('fr-FR') 
-            };
-            if(!data.title || !tempBlogImg) return alert("Article incomplet");
-            push(ref(db, 'blog'), data).then(() => { alert("Publié"); showView('blogView'); });
-        };
-
-        window.sendMessage = () => {
-            const d = { 
-                name: get('msgName').value, email: get('msgEmail').value, 
-                body: get('msgBody').value, date: new Date().toLocaleString() 
-            };
-            if(!d.name || !d.body) return alert("Veuillez remplir le formulaire");
-            push(ref(db, 'messages'), d).then(() => {
-                alert("Votre demande a été transmise.");
-                get('msgName').value = ""; get('msgEmail').value = ""; get('msgBody').value = "";
-            });
-        };
 
         // --- DATA READ ---
         onValue(ref(db, 'listings'), (snap) => {
             let html = ""; const data = snap.val();
             if(data) Object.entries(data).reverse().forEach(([id, it]) => {
                 html += `
-                <div class="property-card bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden shadow-xl border border-slate-100 dark:border-slate-800 relative group">
-                    <div class="h-96 overflow-hidden relative">
-                        <img src="${it.images[0]}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000">
-                        <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition duration-500 flex items-center justify-center">
-                             <button class="bg-white text-black px-8 py-3 rounded-full font-bold text-xs uppercase tracking-widest shadow-xl">Détails</button>
-                        </div>
+                <div class="reveal">
+                    <div class="parallax-container">
+                        <img src="${it.images[0]}" class="parallax-img">
                     </div>
-                    <div class="p-10">
-                        <span class="text-[9px] font-black text-amber-600 uppercase tracking-[0.3em] mb-3 block">${it.cat}</span>
-                        <h3 class="text-3xl font-serif italic mb-2">${it.title}</h3>
-                        <p class="text-lg font-medium opacity-70 mb-6">${it.price}</p>
-                        ${localStorage.getItem('arcadia_staff') ? `
-                            <button onclick="del('listings/${id}')" class="absolute top-6 right-6 w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition"><i class="fas fa-trash"></i></button>
-                        ` : ''}
-                    </div>
-                </div>`;
-            });
-            get('allContent').innerHTML = html || "<p class='col-span-3 text-center opacity-20 py-20 italic'>Aucune propriété en catalogue actuellement.</p>";
-        });
-
-        onValue(ref(db, 'blog'), (snap) => {
-            let html = ""; const data = snap.val();
-            if(data) Object.entries(data).reverse().forEach(([id, it]) => {
-                html += `
-                <div class="group">
-                    <div class="h-[500px] rounded-[3.5rem] overflow-hidden mb-10 shadow-2xl">
-                        <img src="${it.img}" class="w-full h-full object-cover group-hover:scale-105 transition duration-[2s]">
-                    </div>
-                    <span class="text-amber-500 text-[10px] font-bold uppercase tracking-widest">${it.date}</span>
-                    <h3 class="text-4xl font-serif italic mt-4 mb-6 leading-tight">${it.title}</h3>
-                    <p class="text-slate-500 dark:text-slate-400 leading-relaxed mb-8 line-clamp-3">${it.body}</p>
-                    <div class="flex items-center justify-between">
-                         <button class="text-[11px] font-bold uppercase tracking-widest border-b-2 border-amber-500 pb-1 hover:text-amber-500 transition">Lire la suite</button>
-                         ${localStorage.getItem('arcadia_staff') ? `<button onclick="del('blog/${id}')" class="text-red-500 text-xs">Supprimer</button>` : ''}
-                    </div>
-                </div>`;
-            });
-            get('blogContent').innerHTML = html || "<p class='col-span-2 text-center opacity-30'>L'Édito est en cours de préparation.</p>";
-        });
-
-        onValue(ref(db, 'messages'), (snap) => {
-            let html = "", count = 0; const msgs = snap.val();
-            if(msgs) Object.entries(msgs).reverse().forEach(([id, m]) => {
-                count++;
-                html += `
-                <div class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] relative shadow-lg border border-slate-100 dark:border-slate-800">
-                    <button onclick="del('messages/${id}')" class="absolute top-6 right-6 text-slate-300 hover:text-red-500 transition"><i class="fas fa-times-circle text-xl"></i></button>
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="w-12 h-12 rounded-full gold-gradient flex items-center justify-center font-bold text-slate-900">${m.name.charAt(0)}</div>
+                    <div class="py-8 border-b border-black/5 flex justify-between items-end">
                         <div>
-                            <h4 class="font-serif italic text-xl">${m.name}</h4>
-                            <p class="text-[10px] uppercase text-amber-600 font-bold tracking-widest">${m.email} • ${m.date}</p>
+                            <span class="text-[9px] tracking-[3px] uppercase text-slate-400 mb-2 block">${it.cat}</span>
+                            <h3 class="text-3xl font-serif italic">${it.title}</h3>
                         </div>
-                    </div>
-                    <div class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl text-sm italic leading-relaxed text-slate-600 dark:text-slate-300">
-                        "${m.body}"
+                        <div class="text-right">
+                            <p class="font-light tracking-widest text-sm">${it.price}</p>
+                            ${localStorage.getItem('arcadia_staff') ? `<button onclick="del('listings/${id}')" class="text-[8px] text-red-400 mt-2 uppercase">Supprimer</button>` : ''}
+                        </div>
                     </div>
                 </div>`;
             });
-            get('messageList').innerHTML = html || "<div class='text-center opacity-20 py-10'><i class='fas fa-inbox text-5xl mb-4'></i><p>Aucun message en attente</p></div>";
-            get('msgCount').innerText = count;
+            get('allContent').innerHTML = html;
         });
 
-        window.del = (p) => { if(confirm("Confirmer la suppression ?")) remove(ref(db, p)); };
+        // --- AUTH & MISC ---
+        get('btnLoginAction').onclick = () => {
+            const STAFF = { "Axel": "Axel30", "Alden": "Alden30" };
+            if(STAFF[get('userLogin').value] === get('passLogin').value) {
+                localStorage.setItem('arcadia_staff', get('userLogin').value);
+                location.reload();
+            } else alert("Identifiants incorrects.");
+        };
 
-        // --- INIT ---
-        const user = localStorage.getItem('arcadia_staff');
-        if(user) { 
-            get('activeUserDisplay').innerText = user; 
-            document.body.classList.add('is-admin'); 
-            get('btnStaff').style.display = 'none';
-        }
+        window.logout = () => { localStorage.removeItem('arcadia_staff'); location.reload(); };
 
+        // Custom Cursor simple
         document.addEventListener('mousemove', e => {
-            get('custom-cursor').style.left = e.clientX + 'px';
-            get('custom-cursor').style.top = e.clientY + 'px';
+            get('cursor').style.left = e.clientX + 'px';
+            get('cursor').style.top = e.clientY + 'px';
         });
 
-        // Feedback tactile sur les boutons
-        document.querySelectorAll('button').forEach(btn => {
-            btn.addEventListener('mouseenter', () => get('custom-cursor').style.transform = 'translate(-50%, -50%) scale(2)');
-            btn.addEventListener('mouseleave', () => get('custom-cursor').style.transform = 'translate(-50%, -50%) scale(1)');
-        });
+        // Init
+        const user = localStorage.getItem('arcadia_staff');
+        if(user) { get('activeUserDisplay').innerText = user; document.body.classList.add('is-admin'); }
     </script>
 </body>
 </html>
