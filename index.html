@@ -21,264 +21,305 @@
         #adminBar { display: none; background: #0f172a; border-bottom: 2px solid #b45309; }
         .is-admin #adminBar { display: flex; }
         
-        .music-player {
-            position: fixed; bottom: 20px; left: 20px; z-index: 200;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            padding: 10px 15px; border-radius: 50px; border: 1px solid rgba(0,0,0,0.1);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        .chat-bubble { border-radius: 20px; padding: 12px 18px; margin-bottom: 10px; max-width: 85%; font-size: 13px; line-height: 1.5; }
-        .chat-admin { background: #0f172a; color: white; margin-left: auto; border-bottom-right-radius: 2px; }
-        .chat-client { background: #f1f5f9; color: #1e293b; border-bottom-left-radius: 2px; border: 1px solid #e2e8f0; }
-        
-        .verified-badge { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: #3b82f6; color: white; border-radius: 50%; font-size: 8px; margin-left: 4px; vertical-align: middle; }
-        .auction-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #b45309; }
-        .notif-badge { animation: blink 1.5s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .fav-badge { position: absolute; top: -5px; right: -5px; background: #b45309; color: white; font-size: 10px; padding: 2px 6px; border-radius: 50%; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
 
-    <div class="music-player flex items-center gap-4">
-        <button id="playPauseBtn" class="bg-amber-600 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center transition hover:scale-110">
-            <span id="musicIcon">▶</span>
-        </button>
-        <div class="flex flex-col">
-            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">Ambiance Arcadia</span>
-            <select id="trackSelect" class="bg-transparent text-[11px] font-bold text-slate-700 outline-none cursor-pointer border-b border-slate-200">
-                <option value="">Choisir un titre</option>
-                <option value="rk_chopard.mp3">RK - Big Chopard</option>
-                <option value="lafouine_vision.mp3">La Fouine ft. Kaaris - Vision</option>
-                <option value="rnboi_bebe.mp3">RNBOI - Mon Bébé</option>
-            </select>
-        </div>
-        <audio id="bgMusic" loop preload="auto"><source id="musicSource" src="" type="audio/mpeg"></audio>
+    <div class="fixed top-4 right-4 bg-white shadow-xl px-4 py-2 rounded-full z-50 border border-slate-100 flex items-center gap-2">
+        <select id="langSelect" class="bg-transparent outline-none font-bold text-xs cursor-pointer">
+            <option value="fr">FR</option>
+            <option value="en">EN</option>
+            <option value="ar">AR</option>
+        </select>
     </div>
 
-    <div id="adminBar" class="fixed top-0 w-full text-white py-3 px-8 z-[100] justify-between items-center text-[10px] font-bold uppercase tracking-widest shadow-2xl">
-        <div class="flex items-center space-x-6">
-            <span class="text-amber-500">SESSION : <span id="activeUserDisplay"></span> <span class="verified-badge">✓</span></span>
-            <button onclick="showView('adminPanel')">PANEL DE CONTRÔLE</button>
-            <button onclick="showView('publicContent')">VUE CLIENT</button>
+    <div id="chatBox" class="fixed bottom-24 right-6 w-80 bg-white shadow-2xl rounded-2xl hidden flex flex-col z-50 border border-slate-100 overflow-hidden">
+        <div class="bg-slate-900 text-white p-4 font-bold">Concierge IA</div>
+        <div id="chatMessages" class="p-4 h-60 overflow-y-auto text-sm space-y-2 bg-slate-50"></div>
+        <div class="flex border-t">
+            <input id="chatInput" class="flex-1 p-3 outline-none text-xs" placeholder="Demandez un devis...">
+            <button id="sendChat" class="px-4 bg-amber-600 text-white">➤</button>
         </div>
-        <button onclick="logout()" class="bg-red-600 px-4 py-1 rounded-full hover:bg-red-700 transition">Déconnexion</button>
+    </div>
+    <button onclick="toggleChat()" class="fixed bottom-6 right-6 bg-amber-600 text-white w-14 h-14 rounded-full shadow-xl text-xl z-50 flex items-center justify-center">💬</button>
+
+    <div id="adminBar" class="fixed top-0 w-full text-white py-3 px-8 z-[100] justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+        <div class="flex items-center space-x-6">
+            <span class="text-amber-500">STAFF: <span id="activeUserDisplay"></span></span>
+            <button onclick="showView('adminPanel')">PANEL</button>
+            <button onclick="showView('publicContent')">SITE</button>
+        </div>
+        <button id="btnLogout" class="bg-red-600 px-3 py-1 rounded-full hover:bg-red-700 transition">SORTIR</button>
     </div>
 
     <main id="publicContent" class="view-section active-view">
         <section class="hero-bg flex flex-col items-center justify-center text-center px-6 relative">
-            <div class="animate-bounce mb-4 text-amber-400">✨</div>
-            <h1 class="text-white text-5xl md:text-7xl font-serif font-bold tracking-tight mb-4">Arcadia Prestige</h1>
-            <p class="text-amber-400 font-bold uppercase tracking-[0.4em] text-[11px] mb-6">L'Excellence Immobilière & Conciergerie</p>
-            <div class="bg-white/10 backdrop-blur-md px-8 py-4 rounded-full border border-white/20 text-white font-bold text-lg">
-                📞 <a href="tel:0629070034" class="hover:text-amber-400 transition tracking-widest">06 29 07 00 34</a>
+            <h1 class="text-white text-5xl md:text-7xl font-serif font-bold mb-4">Arcadia Prestige</h1>
+            <p class="text-amber-400 font-bold uppercase tracking-[0.4em] text-[11px] mb-8">L'Excellence Immobilière</p>
+            <div class="flex gap-4">
+                <a href="#portfolio" class="bg-white text-slate-900 px-8 py-3 rounded-full font-bold text-sm uppercase">Découvrir</a>
+                <button onclick="scrollToFavs()" class="bg-amber-600 text-white px-8 py-3 rounded-full font-bold text-sm uppercase relative">
+                    Mes Favoris <span id="favCount" class="fav-badge">0</span>
+                </button>
             </div>
-            <button onclick="openLogin()" class="absolute bottom-4 right-6 text-white/20 hover:text-white/60 text-[10px] font-bold transition">ACCÈS STAFF</button>
+            <button onclick="openLogin()" class="absolute bottom-4 left-6 text-white/10 text-[9px] hover:text-white/40">STAFF LOGIN</button>
         </section>
 
-        <section id="auctionSection" class="container mx-auto px-6 -mt-10 relative z-20">
-            <div class="auction-card max-w-4xl mx-auto rounded-[2.5rem] p-8 text-white shadow-2xl border-t-4 border-amber-600">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div>
-                        <span class="bg-red-600 text-[10px] font-black px-3 py-1 rounded-full animate-pulse uppercase tracking-tighter">Vente aux enchères en cours</span>
-                        <h3 id="auctionTitle" class="text-3xl font-serif font-bold mt-2">Villa de luxe - Côte d'Azur</h3>
-                    </div>
-                    <div class="text-center bg-white/5 p-4 rounded-2xl border border-white/10 min-w-[200px]">
-                        <p class="text-[10px] uppercase text-amber-400 font-black mb-1">Clôture dans :</p>
-                        <div id="countdown" class="text-2xl font-mono font-bold tracking-widest">23:59:59</div>
-                    </div>
-                    <button class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-4 px-8 rounded-2xl transition shadow-lg uppercase text-xs">Participer</button>
+        <section id="portfolio" class="py-20 bg-white">
+            <div class="container mx-auto px-6 text-center mb-12">
+                <h3 class="text-3xl font-serif font-bold italic">Portefeuille d'Exception</h3>
+            </div>
+            <div id="allContent" class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10">
                 </div>
-            </div>
         </section>
 
-        <section class="container mx-auto py-24 px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div class="space-y-8">
-                <h2 class="text-4xl font-serif font-bold italic leading-tight">Une vision du luxe <br><span class="text-amber-600">sans compromis.</span></h2>
-                <p class="text-slate-500 text-lg">Acquisitions d'exception et conciergerie privée internationale.</p>
-            </div>
-            <div class="relative">
-                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" class="rounded-[3rem] shadow-2xl z-10 relative" alt="Luxe">
-            </div>
-        </section>
-
-        <section class="container mx-auto px-6 pb-20">
-            <div class="bg-white rounded-[3rem] shadow-2xl p-8 md:p-12 border border-slate-100 max-w-5xl mx-auto">
-                <h2 class="text-3xl font-serif font-bold italic text-center mb-10">Formulez votre demande</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <input type="text" id="resName" placeholder="Votre Nom" class="bg-slate-50 p-4 rounded-2xl outline-none">
-                    <input type="email" id="resEmail" placeholder="Votre e-mail" class="bg-slate-50 p-4 rounded-2xl outline-none col-span-1 md:col-span-2">
-                    <select id="resType" class="bg-slate-50 p-4 rounded-2xl outline-none">
-                        <option value="Visite">Visite Privée</option>
-                        <option value="Création">Projet d'Architecture</option>
-                        <option value="Vente">Mise en vente</option>
-                    </select>
-                    <input type="date" id="resDate" class="bg-slate-50 p-4 rounded-2xl outline-none">
-                    <input type="time" id="resTime" class="bg-slate-50 p-4 rounded-2xl outline-none">
-                </div>
-                <textarea id="resMsg" rows="3" placeholder="Comment pouvons-nous vous aider ?" class="w-full bg-slate-50 p-4 rounded-2xl mt-6 outline-none"></textarea>
-                <button id="btnReserve" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase mt-8 hover:bg-amber-600 transition-all shadow-lg">Transmettre au Concierge</button>
-            </div>
-        </section>
-
-        <section class="container mx-auto px-6 mb-20">
-            <div class="max-w-2xl mx-auto bg-slate-900 text-white p-10 rounded-[2.5rem] shadow-2xl">
-                <h3 class="text-center font-serif font-bold text-xl mb-6 italic">Suivi de dossier</h3>
-                <div class="flex gap-2">
-                    <input type="email" id="checkEmail" placeholder="votre@email.com" class="flex-1 p-4 rounded-xl outline-none text-slate-900">
-                    <button id="btnCheck" onclick="checkMyMessages()" class="bg-amber-600 text-white px-8 rounded-xl font-bold text-xs uppercase transition hover:bg-amber-700 relative">
-                        Vérifier <span id="clientBadge" class="hidden absolute -top-3 -right-3 bg-red-600 text-white text-[9px] px-2 py-1 rounded-full notif-badge font-black">NOUVEAU</span>
-                    </button>
-                </div>
-                <div id="clientChatHistory" class="mt-8 space-y-4 hidden"></div>
-            </div>
-        </section>
-
-        <section class="py-16 bg-white border-t border-slate-100">
-            <div class="container mx-auto px-6 text-center mb-16"><h3 class="text-4xl font-serif font-bold italic">Portefeuille Arcadia</h3></div>
+        <section id="favSection" class="py-20 bg-slate-900 text-white hidden">
             <div class="container mx-auto px-6">
-                <div id="allContent" class="grid grid-cols-1 md:grid-cols-3 gap-10"></div>
+                <h3 class="text-3xl font-serif font-bold mb-10 text-center">Mes Coups de Cœur ❤️</h3>
+                <div id="favContent" class="grid grid-cols-1 md:grid-cols-3 gap-10"></div>
+            </div>
+        </section>
+
+        <section class="py-20 bg-slate-50">
+            <div class="max-w-4xl mx-auto px-6 bg-white p-12 rounded-[3rem] shadow-xl text-center border border-slate-100">
+                <h2 class="text-3xl font-serif font-bold mb-6">Une demande particulière ?</h2>
+                <p class="text-slate-500 mb-8">Notre conciergerie privée vous répond sous 1 heure.</p>
+                <button class="bg-slate-900 text-white px-12 py-4 rounded-2xl font-bold uppercase tracking-widest hover:bg-amber-600 transition">Contacter un expert</button>
             </div>
         </section>
     </main>
 
     <main id="adminPanel" class="view-section pt-24 pb-20 container mx-auto px-6">
-        <div class="flex gap-4 mb-8 overflow-x-auto pb-2 items-center">
-            <button onclick="switchTab('V')" id="tabV" class="tab-btn px-6 py-3 rounded-xl font-black bg-slate-900 text-white text-[10px] uppercase">🏠 Villas</button>
-            <button onclick="switchTab('C')" id="tabC" class="tab-btn px-6 py-3 rounded-xl font-black bg-slate-100 text-slate-400 text-[10px] uppercase">🛠 Créations</button>
-            <button onclick="switchTab('A')" id="tabA" class="tab-btn px-6 py-3 rounded-xl font-black bg-slate-100 text-slate-400 text-[10px] uppercase">📰 Articles</button>
-            <div class="h-8 w-px bg-slate-200 mx-2"></div>
-            <button onclick="switchTab('M')" id="tabM" class="tab-btn px-6 py-3 rounded-xl font-black bg-amber-100 text-amber-700 text-[10px] relative uppercase tracking-widest">
-                📩 Messagerie <span id="msgCount" class="hidden absolute -top-2 -right-2 bg-red-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] animate-bounce">0</span>
-            </button>
-        </div>
-
-        <div id="adminContentContainer" class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            <div id="formSection" class="lg:col-span-7 bg-white p-10 rounded-[2.5rem] shadow-2xl border">
-                <div class="space-y-6">
-                    <div onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-slate-200 p-10 rounded-[2rem] text-center cursor-pointer hover:border-amber-400 transition">
-                        <input type="file" id="fileInput" class="hidden" accept="image/*">
-                        <p id="fileStatus" class="text-[10px] font-black text-slate-400 uppercase">Télécharger un visuel</p>
-                    </div>
-                    <input type="text" id="inTitle" placeholder="Titre" class="w-full bg-slate-50 p-4 rounded-xl outline-none">
-                    <input type="text" id="inPrice" placeholder="Prix" class="w-full bg-slate-50 p-4 rounded-xl outline-none">
-                    <textarea id="inDesc" rows="4" placeholder="Description..." class="w-full bg-slate-50 p-4 rounded-xl outline-none"></textarea>
-                    <button id="btnPublish" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase hover:bg-amber-600 shadow-xl transition">Mettre en ligne</button>
-                </div>
+        <div class="max-w-lg mx-auto bg-white p-8 rounded-[2rem] shadow-2xl">
+            <h2 class="text-2xl font-serif font-bold mb-6 text-center">Publier un nouveau bien</h2>
+            <div class="space-y-4">
+                <input type="file" id="fileInput" class="w-full text-xs border p-2 rounded">
+                <input type="text" id="inTitle" placeholder="Nom de la propriété" class="w-full p-4 bg-slate-100 rounded-xl outline-none focus:ring-2 ring-amber-500">
+                <input type="text" id="inPrice" placeholder="Prix (ex: 4 500 000 €)" class="w-full p-4 bg-slate-100 rounded-xl outline-none focus:ring-2 ring-amber-500">
+                <button id="btnPublish" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-amber-600 transition">PUBLIER</button>
             </div>
-            <div id="listSection" class="lg:col-span-5"><div id="adminList" class="space-y-4"></div></div>
-            <div id="messagesSection" class="hidden lg:col-span-12"><div id="messagesList" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div></div>
         </div>
     </main>
 
-    <div id="loginOverlay" class="fixed inset-0 z-[500] hidden flex items-center justify-center bg-slate-900/95 backdrop-blur-md p-6">
-        <div class="bg-slate-800 p-10 rounded-[3rem] text-white text-center w-full max-w-sm border border-slate-700">
-            <h2 class="text-3xl font-serif font-bold mb-6 italic">Identification</h2>
-            <input type="text" id="userLogin" placeholder="Identifiant" class="w-full bg-slate-700 p-4 rounded-2xl mb-4 outline-none">
-            <input type="password" id="passLogin" placeholder="Mot de passe" class="w-full bg-slate-700 p-4 rounded-2xl mb-6 outline-none">
-            <button id="btnLoginAction" class="w-full bg-amber-600 py-4 rounded-2xl font-bold uppercase hover:bg-amber-700 transition">Se connecter</button>
-            <button onclick="closeLogin()" class="mt-4 text-slate-500 text-xs uppercase font-black">Retour</button>
+    <div id="loginOverlay" class="fixed inset-0 z-[500] hidden flex items-center justify-center bg-slate-900/90 backdrop-blur-sm">
+        <div class="bg-white p-10 rounded-[2rem] w-80 text-center shadow-2xl">
+            <h3 class="text-xl font-serif font-bold mb-6">Accès Staff</h3>
+            <input type="text" id="userLogin" placeholder="Identifiant" class="w-full p-3 bg-slate-100 rounded mb-3 outline-none">
+            <input type="password" id="passLogin" placeholder="Mot de passe" class="w-full p-3 bg-slate-100 rounded mb-6 outline-none">
+            <button id="btnLoginAction" class="w-full bg-slate-900 text-white py-3 rounded font-bold">ENTRER</button>
+            <button onclick="closeLogin()" class="mt-4 text-[10px] text-slate-400 uppercase">Fermer</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+        // CONFIGURATION FIREBASE
         const firebaseConfig = {
-            apiKey: "AIzaSyBg9JIb2XAFacftazyDcAXOnCpfvaQ2PYI",
+            apiKey: "AIzaSy...", // Remplace par ta clé complète
             authDomain: "arcadiaimmobilier-ee335.firebaseapp.com",
             databaseURL: "https://arcadiaimmobilier-ee335-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "arcadiaimmobilier-ee335",
-            storageBucket: "arcadiaimmobilier-ee335.firebasestorage.app",
-            messagingSenderId: "718967628351",
-            appId: "1:718967628351:web:2c60b5bd68916773bdce8a"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-
-        const ACCOUNTS = { "Axel": "Axel30", "Alden": "Alden30" };
-        let currentUser = sessionStorage.getItem('arcadia_user');
-        let currentMode = 'V';
-        let currentImg = "";
         let globalData = {};
 
-        // Fonctions UI Globales
-        window.openLogin = () => document.getElementById('loginOverlay').classList.remove('hidden');
-        window.closeLogin = () => document.getElementById('loginOverlay').classList.add('hidden');
-        window.logout = () => { sessionStorage.removeItem('arcadia_user'); location.reload(); };
+        /* =========================
+           UTILITAIRE DOM
+        ========================= */
+        const get = id => document.getElementById(id);
+
+        /* =========================
+           NAVIGATION
+        ========================= */
         window.showView = (id) => {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
-            document.getElementById(id).classList.add('active-view');
+            get(id).classList.add('active-view');
         };
 
-        // Login
-        document.getElementById('btnLoginAction').onclick = () => {
-            const u = document.getElementById('userLogin').value;
-            const p = document.getElementById('passLogin').value;
-            if (ACCOUNTS[u] === p) { sessionStorage.setItem('arcadia_user', u); location.reload(); }
-            else { alert("Accès refusé."); }
+        window.openLogin = () => get('loginOverlay').classList.remove('hidden');
+        window.closeLogin = () => get('loginOverlay').classList.add('hidden');
+
+        window.scrollToFavs = () => {
+            const el = get('favSection');
+            if(el) el.scrollIntoView({ behavior: 'smooth' });
         };
 
-        // Gestion Enchères (Compte à rebours fictif)
-        function startCountdown() {
-            let time = 86400; // 24 heures en secondes
-            setInterval(() => {
-                time--;
-                let h = Math.floor(time / 3600);
-                let m = Math.floor((time % 3600) / 60);
-                let s = time % 60;
-                document.getElementById('countdown').innerText = 
-                    `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-            }, 1000);
-        }
-        startCountdown();
+        /* =========================
+           AUTHENTIFICATION
+        ========================= */
+        const ACCOUNTS = { "Axel": "Axel30", "Alden": "Alden30" };
 
-        // Messagerie Client & Admin (Logique conservée)
-        window.checkMyMessages = () => {
-            const emailInput = document.getElementById('checkEmail').value.toLowerCase().trim();
-            const historyDiv = document.getElementById('clientChatHistory');
-            if(!emailInput) return;
-            onValue(ref(db, 'messages'), (snap) => {
-                const msgs = snap.val() || {};
-                let html = "";
-                Object.values(msgs).forEach(m => {
-                    if(m.email.toLowerCase() === emailInput) {
-                        html += `<div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                            <p class="text-[10px] text-amber-500 uppercase font-black mb-2">${m.date}</p>
-                            <div class="chat-bubble chat-client text-slate-800">${m.msg}</div>
-                            ${m.adminReply ? `<div class="chat-bubble chat-admin mt-4">
-                                <p class="font-bold text-[9px] text-amber-400 mb-1 uppercase">${m.respondedBy} - Arcadia :</p>${m.adminReply}</div>` : ''}
-                        </div>`;
-                    }
-                });
-                historyDiv.innerHTML = html || "<p class='text-center text-slate-500'>Aucun dossier trouvé.</p>";
-                historyDiv.classList.remove('hidden');
-            });
+        get('btnLoginAction').onclick = () => {
+            const u = get('userLogin').value;
+            const p = get('passLogin').value;
+
+            if(ACCOUNTS[u] === p){
+                sessionStorage.setItem('arcadia_user', u);
+                location.reload();
+            } else alert("Identifiants incorrects");
         };
 
-        // Publication & Catalogue
-        onValue(ref(db, 'content'), (snap) => {
-            globalData = snap.val() || {};
-            const container = document.getElementById('allContent');
-            let html = "";
-            ['villas', 'creations', 'articles'].forEach(cat => {
-                if(globalData[cat]) Object.values(globalData[cat]).forEach(item => {
-                    html += `<div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden group">
-                        <img src="${item.img}" class="h-64 w-full object-cover group-hover:scale-105 transition duration-500">
-                        <div class="p-8"><span class="text-[9px] font-black text-amber-600 uppercase tracking-widest">${item.type}</span>
-                        <h4 class="text-2xl font-serif font-bold mt-1">${item.title}</h4><p class="text-amber-700 font-bold mt-2">${item.price}</p></div></div>`;
-                });
-            });
-            container.innerHTML = html;
+        get('btnLogout')?.addEventListener('click', () => {
+            sessionStorage.removeItem('arcadia_user');
+            location.reload();
         });
 
-        // Audio
-        const audio = document.getElementById('bgMusic');
-        document.getElementById('playPauseBtn').onclick = () => { audio.paused ? audio.play() : audio.pause(); };
-        document.getElementById('trackSelect').onchange = (e) => { document.getElementById('musicSource').src = e.target.value; audio.load(); audio.play(); };
+        if(sessionStorage.getItem('arcadia_user')){
+            document.body.classList.add('is-admin');
+            get('activeUserDisplay').innerText = sessionStorage.getItem('arcadia_user');
+        }
 
-        if (currentUser) { document.body.classList.add('is-admin'); document.getElementById('activeUserDisplay').innerText = currentUser; }
+        /* =========================
+           FIREBASE & RENDER
+        ========================= */
+        onValue(ref(db, 'content'), (snap) => {
+            globalData = snap.val() || {};
+            renderAll();
+            renderFavs();
+        });
+
+        function renderAll(){
+            let html = "";
+            ['villas','creations','articles'].forEach(cat => {
+                if(globalData[cat]){
+                    Object.entries(globalData[cat]).forEach(([id, item]) => {
+                        html += createCard(id, item, cat);
+                    });
+                }
+            });
+            get('allContent').innerHTML = html || "<p class='text-center col-span-3 text-slate-400'>Aucun contenu disponible</p>";
+        }
+
+        function createCard(id, item, cat){
+            return `
+            <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden group relative border border-slate-100 transition-all hover:shadow-2xl">
+                <button onclick="toggleFav('${id}')" class="absolute top-4 right-4 text-xl z-10 p-2 rounded-full bg-white/80 shadow hover:scale-110 transition">❤️</button>
+                <img src="${item.img}" class="h-64 w-full object-cover group-hover:scale-105 transition duration-500">
+                <div class="p-8">
+                    <span class="text-[9px] font-black text-amber-600 uppercase tracking-widest">${cat}</span>
+                    <h4 class="text-2xl font-serif font-bold mt-1">${item.title}</h4>
+                    <p class="text-amber-700 font-bold mt-2">${item.price || 'Prix sur demande'}</p>
+                    <button onclick="generatePDF('${item.title}','${item.price}')" 
+                    class="mt-4 text-[10px] bg-slate-900 text-white px-4 py-2 rounded-xl uppercase font-bold tracking-tighter hover:bg-amber-600 transition">
+                    Télécharger PDF
+                    </button>
+                </div>
+            </div>`;
+        }
+
+        /* =========================
+           LOGIQUE FAVORIS
+        ========================= */
+        window.toggleFav = (id) => {
+            let favs = JSON.parse(localStorage.getItem("favs") || "[]");
+            if(favs.includes(id)) favs = favs.filter(f => f !== id);
+            else favs.push(id);
+            localStorage.setItem("favs", JSON.stringify(favs));
+            renderFavs();
+        };
+
+        function renderFavs(){
+            let favs = JSON.parse(localStorage.getItem("favs") || "[]");
+            let html = "";
+            let count = 0;
+
+            ['villas','creations','articles'].forEach(cat => {
+                if(globalData[cat]){
+                    Object.entries(globalData[cat]).forEach(([id, item]) => {
+                        if(favs.includes(id)){
+                            html += createCard(id, item, cat);
+                            count++;
+                        }
+                    });
+                }
+            });
+
+            get('favContent').innerHTML = html;
+            get('favCount').innerText = count;
+            get('favSection').classList.toggle('hidden', count === 0);
+        }
+
+        /* =========================
+           FONCTIONS CLIENTS (PDF, CHAT, LANGUE)
+        ========================= */
+        window.generatePDF = (title, price) => {
+            const win = window.open('', '', 'width=600,height=600');
+            win.document.write(`
+            <html><body style="font-family:serif;text-align:center;padding:50px; border:10px solid #b45309">
+                <h1 style="font-size:40px; color:#0f172a">ARCADIA PRESTIGE</h1>
+                <p style="text-transform:uppercase; letter-spacing:5px">Document Confidentiel</p>
+                <hr style="margin:40px 0">
+                <h2 style="font-size:30px">${title}</h2>
+                <h3 style="color:#b45309; font-size:24px">${price}</h3>
+                <p style="margin-top:50px; font-style:italic">Contactez notre conciergerie pour plus de détails.</p>
+            </body></html>`);
+            win.print();
+        };
+
+        window.toggleChat = () => get('chatBox').classList.toggle("hidden");
+
+        get('sendChat').onclick = () => {
+            const input = get('chatInput');
+            const msg = input.value.trim().toLowerCase();
+            if(!msg) return;
+
+            const box = get('chatMessages');
+            box.innerHTML += `<div class="text-right text-xs mb-2"><span class="bg-slate-200 p-2 rounded-lg inline-block">${msg}</span></div>`;
+
+            let reply = "Notre concierge traite votre demande immédiatement.";
+            if(msg.includes("prix")) reply = "Nos tarifs sont exclusifs. Un expert vous contactera pour un devis personnalisé.";
+            if(msg.includes("visite")) reply = "Nous pouvons organiser une visite privée sous 24h.";
+
+            setTimeout(() => {
+                box.innerHTML += `<div class="text-left text-xs text-amber-600 font-bold">IA: ${reply}</div>`;
+                box.scrollTop = box.scrollHeight;
+            }, 700);
+
+            input.value = "";
+        };
+
+        get('langSelect').onchange = (e) => {
+            const l = e.target.value;
+            document.body.style.direction = (l === "ar") ? "rtl" : "ltr";
+            document.body.style.textAlign = (l === "ar") ? "right" : "left";
+        };
+
+        /* =========================
+           UPLOAD ADMIN
+        ========================= */
+        let currentImg = "";
+
+        get('fileInput').onchange = e => {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = () => currentImg = reader.result;
+            reader.readAsDataURL(file);
+        };
+
+        get('btnPublish').onclick = () => {
+            const title = get('inTitle').value;
+            const price = get('inPrice').value;
+
+            if(!title || !currentImg){
+                alert("Veuillez remplir le titre et charger une image.");
+                return;
+            }
+
+            push(ref(db, 'content/villas'), {
+                title,
+                price,
+                img: currentImg
+            }).then(() => {
+                alert("Bien publié avec succès !");
+                location.reload();
+            });
+        };
     </script>
 </body>
 </html>
