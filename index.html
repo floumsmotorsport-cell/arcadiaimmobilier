@@ -3,225 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcadia Immobilier | Luxury Real Estate</title>
+    <title>Arcadia | Luxury Real Estate & Editorial</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@100;200;300;400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@200;300;400;600&display=swap');
         
-        :root { --gold: #c5a059; --dark: #121212; --light: #ffffff; }
-
-        body { font-family: 'Montserrat', sans-serif; background: var(--light); color: var(--dark); overflow-x: hidden; }
+        :root { --gold: #b38e44; --dark: #0f172a; --light: #fdfdfd; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--light); color: var(--dark); scroll-behavior: smooth; }
         .font-serif { font-family: 'Cormorant Garamond', serif; }
 
-        /* Navbar & Navigation */
-        #mainNavbar { 
-            position: fixed; top: 0; width: 100%; height: 100px; 
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 0 5%; z-index: 1500; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            background: transparent;
-        }
-        #mainNavbar.scrolled { height: 75px; background: rgba(255, 255, 255, 0.98); border-bottom: 1px solid #f0f0f0; }
+        /* Navbar */
+        #mainNavbar { position: fixed; top: 0; width: 100%; height: 90px; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; z-index: 1500; transition: 0.4s; }
+        #mainNavbar.scrolled { background: white; height: 70px; border-bottom: 1px solid #eee; }
+        .nav-link { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: white; transition: 0.3s; }
         #mainNavbar.scrolled .nav-link { color: var(--dark); }
-        .nav-link { color: white; font-size: 10px; letter-spacing: 3px; font-weight: 300; text-transform: uppercase; transition: opacity 0.3s; }
 
-        /* Hero avec Parallaxe Fixe */
-        .hero {
-            height: 100vh;
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.2)), 
-                        url('https://images.unsplash.com/photo-1600607687940-477a28b6d080?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
-            background-attachment: fixed; /* Parallaxe natif Hero */
-            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white;
-        }
+        /* Hero */
+        .hero { height: 100vh; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070') center/cover no-repeat fixed; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
 
-        /* Conteneur Parallaxe pour les cartes */
-        .parallax-container {
-            position: relative; overflow: hidden; height: 100%; width: 100%;
-            aspect-ratio: 16/10;
-        }
-        .parallax-img {
-            position: absolute; top: -15%; left: 0; width: 100%; height: 130%;
-            object-fit: cover; will-change: transform; transition: transform 0.1s linear;
-        }
+        /* Parallaxe */
+        .px-card { position: relative; overflow: hidden; aspect-ratio: 16/10; }
+        .px-img { position: absolute; top: -10%; left: 0; width: 100%; height: 120%; object-fit: cover; will-change: transform; transition: transform 0.1s linear; }
 
-        /* Reveal Animation au scroll */
-        .reveal { opacity: 0; transform: translateY(40px); transition: all 1s cubic-bezier(0.2, 1, 0.3, 1); }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-
-        /* Admin Bar */
-        #adminBar { display: none; background: #000; color: #fff; position: fixed; top: 0; width: 100%; z-index: 2000; font-size: 9px; height: 30px; align-items: center; padding: 0 5%; letter-spacing: 2px; text-transform: uppercase; }
-        .is-admin #adminBar { display: flex; }
-        .is-admin #mainNavbar { top: 30px; }
-
-        /* Custom Cursor */
-        #cursor { width: 12px; height: 12px; border: 1px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transition: transform 0.15s ease-out; }
+        /* Admin UI */
+        .admin-tab { display: none; }
+        .admin-tab.active { display: block; }
+        .input-pro { width: 100%; border: none; border-bottom: 1px solid #ddd; padding: 12px 0; outline: none; background: transparent; margin-bottom: 20px; font-size: 14px; }
+        .input-pro:focus { border-bottom-color: var(--gold); }
+        
+        .btn-gold { background: var(--gold); color: white; padding: 12px 25px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; transition: 0.3s; }
+        .btn-gold:hover { background: var(--dark); }
 
         .view-section { display: none; }
         .active-view { display: block; }
-
-        /* Boutons Kretz */
-        .btn-minimal {
-            border: 1px solid var(--dark); padding: 18px 45px; font-size: 10px; letter-spacing: 4px;
-            text-transform: uppercase; transition: 0.4s; position: relative;
-        }
-        .btn-minimal:hover { background: var(--dark); color: white; padding-right: 55px; }
     </style>
 </head>
 <body>
 
-    <div id="cursor"></div>
-    <div id="adminBar">
-        <span>Arcadia Staff : <span id="activeUserDisplay" class="font-bold"></span></span>
-        <div class="ml-10 space-x-6">
-            <button onclick="showView('adminPanel')">Biens</button>
-            <button onclick="showView('adminBlog')">Édito</button>
-            <button onclick="showView('adminInbox')">Conciergerie</button>
-        </div>
+    <div id="adminBar" class="hidden fixed top-0 w-full h-10 bg-black text-white z-[2000] flex items-center px-8 text-[9px] tracking-widest uppercase">
+        <span class="text-gold font-bold mr-10">Arcadia Staff: <span id="activeUser"></span></span>
+        <button onclick="showView('adminGlobal')" class="mr-6 hover:text-gold">Console de gestion</button>
         <button onclick="logout()" class="ml-auto opacity-50">Déconnexion</button>
     </div>
 
     <nav id="mainNavbar">
-        <div class="flex gap-12 w-1/3">
+        <div class="flex gap-10 w-1/3">
             <button onclick="showView('publicContent')" class="nav-link">Collection</button>
             <button onclick="showView('blogView')" class="nav-link">L'Édito</button>
         </div>
-        <img src="https://image2url.com/r2/default/images/1774637280338-edb5fb97-c196-45e7-bdfa-1af5a2805830.png" 
-             alt="Arcadia" class="h-8 cursor-pointer invert" id="navLogo" onclick="showView('publicContent')">
-        <div class="flex gap-12 w-1/3 justify-end">
+        <img src="https://image2url.com/r2/default/images/1774637280338-edb5fb97-c196-45e7-bdfa-1af5a2805830.png" class="h-10 invert cursor-pointer" id="navLogo" onclick="showView('publicContent')">
+        <div class="flex gap-10 w-1/3 justify-end">
             <button onclick="showView('contactView')" class="nav-link">Contact</button>
-            <button onclick="openLogin()" class="nav-link opacity-30">Staff</button>
+            <button onclick="openLogin()" class="nav-link opacity-30">Privé</button>
         </div>
     </nav>
 
     <main id="publicContent" class="view-section active-view">
         <section class="hero">
-            <h1 class="font-serif text-8xl md:text-[10rem] italic font-light mb-2">Arcadia</h1>
-            <p class="uppercase tracking-[0.6em] text-[11px] font-light opacity-80">L'Excellence Immobilière</p>
+            <h1 class="font-serif text-8xl md:text-[10rem] italic font-light">Arcadia</h1>
+            <p class="uppercase tracking-[0.8em] text-[11px] opacity-80">Immobilier d'Art & Édito Luxe</p>
         </section>
 
-        <section class="py-40 px-[5%]">
-            <div id="allContent" class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-32">
+        <section class="py-32 px-[10%] bg-white border-b">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-20">
+                <div class="text-center">
+                    <h4 class="font-serif text-2xl italic mb-4">Vente & Acquisition</h4>
+                    <p class="text-xs text-gray-400 leading-relaxed uppercase tracking-widest">Une sélection discrète de propriétés d'exception à Los Santos.</p>
+                </div>
+                <div class="text-center">
+                    <h4 class="font-serif text-2xl italic mb-4">Chasse Immobilière</h4>
+                    <p class="text-xs text-gray-400 leading-relaxed uppercase tracking-widest">Nous trouvons pour vous le bien off-market qui correspond à vos rêves.</p>
+                </div>
+                <div class="text-center">
+                    <h4 class="font-serif text-2xl italic mb-4">L'Édito</h4>
+                    <p class="text-xs text-gray-400 leading-relaxed uppercase tracking-widest">Découvrez les tendances architecture et design du moment.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-32 px-[5%] max-w-[1400px] mx-auto">
+            <div id="allListings" class="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-32">
                 </div>
         </section>
     </main>
 
-    <main id="contactView" class="view-section pt-40 px-[5%]">
-        <div class="max-w-4xl mx-auto py-20">
-            <h2 class="font-serif text-7xl italic mb-20 text-center">Une demande particulière ?</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-20">
-                <input type="text" id="msgName" placeholder="NOM COMPLET" class="border-b border-black/10 p-4 outline-none uppercase text-[10px] tracking-widest">
-                <input type="text" id="msgEmail" placeholder="RADIO / COORDONNÉES" class="border-b border-black/10 p-4 outline-none uppercase text-[10px] tracking-widest">
-                <textarea id="msgBody" placeholder="VOTRE MESSAGE" class="md:col-span-2 border-b border-black/10 p-4 outline-none uppercase text-[10px] tracking-widest h-32"></textarea>
-                <button onclick="sendMessage()" class="btn-minimal md:col-span-2">Envoyer le message</button>
+    <main id="blogView" class="view-section pt-40 px-[5%]">
+        <div class="max-w-4xl mx-auto text-center mb-32">
+            <h2 class="font-serif text-7xl italic mb-6">L'Édito Arcadia</h2>
+            <p class="uppercase tracking-[0.4em] text-[10px] text-gray-400">Journal de l'architecture et du design</p>
+        </div>
+        <div id="allArticles" class="grid grid-cols-1 gap-40 max-w-5xl mx-auto pb-40">
+            </div>
+    </main>
+
+    <main id="adminGlobal" class="view-section pt-40 px-[5%] bg-gray-50">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex gap-8 mb-16 border-b pb-4">
+                <button onclick="switchTab('tabBiens')" class="text-xs uppercase tracking-widest font-bold">Gestion des Biens</button>
+                <button onclick="switchTab('tabArticles')" class="text-xs uppercase tracking-widest font-bold opacity-40 hover:opacity-100">Gestion de l'Édito</button>
+            </div>
+
+            <div id="tabBiens" class="admin-tab active grid grid-cols-1 lg:grid-cols-3 gap-16">
+                <div class="bg-white p-10 shadow-sm">
+                    <h3 class="font-serif text-2xl mb-8 italic">Publier un Bien</h3>
+                    <input type="text" id="bTitle" placeholder="TITRE" class="input-pro">
+                    <input type="text" id="bPrice" placeholder="PRIX ($)" class="input-pro">
+                    <input type="file" id="bFiles" class="text-[10px] mb-8" multiple>
+                    <button id="btnPublishBien" class="btn-gold w-full">Mettre en ligne</button>
+                </div>
+                <div class="lg:col-span-2 space-y-4" id="listBiensAdmin"></div>
+            </div>
+
+            <div id="tabArticles" class="admin-tab grid grid-cols-1 lg:grid-cols-3 gap-16">
+                <div class="bg-white p-10 shadow-sm">
+                    <h3 class="font-serif text-2xl mb-8 italic">Rédiger un Article</h3>
+                    <input type="text" id="aTitle" placeholder="TITRE DE L'ARTICLE" class="input-pro">
+                    <textarea id="aContent" placeholder="TEXTE DE L'ARTICLE" class="input-pro h-40"></textarea>
+                    <input type="file" id="aFile" class="text-[10px] mb-8">
+                    <button id="btnPublishArt" class="btn-gold w-full">Publier l'Edito</button>
+                </div>
+                <div class="lg:col-span-2 space-y-4" id="listArtAdmin"></div>
             </div>
         </div>
     </main>
 
     <div id="loginOverlay" class="fixed inset-0 z-[3000] hidden bg-white flex items-center justify-center">
-        <div class="w-full max-w-xs text-center">
-            <h3 class="font-serif text-4xl italic mb-12">Privé</h3>
-            <input type="text" id="userLogin" placeholder="ID" class="w-full border-b mb-6 p-2 text-center">
-            <input type="password" id="passLogin" placeholder="CODE" class="w-full border-b mb-12 p-2 text-center">
-            <button id="btnLoginAction" class="btn-minimal w-full">Entrer</button>
-            <button onclick="closeLogin()" class="mt-8 text-[9px] uppercase tracking-widest opacity-40">Retour</button>
+        <div class="text-center w-full max-w-xs">
+            <h3 class="font-serif text-4xl italic mb-12">Identification</h3>
+            <input type="text" id="user" placeholder="ID" class="input-pro text-center">
+            <input type="password" id="pass" placeholder="CODE" class="input-pro text-center">
+            <button id="loginBtn" class="btn-gold w-full mt-8">Accéder</button>
+            <button onclick="closeLogin()" class="block w-full mt-6 text-[9px] uppercase opacity-30">Fermer</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, push, remove, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = { databaseURL: "https://arcadiaimmobilier-ee335-default-rtdb.europe-west1.firebasedatabase.app" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const get = id => document.getElementById(id);
 
-        // --- GESTION PARALLAXE & REVEAL ---
-        window.addEventListener('scroll', () => {
-            const nav = get('mainNavbar');
-            const logo = get('navLogo');
-            const scrollPos = window.scrollY;
-
-            // Navbar
-            if(scrollPos > 80) {
-                nav.classList.add('scrolled');
-                logo.classList.remove('invert');
-            } else if(get('publicContent').classList.contains('active-view')) {
-                nav.classList.remove('scrolled');
-                logo.classList.add('invert');
-            }
-
-            // Animation Parallaxe des images
-            document.querySelectorAll('.parallax-img').forEach(img => {
-                const parent = img.parentElement;
-                const rect = parent.getBoundingClientRect();
-                if(rect.top < window.innerHeight && rect.bottom > 0) {
-                    const shift = (window.innerHeight - rect.top) * 0.12; // Vitesse parallaxe
-                    img.style.transform = `translateY(${shift}px)`;
-                }
-            });
-
-            // Animation Reveal
-            document.querySelectorAll('.reveal').forEach(el => {
-                if(el.getBoundingClientRect().top < window.innerHeight * 0.85) el.classList.add('visible');
-            });
-        });
-
         // --- NAVIGATION ---
         window.showView = (id) => {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
             get(id).classList.add('active-view');
+            const nav = get('mainNavbar');
+            if(id === 'publicContent') {
+                nav.classList.remove('scrolled');
+                get('navLogo').classList.add('invert');
+            } else {
+                nav.classList.add('scrolled');
+                get('navLogo').classList.remove('invert');
+            }
             window.scrollTo(0,0);
-            window.dispatchEvent(new Event('scroll')); // Reset navbar style
         };
 
+        window.switchTab = (id) => {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            get(id).classList.add('active');
+        };
+
+        window.onscroll = () => {
+            const nav = get('mainNavbar');
+            if(window.scrollY > 80 || !get('publicContent').classList.contains('active-view')) {
+                nav.classList.add('scrolled');
+                get('navLogo').classList.remove('invert');
+            } else {
+                nav.classList.remove('scrolled');
+                get('navLogo').classList.add('invert');
+            }
+            // Parallax
+            document.querySelectorAll('.px-img').forEach(img => {
+                const rect = img.parentElement.getBoundingClientRect();
+                if(rect.top < window.innerHeight && rect.bottom > 0) {
+                    img.style.transform = `translateY(${(window.innerHeight - rect.top) * 0.12}px)`;
+                }
+            });
+        };
+
+        // --- AUTH ---
+        get('loginBtn').onclick = () => {
+            if(get('pass').value === "Axel30" || get('pass').value === "Alden30") {
+                localStorage.setItem('staff', get('user').value);
+                location.reload();
+            }
+        };
+        window.logout = () => { localStorage.removeItem('staff'); location.reload(); };
         window.openLogin = () => get('loginOverlay').classList.remove('hidden');
         window.closeLogin = () => get('loginOverlay').classList.add('hidden');
 
-        // --- DATA READ ---
-        onValue(ref(db, 'listings'), (snap) => {
-            let html = ""; const data = snap.val();
-            if(data) Object.entries(data).reverse().forEach(([id, it]) => {
-                html += `
-                <div class="reveal">
-                    <div class="parallax-container">
-                        <img src="${it.images[0]}" class="parallax-img">
-                    </div>
-                    <div class="py-8 border-b border-black/5 flex justify-between items-end">
-                        <div>
-                            <span class="text-[9px] tracking-[3px] uppercase text-slate-400 mb-2 block">${it.cat}</span>
-                            <h3 class="text-3xl font-serif italic">${it.title}</h3>
-                        </div>
-                        <div class="text-right">
-                            <p class="font-light tracking-widest text-sm">${it.price}</p>
-                            ${localStorage.getItem('arcadia_staff') ? `<button onclick="del('listings/${id}')" class="text-[8px] text-red-400 mt-2 uppercase">Supprimer</button>` : ''}
-                        </div>
-                    </div>
-                </div>`;
+        // --- GESTION MEDIA ---
+        let bImgs = []; get('bFiles').onchange = (e) => {
+            bImgs = []; Array.from(e.target.files).forEach(f => {
+                const r = new FileReader(); r.onload = ev => bImgs.push(ev.target.result); r.readAsDataURL(f);
             });
-            get('allContent').innerHTML = html;
-        });
-
-        // --- AUTH & MISC ---
-        get('btnLoginAction').onclick = () => {
-            const STAFF = { "Axel": "Axel30", "Alden": "Alden30" };
-            if(STAFF[get('userLogin').value] === get('passLogin').value) {
-                localStorage.setItem('arcadia_staff', get('userLogin').value);
-                location.reload();
-            } else alert("Identifiants incorrects.");
+        };
+        let aImg = ""; get('aFile').onchange = (e) => {
+            const r = new FileReader(); r.onload = ev => aImg = ev.target.result; r.readAsDataURL(e.target.files[0]);
         };
 
-        window.logout = () => { localStorage.removeItem('arcadia_staff'); location.reload(); };
+        // --- ACTIONS PUBLICATION ---
+        get('btnPublishBien').onclick = () => {
+            const d = { title: get('bTitle').value, price: get('bPrice').value, images: bImgs, date: Date.now() };
+            if(d.title && bImgs.length) push(ref(db, 'listings'), d).then(() => location.reload());
+        };
+        get('btnPublishArt').onclick = () => {
+            const d = { title: get('aTitle').value, content: get('aContent').value, image: aImg, date: Date.now() };
+            if(d.title && aImg) push(ref(db, 'articles'), d).then(() => location.reload());
+        };
 
-        // Custom Cursor simple
-        document.addEventListener('mousemove', e => {
-            get('cursor').style.left = e.clientX + 'px';
-            get('cursor').style.top = e.clientY + 'px';
+        // --- AFFICHAGE DATA ---
+        onValue(ref(db, 'listings'), (snap) => {
+            let html = ""; let adm = "";
+            if(snap.val()) Object.entries(snap.val()).reverse().forEach(([id, it]) => {
+                html += `
+                <div class="group cursor-pointer">
+                    <div class="px-card"><img src="${it.images[0]}" class="px-img"></div>
+                    <div class="py-6 flex justify-between border-b border-black/5">
+                        <h3 class="font-serif text-3xl italic">${it.title}</h3>
+                        <p class="font-light tracking-widest text-sm">${it.price}</p>
+                    </div>
+                </div>`;
+                adm += `<div class="p-4 bg-white border flex justify-between items-center text-xs"><span>${it.title}</span><button onclick="del('listings/${id}')" class="text-red-500">SUPPRIMER</button></div>`;
+            });
+            get('allListings').innerHTML = html;
+            get('listBiensAdmin').innerHTML = adm;
         });
 
+        onValue(ref(db, 'articles'), (snap) => {
+            let html = ""; let adm = "";
+            if(snap.val()) Object.entries(snap.val()).reverse().forEach(([id, it]) => {
+                html += `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                    <div class="px-card"><img src="${it.image}" class="px-img"></div>
+                    <div>
+                        <span class="text-[9px] tracking-[4px] uppercase text-gold block mb-6">Édito • ${new Date(it.date).toLocaleDateString()}</span>
+                        <h2 class="font-serif text-5xl italic mb-8 leading-tight">${it.title}</h2>
+                        <p class="text-gray-500 font-light leading-relaxed mb-8">${it.content}</p>
+                        <div class="w-10 h-[1px] bg-black"></div>
+                    </div>
+                </div>`;
+                adm += `<div class="p-4 bg-white border flex justify-between items-center text-xs"><span>${it.title}</span><button onclick="del('articles/${id}')" class="text-red-500">SUPPRIMER</button></div>`;
+            });
+            get('allArticles').innerHTML = html;
+            get('listArtAdmin').innerHTML = adm;
+        });
+
+        window.del = (p) => { if(confirm("Supprimer ?")) remove(ref(db, p)); };
+
         // Init
-        const user = localStorage.getItem('arcadia_staff');
-        if(user) { get('activeUserDisplay').innerText = user; document.body.classList.add('is-admin'); }
+        const user = localStorage.getItem('staff');
+        if(user) { get('adminBar').classList.remove('hidden'); get('activeUser').innerText = user; document.body.style.paddingTop = "40px"; }
     </script>
 </body>
 </html>
