@@ -10,41 +10,43 @@
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;600;900&display=swap');
         
         :root { --gold: #d4af37; --dark: #0f172a; }
-        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; transition: background 0.5s, color 0.5s; padding-top: 80px; }
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; transition: background 0.5s; padding-top: 80px; }
         .font-serif { font-family: 'Playfair Display', serif; }
 
-        /* Curseur & Progress */
-        #custom-cursor { width: 20px; height: 20px; border: 2px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: transform 0.1s; }
+        /* Curseur Custom */
+        #custom-cursor { width: 25px; height: 25px; border: 1px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: transform 0.1s; backdrop-filter: invert(1); }
         #scrollProgress { position: fixed; top: 0; left: 0; height: 3px; background: var(--gold); z-index: 2000; width: 0%; }
 
-        /* Mode Sombre */
+        /* Modes */
         body.dark-mode { background-color: #020617; color: #f8fafc; }
-        .dark-mode .bg-white { background-color: #1e293b; color: white; }
+        .dark-mode .bg-white { background-color: #0f172a; color: white; border-color: rgba(255,255,255,0.1); }
+        .dark-mode input, .dark-mode textarea, .dark-mode select { background-color: #1e293b; color: white; border: none; }
 
         /* Navbar */
-        #mainNavbar { position: fixed; top: 0; left: 0; width: 100%; height: 80px; background: #0f172a; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; z-index: 1500; border-bottom: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
-        #mainNavbar img { height: 60px; object-fit: contain; transition: 0.3s; }
-
-        /* Hero & Animations */
+        #mainNavbar { position: fixed; top: 0; left: 0; width: 100%; height: 80px; background: rgba(15, 23, 42, 0.95); display: flex; align-items: center; justify-content: space-between; padding: 0 40px; z-index: 1500; backdrop-filter: blur(15px); border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
+        
+        /* Hero */
         .hero-bg {
-            background: linear-gradient(rgba(10, 15, 30, 0.8), rgba(10, 15, 30, 0.8)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80');
-            background-size: cover; background-position: center; height: 85vh; background-attachment: fixed; transition: background 0.7s ease;
+            background: linear-gradient(rgba(10, 15, 30, 0.7), rgba(10, 15, 30, 0.7)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover; background-position: center; height: 85vh; display: flex; align-items: center; justify-content: center;
         }
-        .reveal-on-scroll { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
-        .reveal-on-scroll.active { opacity: 1; transform: translateY(0); }
 
-        /* Vues */
-        .view-section { display: none; }
-        .active-view { display: block; animation: fadeIn 0.5s ease; }
+        /* Views */
+        .view-section { display: none; min-height: 100vh; }
+        .active-view { display: block; animation: fadeIn 0.6s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* Admin */
-        #adminBar { display: none; background: #0f172a; border-bottom: 2px solid var(--gold); }
+        #adminBar { display: none; background: #d4af37; color: #0f172a; position: fixed; top: 80px; width: 100%; z-index: 1400; transition: 0.3s; }
         .is-admin #adminBar { display: flex; }
+
+        /* Cards */
+        .card-prestige { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid transparent; }
+        .card-prestige:hover { transform: translateY(-10px); border-color: var(--gold); }
 
         /* Widgets */
         .whatsapp-btn { position: fixed; bottom: 30px; right: 20px; background: #25d366; color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; z-index: 1000; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        #musicControl { position: fixed; bottom: 30px; left: 20px; z-index: 1000; background: rgba(15, 23, 42, 0.9); padding: 12px 18px; border-radius: 24px; color: white; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); min-width: 200px; }
+        #musicControl { position: fixed; bottom: 30px; left: 20px; z-index: 1000; background: rgba(15, 23, 42, 0.9); padding: 12px 18px; border-radius: 24px; color: white; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
@@ -53,84 +55,103 @@
     <div id="scrollProgress"></div>
 
     <nav id="mainNavbar">
-        <img src="logo_arcadia_immo.jpg" alt="Arcadia Logo">
-        <div class="flex items-center gap-6 text-[11px] font-black uppercase tracking-widest text-white">
+        <img src="logo_arcadia_immo.jpg" alt="Arcadia" class="h-12 cursor-pointer" onclick="showView('publicContent')">
+        <div class="flex items-center gap-8 text-[11px] font-bold uppercase tracking-[0.2em] text-white">
             <button onclick="toggleDarkMode()" class="text-lg hover:text-amber-500 transition"><i class="fas fa-moon"></i></button>
             <button onclick="showView('publicContent')" class="hover:text-amber-500 transition">Collection</button>
-            <button onclick="openDevis()" class="hover:text-amber-500 transition">Estimation</button>
-            <button onclick="openLogin()" class="bg-amber-600 px-5 py-2 rounded-full hover:bg-white hover:text-slate-900 transition">Staff</button>
+            <button onclick="showView('contactView')" class="hover:text-amber-500 transition">Contact</button>
+            <button onclick="openLogin()" id="btnStaff" class="bg-amber-600 px-6 py-2 rounded-full hover:bg-white hover:text-slate-900 transition">Staff</button>
         </div>
     </nav>
 
-    <div id="adminBar" class="fixed top-[80px] w-full text-white py-3 px-8 z-[140] justify-between items-center text-[10px] font-bold uppercase tracking-widest">
-        <div class="flex items-center space-x-6">
-            <span class="text-amber-500 italic">STAFF: <span id="activeUserDisplay"></span></span>
-            <button onclick="showView('adminPanel')" class="hover:text-amber-500">GESTION & INBOX</button>
-            <button onclick="showView('publicContent')">VOIR LE SITE</button>
+    <div id="adminBar" class="py-2 px-10 justify-between items-center text-[10px] font-black uppercase tracking-widest shadow-lg">
+        <div class="flex items-center space-x-8">
+            <span>Staff : <span id="activeUserDisplay" class="italic"></span></span>
+            <button onclick="showView('adminPanel')" class="hover:underline">Ajouter un bien</button>
+            <button onclick="showView('adminInbox')" class="hover:underline">Inbox (<span id="msgCount">0</span>)</button>
         </div>
-        <button id="btnLogout" class="bg-red-600 px-4 py-1 rounded-full">DECONNEXION</button>
+        <button onclick="logout()" class="bg-slate-900 text-white px-4 py-1 rounded">Quitter</button>
     </div>
 
     <div id="musicControl">
-        <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
             <div class="flex flex-col">
-                <span class="text-[8px] uppercase tracking-widest text-amber-500 font-bold">Ambiance</span>
-                <span id="trackName" class="text-[10px] font-medium truncate w-32">Silence</span>
+                <span class="text-[8px] uppercase text-amber-500 font-bold">Ambiance</span>
+                <span id="trackName" class="text-[10px] truncate w-24">Silence</span>
             </div>
-            <button onclick="toggleMusic()" id="musicBtn" class="bg-amber-600 w-8 h-8 rounded-full flex items-center justify-center"><span id="playIcon">▶</span></button>
+            <button onclick="toggleMusic()" class="bg-amber-600 w-8 h-8 rounded-full text-white"><span id="playIcon">▶</span></button>
         </div>
-        <div class="w-full h-1 bg-white/20 mt-2 rounded-full overflow-hidden"><div id="musicProgressBar" class="h-full bg-amber-500" style="width:0%"></div></div>
-        <audio id="bgAudio"></audio>
+        <audio id="bgAudio" loop></audio>
     </div>
-
     <a href="https://wa.me/33600000000" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i></a>
 
     <main id="publicContent" class="view-section active-view">
-        <section class="hero-bg flex flex-col items-center justify-center text-center px-6">
-            <h1 class="text-white text-7xl md:text-9xl font-serif font-bold italic mb-4">Arcadia</h1>
-            <p class="text-amber-500 font-bold uppercase tracking-[0.5em] text-[12px] mb-12">L'Immobilier de Collection</p>
-            <button onclick="window.scrollTo(0, 950)" class="bg-white text-slate-900 px-10 py-4 rounded-full font-bold text-xs uppercase hover:bg-amber-600 transition">Explorer</button>
-        </section>
-
-        <section class="py-20 bg-white border-b">
-            <div class="container mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div><h3 class="text-4xl font-serif font-bold text-amber-600 counter" data-target="150">0</h3><p class="text-[10px] font-bold text-slate-400">VENTES</p></div>
-                <div><h3 class="text-4xl font-serif font-bold text-amber-600 counter" data-target="12">0</h3><p class="text-[10px] font-bold text-slate-400">EXPERTS</p></div>
-                <div><h3 class="text-4xl font-serif font-bold text-amber-600 counter" data-target="9">0</h3><p class="text-[10px] font-bold text-slate-400">PAYS</p></div>
-                <div><h3 class="text-4xl font-serif font-bold text-amber-600 counter" data-target="100">0</h3><p class="text-[10px] font-bold text-slate-400">SATISFACTION %</p></div>
+        <section class="hero-bg text-center px-6">
+            <div class="max-w-4xl">
+                <h1 class="text-white text-7xl md:text-9xl font-serif font-bold italic mb-6">Arcadia</h1>
+                <p class="text-amber-500 font-bold uppercase tracking-[0.6em] text-xs mb-12">L'Immobilier de Collection</p>
+                <button onclick="document.getElementById('collection').scrollIntoView()" class="bg-white text-slate-900 px-10 py-4 rounded-full font-bold text-[10px] uppercase hover:bg-amber-600 hover:text-white transition">Explorer les propriétés</button>
             </div>
         </section>
 
-        <section class="py-20 container mx-auto px-6">
-            <div id="allContent" class="grid grid-cols-1 md:grid-cols-3 gap-12"></div>
+        <section id="collection" class="py-20 container mx-auto px-6">
+            <div class="flex justify-center gap-8 mb-16 border-b border-slate-200 pb-4">
+                <button onclick="filterContent('all')" class="text-[10px] font-bold uppercase tracking-widest hover:text-amber-500 transition">Tout</button>
+                <button onclick="filterContent('Villa')" class="text-[10px] font-bold uppercase tracking-widest hover:text-amber-500 transition">Villas</button>
+                <button onclick="filterContent('Penthouse')" class="text-[10px] font-bold uppercase tracking-widest hover:text-amber-500 transition">Penthouses</button>
+                <button onclick="filterContent('Appartement')" class="text-[10px] font-bold uppercase tracking-widest hover:text-amber-500 transition">Appartements</button>
+            </div>
+            <div id="allContent" class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                </div>
         </section>
     </main>
 
-    <main id="adminPanel" class="view-section pt-32 pb-24 container mx-auto px-6">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            <div class="bg-white p-10 rounded-[3rem] shadow-2xl">
-                <h2 class="text-3xl font-serif font-bold mb-8 italic">Nouveau contenu</h2>
-                <div class="space-y-4">
-                    <input type="text" id="inTitle" placeholder="Titre" class="w-full p-4 bg-slate-100 rounded-2xl outline-none">
-                    <input type="text" id="inPrice" placeholder="Prix (ex: 1 200 000 €)" class="w-full p-4 bg-slate-100 rounded-2xl outline-none">
-                    <textarea id="inDesc" placeholder="Description..." class="w-full p-4 bg-slate-100 rounded-2xl h-32 outline-none"></textarea>
-                    <input type="file" id="multiFileInput" multiple class="text-xs">
-                    <button id="btnPublish" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase">Mettre en ligne</button>
-                </div>
-            </div>
-            <div id="adminMessages" class="space-y-4">
-                <h2 class="text-3xl font-serif font-bold mb-8">Inbox</h2>
-                </div>
+    <main id="contactView" class="view-section pt-32 container mx-auto px-6 max-w-xl text-center">
+        <h2 class="text-5xl font-serif italic mb-4">Contact Privé</h2>
+        <p class="text-slate-400 text-xs uppercase tracking-widest mb-12">Demande de renseignements ou estimation</p>
+        <div class="space-y-4">
+            <input type="text" id="msgName" placeholder="Nom Complet" class="w-full p-5 bg-white border rounded-2xl outline-none shadow-sm">
+            <input type="email" id="msgEmail" placeholder="Email" class="w-full p-5 bg-white border rounded-2xl outline-none shadow-sm">
+            <textarea id="msgBody" placeholder="Votre projet..." class="w-full p-5 bg-white border rounded-2xl h-40 outline-none shadow-sm"></textarea>
+            <button onclick="sendMessage()" class="w-full bg-amber-600 text-white py-5 rounded-2xl font-bold uppercase tracking-widest hover:bg-slate-900 transition">Envoyer</button>
         </div>
     </main>
 
-    <div id="loginOverlay" class="fixed inset-0 z-[2100] hidden flex items-center justify-center bg-slate-950/95 backdrop-blur-xl">
-        <div class="bg-white p-12 rounded-[3.5rem] w-96 text-center">
-            <h3 class="text-2xl font-serif font-bold mb-8 italic">Authentification Staff</h3>
-            <input type="text" id="userLogin" placeholder="Staff ID" class="w-full p-4 bg-slate-100 rounded-2xl mb-4 outline-none">
-            <input type="password" id="passLogin" placeholder="Mot de passe" class="w-full p-4 bg-slate-100 rounded-2xl mb-8 outline-none">
-            <button id="btnLoginAction" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold uppercase">Accéder</button>
-            <button onclick="closeLogin()" class="mt-6 text-slate-400 text-[10px] font-bold">RETOUR</button>
+    <main id="adminPanel" class="view-section pt-40 pb-20 container mx-auto px-6">
+        <div class="max-w-3xl mx-auto bg-white p-12 rounded-[3rem] shadow-2xl border border-amber-100">
+            <h2 class="text-3xl font-serif italic mb-8">Ajouter une Propriété</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <input type="text" id="inTitle" placeholder="Titre" class="p-4 bg-slate-50 border rounded-xl outline-none">
+                <select id="inCat" class="p-4 bg-slate-50 border rounded-xl outline-none">
+                    <option value="Villa">Villa</option>
+                    <option value="Penthouse">Penthouse</option>
+                    <option value="Appartement">Appartement</option>
+                </select>
+            </div>
+            <input type="text" id="inPrice" placeholder="Prix (ex: 5 200 000 €)" class="w-full p-4 bg-slate-50 border rounded-xl mb-4 outline-none">
+            <textarea id="inDesc" placeholder="Description..." class="w-full p-4 bg-slate-50 border rounded-xl h-32 mb-4 outline-none"></textarea>
+            
+            <div class="mb-6">
+                <label class="block text-[10px] font-bold uppercase mb-2">Photos (Sélectionnez-en plusieurs)</label>
+                <input type="file" id="multiFileInput" multiple class="text-xs">
+            </div>
+
+            <button id="btnPublish" class="w-full bg-slate-900 text-white py-5 rounded-xl font-bold uppercase tracking-widest hover:bg-amber-600 transition">Mettre en ligne</button>
+        </div>
+    </main>
+
+    <main id="adminInbox" class="view-section pt-40 container mx-auto px-6">
+        <h2 class="text-4xl font-serif italic mb-10">Messages</h2>
+        <div id="messageList" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+    </main>
+
+    <div id="loginOverlay" class="fixed inset-0 z-[2100] hidden flex items-center justify-center bg-slate-950/98 backdrop-blur-xl">
+        <div class="bg-white p-12 rounded-[3.5rem] w-full max-w-sm text-center shadow-2xl">
+            <h3 class="text-2xl font-serif font-bold mb-8 italic">Authentification</h3>
+            <input type="text" id="userLogin" placeholder="ID Staff" class="w-full p-4 bg-slate-100 border rounded-2xl mb-4 outline-none">
+            <input type="password" id="passLogin" placeholder="Mot de passe" class="w-full p-4 bg-slate-100 border rounded-2xl mb-8 outline-none">
+            <button id="btnLoginAction" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase tracking-widest hover:bg-amber-600 transition">Entrer</button>
+            <button onclick="closeLogin()" class="mt-6 text-slate-400 text-[10px] font-bold uppercase">Retour</button>
         </div>
     </div>
 
@@ -143,88 +164,148 @@
         const db = getDatabase(app);
         const get = id => document.getElementById(id);
 
-        // --- SESSION PERSISTANTE ---
-        const checkAuth = () => {
-            const user = localStorage.getItem('arcadia_staff');
-            if(user) {
-                document.body.classList.add('is-admin');
-                get('activeUserDisplay').innerText = user;
-            }
+        // --- NAVIGATION ---
+        window.showView = (id) => {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
+            get(id).classList.add('active-view');
+            window.scrollTo(0,0);
+        };
+        window.openLogin = () => get('loginOverlay').classList.remove('hidden');
+        window.closeLogin = () => get('loginOverlay').classList.add('hidden');
+        window.logout = () => { localStorage.removeItem('arcadia_staff'); location.reload(); };
+
+        // --- UI & MODES ---
+        window.toggleDarkMode = () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            get('mainNavbar').style.background = isDark ? "#020617" : "rgba(15, 23, 42, 0.95)";
         };
 
+        // --- AUTH ---
         get('btnLoginAction').onclick = () => {
             const ACCOUNTS = { "Axel": "Axel30", "Alden": "Alden30" };
             const u = get('userLogin').value, p = get('passLogin').value;
             if(ACCOUNTS[u] === p) {
                 localStorage.setItem('arcadia_staff', u);
                 location.reload();
-            } else alert("Identifiants incorrects");
+            } else alert("Identifiants erronés.");
         };
 
-        get('btnLogout').onclick = () => {
-            localStorage.removeItem('arcadia_staff');
-            location.reload();
-        };
-
-        // --- DARK MODE & IMAGE PRESTIGE ---
-        const prestigeBg = "https://image2url.com/r2/default/images/1774635805237-a6746366-8229-4ca8-867d-2a8e4c77a859.png";
-        window.toggleDarkMode = () => {
-            const isDark = document.body.classList.toggle('dark-mode');
-            const hero = document.querySelector('.hero-bg');
-            if(isDark) {
-                hero.style.backgroundImage = `linear-gradient(rgba(2, 6, 23, 0.8), rgba(2, 6, 23, 0.8)), url('${prestigeBg}')`;
-            } else {
-                hero.style.backgroundImage = `linear-gradient(rgba(10, 15, 30, 0.8), rgba(10, 15, 30, 0.8)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80')`;
+        // --- GESTION IMAGES (MULTIPLE) ---
+        let imagesArray = [];
+        get('multiFileInput').onchange = (e) => {
+            imagesArray = [];
+            const files = e.target.files;
+            for(let file of files) {
+                const reader = new FileReader();
+                reader.onload = (f) => imagesArray.push(f.target.result);
+                reader.readAsDataURL(file);
             }
-            const icon = document.querySelector('#mainNavbar i');
-            icon.classList.toggle('fa-moon'); icon.classList.toggle('fa-sun');
         };
+
+        get('btnPublish').onclick = () => {
+            const title = get('inTitle').value, price = get('inPrice').value, desc = get('inDesc').value, cat = get('inCat').value;
+            if(!title || imagesArray.length === 0) return alert("Titre et image requis");
+            
+            push(ref(db, 'listings'), { title, price, desc, cat, images: imagesArray, date: Date.now() })
+            .then(() => { alert("Bien publié !"); location.reload(); });
+        };
+
+        // --- RENDER LISTINGS ---
+        onValue(ref(db, 'listings'), (snap) => {
+            window.dataListings = snap.val();
+            renderAll(window.dataListings);
+        });
+
+        function renderAll(data, filter = 'all') {
+            let html = "";
+            if(!data) return get('allContent').innerHTML = "Aucun bien disponible.";
+            
+            Object.entries(data).reverse().forEach(([id, item]) => {
+                if(filter !== 'all' && item.cat !== filter) return;
+                
+                // Utilise la première image comme couverture
+                const cover = item.images ? item.images[0] : item.img; 
+                
+                html += `
+                <div class="card-prestige bg-white rounded-[2.5rem] overflow-hidden shadow-sm">
+                    <img src="${cover}" class="h-72 w-full object-cover">
+                    <div class="p-8">
+                        <span class="text-amber-600 text-[9px] font-black uppercase tracking-widest">${item.cat}</span>
+                        <h3 class="text-2xl font-serif italic my-2">${item.title}</h3>
+                        <p class="font-bold text-slate-900 mb-4">${item.price}</p>
+                        <div class="flex justify-between items-center">
+                            <button class="text-[9px] font-bold uppercase tracking-widest border-b border-amber-500 pb-1">Voir le dossier</button>
+                            ${localStorage.getItem('arcadia_staff') ? `<button onclick="deleteListing('${id}')" class="text-red-400 hover:text-red-600"><i class="fas fa-trash"></i></button>` : ''}
+                        </div>
+                    </div>
+                </div>`;
+            });
+            get('allContent').innerHTML = html;
+        }
+
+        window.filterContent = (c) => renderAll(window.dataListings, c);
+        window.deleteListing = (id) => { if(confirm("Supprimer ?")) remove(ref(db, `listings/${id}`)); };
+
+        // --- MESSAGERIE ---
+        window.sendMessage = () => {
+            const name = get('msgName').value, email = get('msgEmail').value, body = get('msgBody').value;
+            if(!name || !body) return alert("Veuillez remplir le formulaire");
+            push(ref(db, 'messages'), { name, email, body, date: new Date().toLocaleString() })
+            .then(() => { alert("Demande envoyée."); location.reload(); });
+        };
+
+        onValue(ref(db, 'messages'), (snap) => {
+            const msgs = snap.val();
+            let html = "", count = 0;
+            if(msgs) {
+                Object.entries(msgs).reverse().forEach(([id, m]) => {
+                    count++;
+                    html += `
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-amber-500 relative">
+                        <button onclick="deleteMsg('${id}')" class="absolute top-4 right-4 text-slate-300"><i class="fas fa-times"></i></button>
+                        <p class="text-[10px] font-bold text-amber-600 uppercase mb-1">${m.date}</p>
+                        <h4 class="font-bold">${m.name}</h4>
+                        <p class="text-xs text-slate-400 mb-3">${m.email}</p>
+                        <p class="text-sm italic">"${m.body}"</p>
+                    </div>`;
+                });
+            }
+            get('messageList').innerHTML = html || "Aucun message.";
+            get('msgCount').innerText = count;
+        });
+        window.deleteMsg = (id) => remove(ref(db, `messages/${id}`));
 
         // --- MUSIQUE ---
         const audio = get('bgAudio');
         window.toggleMusic = () => {
             if (audio.paused) {
-                audio.src = "rk_chopardrk_chopard.mp3"; // ou ton autre fichier
+                audio.src = "rk_chopardrk_chopard.mp3"; 
                 audio.play();
                 get('playIcon').innerText = "⏸";
-                get('trackName').innerText = "Ambiance Prestige";
+                get('trackName').innerText = "Vibe Prestige";
             } else { audio.pause(); get('playIcon').innerText = "▶"; }
         };
-        audio.ontimeupdate = () => get('musicProgressBar').style.width = (audio.currentTime / audio.duration) * 100 + "%";
 
-        // --- COMPTEURS ---
-        const startCounters = () => {
-            document.querySelectorAll('.counter').forEach(c => {
-                const target = +c.dataset.target;
-                let count = 0;
-                const update = () => {
-                    if(count < target) {
-                        count += target/50;
-                        c.innerText = Math.ceil(count) + (target === 100 ? '%' : '+');
-                        setTimeout(update, 30);
-                    } else c.innerText = target + (target === 100 ? '%' : '+');
-                };
-                update();
-            });
-        };
+        // --- INIT ---
+        const user = localStorage.getItem('arcadia_staff');
+        if(user) {
+            document.body.classList.add('is-admin');
+            get('activeUserDisplay').innerText = user;
+            get('btnStaff').innerText = "Admin Panel";
+            get('btnStaff').onclick = () => showView('adminPanel');
+        }
 
-        // --- NAVIGATION ---
-        window.showView = (id) => {
-            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
-            get(id).classList.add('active-view');
-        };
-        window.openLogin = () => get('loginOverlay').classList.remove('hidden');
-        window.closeLogin = () => get('loginOverlay').classList.add('hidden');
-
-        // Initialisation
-        checkAuth();
-        startCounters();
-        
-        // Curseur
         document.addEventListener('mousemove', e => {
             get('custom-cursor').style.left = e.clientX + 'px';
             get('custom-cursor').style.top = e.clientY + 'px';
         });
+
+        window.onscroll = () => {
+            let winScroll = document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            get("scrollProgress").style.width = (winScroll / height) * 100 + "%";
+        };
     </script>
 </body>
 </html>
