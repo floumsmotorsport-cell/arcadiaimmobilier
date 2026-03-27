@@ -5,121 +5,172 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arcadia Prestige | Excellence Immobilière</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;600;900&display=swap');
         
-        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
+        :root { --gold: #d4af37; --dark: #0f172a; }
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; transition: background 0.5s, color 0.5s; padding-top: 80px; }
         .font-serif { font-family: 'Playfair Display', serif; }
 
-        @keyframes revealUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .reveal { animation: revealUp 0.8s ease forwards; }
-        
-        .glass { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        /* 1. Curseur Personnalisé */
+        #custom-cursor { width: 20px; height: 20px; border: 2px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transition: transform 0.1s ease; transform: translate(-50%, -50%); }
+
+        /* 2. Mode Sombre */
+        body.dark-mode { background-color: #020617; color: #f8fafc; }
+        .dark-mode .bg-white { background-color: #1e293b; color: white; }
+        .dark-mode #mainNavbar { background: rgba(2, 6, 23, 0.95); }
+
+        /* Scroll Progress Bar */
+        #scrollProgress { position: fixed; top: 0; left: 0; height: 3px; background: var(--gold); z-index: 2000; width: 0%; transition: width 0.1s; }
+
+        /* Navbar Style */
+        #mainNavbar { position: fixed; top: 0; left: 0; width: 100%; height: 80px; background: #0f172a; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; z-index: 1500; border-bottom: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+        #mainNavbar img { height: 50px; transition: transform 0.5s; }
+        #mainNavbar img:hover { transform: rotate(5deg) scale(1.1); }
+
+        /* 3. Hero Parallaxe */
         .hero-bg {
-            background: linear-gradient(rgba(10, 15, 30, 0.85), rgba(10, 15, 30, 0.85)),
+            background: linear-gradient(rgba(10, 15, 30, 0.8), rgba(10, 15, 30, 0.8)),
                         url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80');
-            background-size: cover; background-position: center; height: 90vh;
+            background-size: cover; background-position: center; height: 85vh; background-attachment: fixed;
         }
 
-        .view-section { display: none; }
-        .active-view { display: block; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* 4. Animations d'entrée */
+        .reveal-on-scroll { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal-on-scroll.active { opacity: 1; transform: translateY(0); }
 
-        .card-hover { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .card-hover:hover { transform: translateY(-15px) scale(1.03); box-shadow: 0 30px 60px rgba(0,0,0,0.15); }
+        /* WhatsApp Floating */
+        .whatsapp-btn { position: fixed; bottom: 30px; right: 20px; background: #25d366; color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 1000; transition: 0.3s; }
+        .whatsapp-btn:hover { transform: scale(1.1) rotate(10deg); }
+
+        /* Music Control */
+        #musicControl { position: fixed; bottom: 30px; left: 20px; z-index: 1000; background: rgba(15, 23, 42, 0.9); padding: 12px 18px; border-radius: 24px; color: white; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); min-width: 200px; }
+        #progressBar { width: 0%; height: 100%; background: var(--gold); transition: width 0.1s linear; }
 
         #adminBar { display: none; background: #0f172a; border-bottom: 2px solid #b45309; }
         .is-admin #adminBar { display: flex; }
 
-        /* Music Player Enhanced */
-        #musicControl { 
-            position: fixed; bottom: 20px; left: 20px; z-index: 1000; 
-            display: flex; flex-direction: column; gap: 5px; 
-            background: rgba(15, 23, 42, 0.9); padding: 12px 18px; 
-            border-radius: 24px; color: white; backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            min-width: 200px;
-        }
-        #progressContainer { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; overflow: hidden; }
-        #progressBar { width: 0%; height: 100%; background: #d97706; transition: width 0.1s linear; }
+        .card-hover { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .card-hover:hover { transform: translateY(-15px); box-shadow: 0 30px 60px rgba(0,0,0,0.15); }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
 
+    <div id="custom-cursor"></div>
+    <div id="scrollProgress"></div>
+
+    <nav id="mainNavbar">
+        <img src="https://img-host.vps.tm/logo_arcadia.png" alt="Arcadia Logo">
+        <div class="flex items-center gap-6 text-[11px] font-black uppercase tracking-widest text-white">
+            <button onclick="toggleDarkMode()" class="text-lg hover:text-amber-500 transition"><i class="fas fa-moon"></i></button>
+            <button onclick="showView('publicContent')" class="hover:text-amber-500 transition">Collection</button>
+            <button onclick="openDevis()" class="hover:text-amber-500 transition">Estimation</button>
+            <button onclick="openLogin()" class="bg-amber-600 px-5 py-2 rounded-full hover:bg-white hover:text-slate-900 transition">Accès Staff</button>
+        </div>
+    </nav>
+
+    <a href="https://wa.me/33600000000" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i></a>
+
     <div id="musicControl">
         <div class="flex items-center justify-between gap-4">
             <div class="flex flex-col">
-                <span class="text-[8px] uppercase tracking-widest text-amber-500 font-bold">En écoute</span>
-                <span id="trackName" class="text-[10px] font-medium truncate w-32">Arcadia Silence</span>
+                <span class="text-[8px] uppercase tracking-widest text-amber-500 font-bold">Ambiance</span>
+                <span id="trackName" class="text-[10px] font-medium truncate w-32">Silence</span>
             </div>
-            <button onclick="toggleMusic()" id="musicBtn" class="bg-amber-600 hover:bg-amber-500 w-8 h-8 rounded-full flex items-center justify-center transition shadow-lg">
+            <button onclick="toggleMusic()" id="musicBtn" class="bg-amber-600 w-8 h-8 rounded-full flex items-center justify-center shadow-lg">
                 <span id="playIcon">▶</span>
             </button>
         </div>
-        <div id="progressContainer" onclick="seekAudio(event)">
-            <div id="progressBar"></div>
+        <div id="progressContainer" onclick="seekAudio(event)" class="w-full h-1 bg-white/20 mt-2 rounded-full cursor-pointer overflow-hidden">
+            <div id="progressBar" class="h-full"></div>
         </div>
         <audio id="bgAudio"></audio>
     </div>
 
-    <div id="adminBar" class="fixed top-0 w-full text-white py-3 px-8 z-[100] justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+    <div id="adminBar" class="fixed top-[80px] w-full text-white py-3 px-8 z-[140] justify-between items-center text-[10px] font-bold uppercase tracking-widest">
         <div class="flex items-center space-x-6">
-            <span class="text-amber-500 border-r border-white/20 pr-6">STAFF: <span id="activeUserDisplay"></span></span>
+            <span class="text-amber-500 border-r border-white/20 pr-6 italic">STAFF: <span id="activeUserDisplay"></span></span>
             <button onclick="showView('adminPanel')" class="hover:text-amber-500 transition">GESTION & INBOX</button>
             <button onclick="showView('publicContent')" class="hover:text-amber-500 transition">RETOUR SITE</button>
         </div>
         <button id="btnLogout" class="bg-red-600 px-4 py-1 rounded-full hover:bg-red-700 transition">DECONNEXION</button>
     </div>
 
-    <div id="detailModal" class="fixed inset-0 bg-black/90 z-[999] hidden flex items-center justify-center p-4 backdrop-blur-md">
-        <div class="bg-white max-w-3xl w-full rounded-[2.5rem] overflow-hidden relative shadow-2xl">
-            <button onclick="closeDetail()" class="absolute top-6 right-6 z-50 bg-white/80 w-10 h-10 rounded-full flex items-center justify-center font-bold">✕</button>
-            <div id="carousel" class="relative h-96 bg-slate-200">
-                <img id="carouselImg" class="w-full h-full object-cover">
-                <button onclick="prevImg()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 w-10 h-10 rounded-full flex items-center justify-center hover:bg-white transition">‹</button>
-                <button onclick="nextImg()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 w-10 h-10 rounded-full flex items-center justify-center hover:bg-white transition">›</button>
-            </div>
-            <div class="p-10">
-                <h2 id="detailTitle" class="text-4xl font-serif font-bold mb-4 italic"></h2>
-                <p id="detailPrice" class="text-amber-600 font-bold text-2xl mb-4"></p>
-                <div id="detailDesc" class="text-slate-600 leading-relaxed max-h-48 overflow-y-auto whitespace-pre-line text-sm"></div>
-                <button onclick="openDevis(); closeDetail();" class="mt-8 w-full bg-slate-900 text-white py-4 rounded-xl font-bold uppercase text-xs hover:bg-amber-600 transition">S'informer sur ce bien</button>
-            </div>
-        </div>
-    </div>
-
     <main id="publicContent" class="view-section active-view">
-        <section class="hero-bg flex flex-col items-center justify-center text-center px-6 relative">
-            <div class="reveal">
-                <h1 class="text-white text-7xl md:text-9xl font-serif font-bold mb-4">Arcadia</h1>
-                <p class="text-amber-500 font-bold uppercase tracking-widest text-[14px] mb-12">Prestige & Articles d'Exception</p>
-                <div class="flex flex-col md:flex-row gap-6 justify-center">
-                    <button onclick="openDevis()" class="bg-amber-600 text-white px-10 py-4 rounded-full font-bold text-xs uppercase shadow-2xl">Demander une estimation</button>
-                    <button onclick="openLogin()" class="glass text-white px-10 py-4 rounded-full font-bold text-xs uppercase">Accès Staff</button>
-                    <button onclick="openClientSpace()" class="border border-white/30 text-white px-10 py-4 rounded-full font-bold text-xs uppercase hover:bg-white/10">Espace Client</button>
+        <section class="hero-bg flex flex-col items-center justify-center text-center px-6">
+            <div class="reveal-on-scroll active">
+                <h1 class="text-white text-7xl md:text-9xl font-serif font-bold mb-4 italic">Arcadia</h1>
+                <p class="text-amber-500 font-bold uppercase tracking-[0.5em] text-[12px] mb-12">L'Immobilier de Collection</p>
+                <div class="flex gap-6 justify-center">
+                    <button onclick="window.scrollTo(0, 950)" class="bg-white text-slate-900 px-10 py-4 rounded-full font-bold text-xs uppercase hover:bg-amber-600 hover:text-white transition">Explorer la collection</button>
+                    <button onclick="openClientSpace()" class="border border-white/30 text-white px-10 py-4 rounded-full font-bold text-xs uppercase hover:bg-white/10 transition">Espace Client</button>
                 </div>
             </div>
         </section>
 
-        <section class="py-10 border-b border-slate-200 bg-white sticky top-0 z-40">
-            <div class="container mx-auto px-6 flex flex-wrap justify-center items-center gap-6 md:gap-12 text-[10px] font-black uppercase tracking-[0.2em]">
-                <button onclick="renderAll()" class="hover:text-amber-600 transition">Tout</button>
-                <button onclick="filterCat('villas')" class="hover:text-amber-600 transition">Villas de Luxe</button>
-                <button onclick="filterCat('biens')" class="hover:text-amber-600 transition">Biens Rares</button>
-                <button onclick="filterCat('articles')" class="hover:text-amber-600 transition">Articles & News</button>
-                <div class="h-4 w-[1px] bg-slate-200 mx-2"></div>
+        <section class="py-20 bg-white border-b border-slate-100">
+            <div class="container mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <h3 class="text-4xl font-serif font-bold text-amber-600 counter" data-target="150">0</h3>
+                    <p class="text-[10px] uppercase font-bold text-slate-400">Ventes d'Exception</p>
+                </div>
+                <div>
+                    <h3 class="text-4xl font-serif font-bold text-amber-600 counter" data-target="12">0</h3>
+                    <p class="text-[10px] uppercase font-bold text-slate-400">Experts Dédiés</p>
+                </div>
+                <div>
+                    <h3 class="text-4xl font-serif font-bold text-amber-600 counter" data-target="9">0</h3>
+                    <p class="text-[10px] uppercase font-bold text-slate-400">Pays Présents</p>
+                </div>
+                <div>
+                    <h3 class="text-4xl font-serif font-bold text-amber-600 counter" data-target="100">0</h3>
+                    <p class="text-[10px] uppercase font-bold text-slate-400">Satisfaction %</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-10 sticky top-[80px] bg-white/90 backdrop-blur-md z-40 border-b">
+            <div class="container mx-auto px-6 flex justify-center items-center gap-8 text-[10px] font-bold uppercase tracking-widest">
+                <button onclick="renderAll()" class="hover:text-amber-600">Tout</button>
+                <button onclick="filterCat('villas')" class="hover:text-amber-600">Villas de Luxe</button>
+                <button onclick="filterCat('biens')" class="hover:text-amber-600">Biens Rares</button>
                 <button onclick="sortByPrice()" class="text-amber-600 border border-amber-600 px-4 py-2 rounded-full hover:bg-amber-600 hover:text-white transition">Trier par prix ↑</button>
             </div>
         </section>
 
-        <section class="py-20">
-            <div id="allContent" class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12"></div>
+        <section class="py-20 container mx-auto px-6">
+            <div id="allContent" class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                </div>
         </section>
     </main>
 
+    <div id="detailModal" class="fixed inset-0 bg-black/95 z-[2000] hidden flex items-center justify-center p-4 backdrop-blur-xl">
+        <div class="bg-white max-w-5xl w-full h-[90vh] rounded-[3rem] overflow-hidden flex flex-col md:flex-row relative shadow-2xl">
+            <button onclick="closeDetail()" class="absolute top-6 right-6 z-50 bg-slate-900 text-white w-10 h-10 rounded-full flex items-center justify-center">✕</button>
+            <div class="w-full md:w-2/3 h-full bg-slate-200">
+                <img id="carouselImg" class="w-full h-full object-cover">
+            </div>
+            <div class="w-full md:w-1/3 p-10 overflow-y-auto">
+                <h2 id="detailTitle" class="text-3xl font-serif font-bold mb-2 italic"></h2>
+                <p id="detailPrice" class="text-amber-600 font-bold text-xl mb-6"></p>
+                
+                <div class="bg-slate-50 p-6 rounded-2xl mb-6">
+                    <h4 class="text-[10px] font-black uppercase mb-4 text-slate-400">Simulateur de Mensualités</h4>
+                    <input type="range" min="5" max="25" value="20" class="w-full accent-amber-600" id="rangeYears">
+                    <p class="text-[10px] mt-2 font-bold">Durée : <span id="valYears">20</span> ans</p>
+                    <p class="text-lg font-bold mt-2 text-slate-900" id="monthlyResult">-- € / mois</p>
+                </div>
+
+                <div id="detailDesc" class="text-slate-500 text-sm leading-relaxed mb-8 whitespace-pre-line"></div>
+                <button onclick="openDevis()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold uppercase text-[10px] hover:bg-amber-600 transition">Demander une visite privée</button>
+            </div>
+        </div>
+    </div>
+
     <main id="adminPanel" class="view-section pt-32 pb-24 container mx-auto px-6">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-slate-100">
+            <div class="bg-white p-10 rounded-[3rem] shadow-2xl">
                 <h2 class="text-3xl font-serif font-bold mb-8 italic">Nouveau contenu</h2>
                 <div class="space-y-4">
                     <select id="inCategory" class="w-full p-4 bg-slate-100 rounded-2xl outline-none font-bold">
@@ -127,52 +178,38 @@
                         <option value="biens">Bien d'exception</option>
                         <option value="articles">Article / Actualité</option>
                     </select>
-                    <input type="text" id="inTitle" placeholder="Titre" class="w-full p-4 bg-slate-100 rounded-2xl outline-none">
+                    <input type="text" id="inTitle" placeholder="Titre du bien" class="w-full p-4 bg-slate-100 rounded-2xl outline-none">
                     <input type="text" id="inPrice" placeholder="Prix (ex: 2 500 000 €)" class="w-full p-4 bg-slate-100 rounded-2xl outline-none">
-                    <textarea id="inDesc" placeholder="Description..." class="w-full p-4 bg-slate-100 rounded-2xl h-48 outline-none"></textarea>
-                    <div class="p-6 border-2 border-dashed border-slate-200 rounded-2xl text-center">
-                        <input type="file" id="multiFileInput" multiple accept="image/*" class="text-xs">
-                    </div>
-                    <button id="btnPublish" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-amber-600">Mettre en ligne</button>
+                    <textarea id="inDesc" placeholder="Description détaillée..." class="w-full p-4 bg-slate-100 rounded-2xl h-48 outline-none"></textarea>
+                    <input type="file" id="multiFileInput" multiple accept="image/*" class="text-xs p-4 border-2 border-dashed w-full rounded-2xl">
+                    <button id="btnPublish" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase text-xs hover:bg-amber-600 transition">Publier maintenant</button>
                 </div>
             </div>
             <div>
-                <h2 class="text-3xl font-serif font-bold mb-8 flex justify-between items-center">
-                    Inbox <span id="msgCount" class="text-sm bg-amber-600 text-white px-4 py-1 rounded-full">0</span>
-                </h2>
-                <div id="adminMessages" class="space-y-6 max-h-[900px] overflow-y-auto pr-2"></div>
+                <h2 class="text-3xl font-serif font-bold mb-8 flex justify-between">Inbox <span id="msgCount" class="text-sm bg-amber-600 text-white px-4 py-1 rounded-full">0</span></h2>
+                <div id="adminMessages" class="space-y-4 max-h-[700px] overflow-y-auto"></div>
             </div>
         </div>
     </main>
 
-    <div id="loginOverlay" class="fixed inset-0 z-[500] hidden flex items-center justify-center bg-slate-950/95 backdrop-blur-xl">
-        <div class="bg-white p-12 rounded-[3.5rem] w-96 text-center shadow-2xl">
-            <h3 class="text-2xl font-serif font-bold mb-8 italic">Authentification Staff</h3>
+    <div id="loginOverlay" class="fixed inset-0 z-[2100] hidden flex items-center justify-center bg-slate-950/95 backdrop-blur-xl">
+        <div class="bg-white p-12 rounded-[3.5rem] w-96 text-center">
+            <h3 class="text-2xl font-serif font-bold mb-8 italic">Staff Login</h3>
             <input type="text" id="userLogin" placeholder="Staff ID" class="w-full p-4 bg-slate-100 rounded-2xl mb-4 outline-none">
             <input type="password" id="passLogin" placeholder="Mot de passe" class="w-full p-4 bg-slate-100 rounded-2xl mb-8 outline-none">
-            <button id="btnLoginAction" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold uppercase text-xs">Accéder</button>
-            <button onclick="closeLogin()" class="mt-6 text-slate-400 text-[10px] uppercase font-bold block mx-auto">Fermer</button>
+            <button id="btnLoginAction" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold uppercase text-xs">Connexion</button>
+            <button onclick="closeLogin()" class="mt-6 text-slate-400 text-[10px] uppercase font-bold">Retour</button>
         </div>
     </div>
 
-    <div id="clientSpace" class="hidden fixed inset-0 bg-slate-950/90 z-[999] flex items-center justify-center backdrop-blur-md">
-        <div class="bg-white p-12 rounded-[3.5rem] w-96 text-center shadow-2xl">
-            <h3 class="text-2xl font-serif font-bold mb-8 italic">Espace Client</h3>
-            <input id="clientEmail" placeholder="Email" class="w-full p-4 bg-slate-100 rounded-2xl mb-3 outline-none">
-            <input id="clientPass" type="password" placeholder="Mot de passe" class="w-full p-4 bg-slate-100 rounded-2xl mb-6 outline-none">
-            <button onclick="loginClient()" class="w-full bg-amber-600 text-white py-4 rounded-2xl font-bold uppercase text-xs">Connexion</button>
-            <button onclick="get('clientSpace').classList.add('hidden')" class="mt-6 text-slate-400 text-[10px] uppercase font-bold block mx-auto">Fermer</button>
-        </div>
-    </div>
-
-    <div id="devisBox" class="fixed inset-0 bg-slate-900/90 z-[999] hidden flex items-center justify-center backdrop-blur-md">
-        <div class="bg-white p-12 rounded-[3rem] w-full max-w-lg shadow-2xl">
-            <h3 class="text-3xl font-serif font-bold mb-8 text-center italic">Estimation & Contact</h3>
+    <div id="devisBox" class="fixed inset-0 bg-slate-900/90 z-[2100] hidden flex items-center justify-center backdrop-blur-md">
+        <div class="bg-white p-12 rounded-[3rem] w-full max-w-lg">
+            <h3 class="text-3xl font-serif font-bold mb-8 text-center italic">Estimation</h3>
             <input id="devisName" placeholder="Votre nom" class="w-full p-4 bg-slate-100 rounded-2xl mb-3 outline-none">
             <input id="devisEmail" placeholder="Votre email" class="w-full p-4 bg-slate-100 rounded-2xl mb-3 outline-none">
-            <textarea id="devisMsg" placeholder="Votre message..." class="w-full p-4 bg-slate-100 rounded-2xl mb-6 h-40 outline-none"></textarea>
-            <button onclick="sendDevis()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-xs">Envoyer la demande</button>
-            <button onclick="closeDevis()" class="mt-4 text-slate-400 w-full text-center text-[10px] uppercase font-bold">Annuler</button>
+            <textarea id="devisMsg" placeholder="Détails de votre projet..." class="w-full p-4 bg-slate-100 rounded-2xl mb-6 h-40 outline-none"></textarea>
+            <button onclick="sendDevis()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold uppercase text-xs">Envoyer la demande</button>
+            <button onclick="closeDevis()" class="mt-4 text-slate-400 w-full text-center text-[10px] font-bold">ANNULER</button>
         </div>
     </div>
 
@@ -190,152 +227,136 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const get = id => document.getElementById(id);
-        
-        // --- MUSIQUE LOGIC ---
+
+        // --- 1. CURSEUR & SCROLL ---
+        document.addEventListener('mousemove', (e) => {
+            get('custom-cursor').style.left = e.clientX + 'px';
+            get('custom-cursor').style.top = e.clientY + 'px';
+        });
+
+        window.onscroll = () => {
+            let winScroll = document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            get("scrollProgress").style.width = (winScroll / height) * 100 + "%";
+        };
+
+        // --- 2. DARK MODE ---
+        window.toggleDarkMode = () => {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('#mainNavbar i');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+        };
+
+        // --- 3. REVEAL ANIMATION ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+
+        // --- 4. STATS COUNTER ---
+        function startCounters() {
+            document.querySelectorAll('.counter').forEach(c => {
+                const target = +c.getAttribute('data-target');
+                let count = 0;
+                const update = () => {
+                    if(count < target) {
+                        count += target/100;
+                        c.innerText = Math.ceil(count) + (target === 100 ? '%' : '+');
+                        setTimeout(update, 20);
+                    } else c.innerText = target + (target === 100 ? '%' : '+');
+                };
+                update();
+            });
+        }
+
+        // --- 5. MUSIQUE ---
         const playlist = [
             { name: "La Fouine - Vision", file: "lafouine_vision.mp3" },
-            { name: "RK - Chopard", file: "rk_chopardrk_chopard.mp3" },
-            { name: "RNBOI - Bébé", file: "rnboi_bebe.mp3" }
+            { name: "RK - Chopard", file: "rk_chopardrk_chopard.mp3" }
         ];
         let currentTrack = 0;
         const audio = get('bgAudio');
-        const progressBar = get('progressBar');
-
         window.toggleMusic = () => {
-            if (audio.src === "" || audio.paused) {
-                if(audio.src === "") audio.src = playlist[currentTrack].file;
+            if (audio.paused) {
+                if(!audio.src) audio.src = playlist[currentTrack].file;
                 audio.play();
                 get('playIcon').innerText = "⏸";
                 get('trackName').innerText = playlist[currentTrack].name;
-            } else {
-                audio.pause();
-                get('playIcon').innerText = "▶";
+            } else { audio.pause(); get('playIcon').innerText = "▶"; }
+        };
+        audio.ontimeupdate = () => get('progressBar').style.width = (audio.currentTime / audio.duration) * 100 + "%";
+
+        // --- 6. CALCULATEUR PRÊT ---
+        get('rangeYears').oninput = function() {
+            get('valYears').innerText = this.value;
+            const price = parseInt(get('detailPrice').innerText.replace(/[^0-9]/g, '')) || 0;
+            if(price > 0) {
+                const monthly = (price * 1.05) / (this.value * 12);
+                get('monthlyResult').innerText = Math.round(monthly).toLocaleString() + " € / mois";
             }
         };
 
-        audio.ontimeupdate = () => {
-            const pct = (audio.currentTime / audio.duration) * 100;
-            progressBar.style.width = pct + "%";
-        };
-
-        window.seekAudio = (e) => {
-            const rect = get('progressContainer').getBoundingClientRect();
-            const pos = (e.clientX - rect.left) / rect.width;
-            audio.currentTime = pos * audio.duration;
-        };
-
-        audio.onended = () => {
-            currentTrack = (currentTrack + 1) % playlist.length;
-            audio.src = playlist[currentTrack].file;
-            get('trackName').innerText = playlist[currentTrack].name;
-            audio.play();
-        };
-
-        // --- FIREBASE DATA & RENDER ---
-        let globalData = {};
+        // --- FIREBASE LOGIC ---
         let multiImages = [];
-        let currentCarouselImages = [];
-        let currentCarouselIndex = 0;
-
-        window.get = get;
-        window.showView = (id) => {
-            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
-            get(id).classList.add('active-view');
-            window.scrollTo(0,0);
-        };
-        window.openLogin = () => get('loginOverlay').classList.remove('hidden');
-        window.closeLogin = () => get('loginOverlay').classList.add('hidden');
-        window.openDevis = () => get('devisBox').classList.remove('hidden');
-        window.closeDevis = () => get('devisBox').classList.add('hidden');
-        window.openClientSpace = () => get('clientSpace').classList.remove('hidden');
-
-        // CARROUSEL
-        window.openDetail = (item) => {
-            currentCarouselImages = item.images || [item.img];
-            currentCarouselIndex = 0;
-            updateCarousel();
-            get('detailTitle').innerText = item.title;
-            get('detailPrice').innerText = item.price || "Sur demande";
-            get('detailDesc').innerText = item.desc || "";
-            get('detailModal').classList.remove('hidden');
-        };
-        function updateCarousel() { get('carouselImg').src = currentCarouselImages[currentCarouselIndex]; }
-        window.closeDetail = () => get('detailModal').classList.add('hidden');
-        window.nextImg = () => { currentCarouselIndex = (currentCarouselIndex + 1) % currentCarouselImages.length; updateCarousel(); };
-        window.prevImg = () => { currentCarouselIndex = (currentCarouselIndex - 1 + currentCarouselImages.length) % currentCarouselImages.length; updateCarousel(); };
-
-        // RENDU & TRI
-        window.renderAll = () => render();
-        window.filterCat = (cat) => render(cat);
-
-        window.sortByPrice = () => {
-            onValue(ref(db, 'content'), (snap) => {
-                let data = snap.val() || {};
-                let items = [];
-                Object.keys(data).forEach(cat => {
-                    Object.entries(data[cat]).forEach(([id, obj]) => items.push({ ...obj, id, cat }));
-                });
-                const getVal = (p) => {
-                    if(!p) return 0;
-                    let n = parseInt(p.replace(/[^0-9]/g, ''));
-                    return isNaN(n) ? 0 : n;
-                };
-                items.sort((a, b) => getVal(a.price) - getVal(b.price));
-                displayItems(items);
-            }, { onlyOnce: true });
-        };
-
-        function displayItems(items) {
-            let html = "";
-            const isAdmin = document.body.classList.contains('is-admin');
-            items.forEach(item => {
-                const itemData = JSON.stringify(item).replace(/'/g, "&apos;");
-                html += `
-                <div class="card-hover bg-white rounded-[2.5rem] shadow-xl overflow-hidden reveal cursor-pointer" onclick='openDetail(${itemData})'>
-                    <div class="h-80 overflow-hidden relative">
-                        <img src="${item.img}" class="w-full h-full object-cover">
-                        <span class="absolute top-4 left-4 bg-black/50 text-white text-[8px] font-black uppercase px-3 py-1 rounded-full backdrop-blur-md">${item.cat || 'bien'}</span>
-                    </div>
-                    <div class="p-8">
-                        <h4 class="text-2xl font-serif font-bold italic">${item.title}</h4>
-                        <p class="text-amber-600 font-bold mt-2">${item.price || ''}</p>
-                        ${isAdmin ? `<button onclick="event.stopPropagation(); deletePost('${item.cat}','${item.id}')" class="mt-6 text-red-500 text-[10px] font-bold uppercase hover:underline">Supprimer</button>` : ''}
-                    </div>
-                </div>`;
-            });
-            get('allContent').innerHTML = html || "<p class='text-center col-span-3 py-20 text-slate-400'>Aucun contenu.</p>";
-        }
-
-        function render(filter = null) {
-            onValue(ref(db, 'content'), (snap) => {
-                let data = snap.val() || {};
-                let items = [];
-                const cats = filter ? [filter] : ['villas','biens','articles'];
-                cats.forEach(c => {
-                    if(data[c]) Object.entries(data[c]).forEach(([id, obj]) => items.push({...obj, id, cat: c}));
-                });
-                displayItems(items);
-            }, { onlyOnce: true });
-        }
-
-        // ADMIN ACTIONS
         get('multiFileInput').onchange = (e) => {
             multiImages = [];
             Array.from(e.target.files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = () => multiImages.push(reader.result);
-                reader.readAsDataURL(file);
+                const r = new FileReader();
+                r.onload = () => multiImages.push(r.result);
+                r.readAsDataURL(file);
             });
         };
 
         get('btnPublish').onclick = () => {
             const title = get('inTitle').value, price = get('inPrice').value, cat = get('inCategory').value, desc = get('inDesc').value;
-            if(!title || multiImages.length === 0) return alert("Titre et image requis.");
+            if(!title || multiImages.length === 0) return alert("Données manquantes");
             push(ref(db, `content/${cat}`), { title, price, desc, img: multiImages[0], images: multiImages })
-            .then(() => { alert("Publié !"); location.reload(); });
+            .then(() => location.reload());
         };
 
-        window.deletePost = (cat, id) => { if(confirm("Supprimer ?")) remove(ref(db, `content/${cat}/${id}`)); };
+        window.render = (filter = null) => {
+            onValue(ref(db, 'content'), (snap) => {
+                const data = snap.val() || {};
+                let items = [];
+                const cats = filter ? [filter] : ['villas','biens','articles'];
+                cats.forEach(c => { if(data[c]) Object.entries(data[c]).forEach(([id, obj]) => items.push({...obj, id, cat: c})); });
+                
+                let html = "";
+                const isAdmin = document.body.classList.contains('is-admin');
+                items.forEach(item => {
+                    const itemData = JSON.stringify(item).replace(/'/g, "&apos;");
+                    html += `
+                    <div class="card-hover bg-white rounded-[2.5rem] shadow-xl overflow-hidden reveal-on-scroll cursor-pointer relative" onclick='openDetail(${itemData})'>
+                        <div class="absolute top-6 right-6 z-10 bg-amber-600 text-white text-[7px] font-black px-4 py-1.5 rounded-full shadow-lg">EXCLUSIVITÉ</div>
+                        <div class="h-80 overflow-hidden"><img src="${item.img}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"></div>
+                        <div class="p-8">
+                            <h4 class="text-2xl font-serif font-bold italic">${item.title}</h4>
+                            <p class="text-amber-600 font-bold mt-2">${item.price || ''}</p>
+                            ${isAdmin ? `<button onclick="event.stopPropagation(); deletePost('${item.cat}','${item.id}')" class="mt-4 text-red-500 text-[10px] font-bold uppercase">Supprimer</button>` : ''}
+                        </div>
+                    </div>`;
+                });
+                get('allContent').innerHTML = html || "<p class='text-center col-span-3 text-slate-400'>Aucun bien disponible.</p>";
+                document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+            });
+        };
+
+        window.openDetail = (item) => {
+            get('carouselImg').src = item.img;
+            get('detailTitle').innerText = item.title;
+            get('detailPrice').innerText = item.price || "Sur demande";
+            get('detailDesc').innerText = item.desc || "";
+            get('detailModal').classList.remove('hidden');
+            get('rangeYears').dispatchEvent(new Event('input'));
+        };
+
+        // UI HELPERS
+        window.showView = (id) => { document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view')); get(id).classList.add('active-view'); };
+        window.openLogin = () => get('loginOverlay').classList.remove('hidden');
+        window.closeLogin = () => get('loginOverlay').classList.add('hidden');
+        window.closeDetail = () => get('detailModal').classList.add('hidden');
+        window.openDevis = () => get('devisBox').classList.remove('hidden');
+        window.closeDevis = () => get('devisBox').classList.add('hidden');
 
         // AUTH
         const ACCOUNTS = { "Axel": "Axel30", "Alden": "Alden30" };
@@ -350,6 +371,7 @@
         }
         get('btnLogout').onclick = () => { sessionStorage.removeItem('arcadia_user'); location.reload(); };
 
+        startCounters();
         render();
     </script>
 </body>
