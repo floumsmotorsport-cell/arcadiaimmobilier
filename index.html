@@ -34,6 +34,17 @@
         </select>
     </div>
 
+    <div id="devisBox" class="fixed inset-0 bg-black/70 z-[999] hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white p-10 rounded-[2rem] w-full max-w-lg shadow-2xl mx-4">
+            <h3 class="text-2xl font-serif font-bold mb-6 text-center">Demande de devis</h3>
+            <input id="devisName" placeholder="Nom" class="w-full p-3 bg-slate-100 rounded mb-3 outline-none focus:ring-1 ring-amber-500">
+            <input id="devisEmail" placeholder="Email" class="w-full p-3 bg-slate-100 rounded mb-3 outline-none focus:ring-1 ring-amber-500">
+            <textarea id="devisMsg" placeholder="Votre demande (bien souhaité, dates, services...)" class="w-full p-3 bg-slate-100 rounded mb-4 h-32 outline-none focus:ring-1 ring-amber-500"></textarea>
+            <button onclick="sendDevis()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold hover:bg-amber-700 transition">Envoyer la demande</button>
+            <button onclick="closeDevis()" class="mt-3 text-xs text-slate-400 w-full hover:text-slate-600">Annuler</button>
+        </div>
+    </div>
+
     <div id="chatBox" class="fixed bottom-24 right-6 w-80 bg-white shadow-2xl rounded-2xl hidden flex flex-col z-50 border border-slate-100 overflow-hidden">
         <div class="bg-slate-900 text-white p-4 font-bold">Concierge IA</div>
         <div id="chatMessages" class="p-4 h-60 overflow-y-auto text-sm space-y-2 bg-slate-50"></div>
@@ -42,7 +53,7 @@
             <button id="sendChat" class="px-4 bg-amber-600 text-white">➤</button>
         </div>
     </div>
-    <button onclick="toggleChat()" class="fixed bottom-6 right-6 bg-amber-600 text-white w-14 h-14 rounded-full shadow-xl text-xl z-50 flex items-center justify-center">💬</button>
+    <button onclick="toggleChat()" class="fixed bottom-6 right-6 bg-amber-600 text-white w-14 h-14 rounded-full shadow-xl text-xl z-50 flex items-center justify-center transition hover:scale-110">💬</button>
 
     <div id="adminBar" class="fixed top-0 w-full text-white py-3 px-8 z-[100] justify-between items-center text-[10px] font-bold uppercase tracking-widest">
         <div class="flex items-center space-x-6">
@@ -66,12 +77,28 @@
             <button onclick="openLogin()" class="absolute bottom-4 left-6 text-white/10 text-[9px] hover:text-white/40">STAFF LOGIN</button>
         </section>
 
+        <section class="py-16 bg-white border-b border-slate-100">
+            <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
+                <div>
+                    <h3 class="text-3xl font-bold text-amber-600">+120</h3>
+                    <p class="text-slate-500 uppercase text-xs tracking-widest mt-1">Biens d’exception</p>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-bold text-amber-600">24h</h3>
+                    <p class="text-slate-500 uppercase text-xs tracking-widest mt-1">Réponse concierge</p>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-bold text-amber-600">International</h3>
+                    <p class="text-slate-500 uppercase text-xs tracking-widest mt-1">Réseau mondial</p>
+                </div>
+            </div>
+        </section>
+
         <section id="portfolio" class="py-20 bg-white">
             <div class="container mx-auto px-6 text-center mb-12">
                 <h3 class="text-3xl font-serif font-bold italic">Portefeuille d'Exception</h3>
             </div>
-            <div id="allContent" class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10">
-                </div>
+            <div id="allContent" class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10"></div>
         </section>
 
         <section id="favSection" class="py-20 bg-slate-900 text-white hidden">
@@ -85,20 +112,48 @@
             <div class="max-w-4xl mx-auto px-6 bg-white p-12 rounded-[3rem] shadow-xl text-center border border-slate-100">
                 <h2 class="text-3xl font-serif font-bold mb-6">Une demande particulière ?</h2>
                 <p class="text-slate-500 mb-8">Notre conciergerie privée vous répond sous 1 heure.</p>
-                <button class="bg-slate-900 text-white px-12 py-4 rounded-2xl font-bold uppercase tracking-widest hover:bg-amber-600 transition">Contacter un expert</button>
+                <button onclick="openDevis()" class="bg-slate-900 text-white px-12 py-4 rounded-2xl font-bold uppercase tracking-widest hover:bg-amber-600 transition">
+                    Contacter un expert
+                </button>
             </div>
         </section>
     </main>
 
     <main id="adminPanel" class="view-section pt-24 pb-20 container mx-auto px-6">
-        <div class="max-w-lg mx-auto bg-white p-8 rounded-[2rem] shadow-2xl">
-            <h2 class="text-2xl font-serif font-bold mb-6 text-center">Publier un nouveau bien</h2>
-            <div class="space-y-4">
-                <input type="file" id="fileInput" class="w-full text-xs border p-2 rounded">
-                <input type="text" id="inTitle" placeholder="Nom de la propriété" class="w-full p-4 bg-slate-100 rounded-xl outline-none focus:ring-2 ring-amber-500">
-                <input type="text" id="inPrice" placeholder="Prix (ex: 4 500 000 €)" class="w-full p-4 bg-slate-100 rounded-xl outline-none focus:ring-2 ring-amber-500">
-                <button id="btnPublish" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-amber-600 transition">PUBLIER</button>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-6xl mx-auto mb-16">
+            <div class="bg-white p-8 rounded-[2rem] shadow-2xl border border-slate-100">
+                <h2 class="text-2xl font-serif font-bold mb-6">Publier un nouveau bien</h2>
+                <div class="space-y-4">
+                    <input type="file" id="fileInput" class="w-full text-xs border p-2 rounded">
+                    <input type="text" id="inTitle" placeholder="Nom de la propriété" class="w-full p-4 bg-slate-100 rounded-xl outline-none focus:ring-2 ring-amber-500 transition-all">
+                    <input type="text" id="inPrice" placeholder="Prix (ex: 4 500 000 €)" class="w-full p-4 bg-slate-100 rounded-xl outline-none focus:ring-2 ring-amber-500 transition-all">
+                    <button id="btnPublish" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-amber-600 transition">PUBLIER MAINTENANT</button>
+                </div>
             </div>
+
+            <div class="bg-slate-900 text-white p-8 rounded-[2rem] border border-slate-700 flex flex-col justify-center">
+                <p class="text-xs text-slate-400 mb-4 tracking-[0.2em] uppercase">Aperçu en temps réel</p>
+                <div id="previewCard" class="bg-[#2b2d31] rounded-2xl p-6 border-l-8 border-amber-600 shadow-2xl">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-amber-600 rounded-full flex items-center justify-center font-black text-xl">A</div>
+                        <div>
+                            <p class="text-sm font-bold tracking-wide">Arcadia Prestige</p>
+                            <p class="text-[10px] text-slate-400 uppercase">Nouvelle parution</p>
+                        </div>
+                    </div>
+                    <h4 id="previewTitle" class="font-serif font-bold text-2xl mb-1 italic">Titre du bien</h4>
+                    <p id="previewPrice" class="text-amber-500 font-bold text-lg">Prix</p>
+                    <img id="previewImg" class="mt-4 rounded-xl w-full h-48 object-cover hidden shadow-lg"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-2xl font-serif font-bold mb-6 flex items-center gap-2">
+                📬 Messages & Devis <span id="msgCount" class="text-xs bg-amber-600 text-white px-2 py-1 rounded-full">0</span>
+            </h2>
+            <div id="adminMessages" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                </div>
         </div>
     </main>
 
@@ -114,11 +169,10 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // CONFIGURATION FIREBASE
         const firebaseConfig = {
-            apiKey: "AIzaSy...", // Remplace par ta clé complète
+            apiKey: "AIzaSy...", 
             authDomain: "arcadiaimmobilier-ee335.firebaseapp.com",
             databaseURL: "https://arcadiaimmobilier-ee335-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "arcadiaimmobilier-ee335",
@@ -127,72 +181,91 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         let globalData = {};
-
-        /* =========================
-           UTILITAIRE DOM
-        ========================= */
         const get = id => document.getElementById(id);
 
         /* =========================
-           NAVIGATION
+           NAVIGATION & AUTH
         ========================= */
         window.showView = (id) => {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
             get(id).classList.add('active-view');
         };
-
         window.openLogin = () => get('loginOverlay').classList.remove('hidden');
         window.closeLogin = () => get('loginOverlay').classList.add('hidden');
+        window.scrollToFavs = () => get('favSection').scrollIntoView({ behavior: 'smooth' });
 
-        window.scrollToFavs = () => {
-            const el = get('favSection');
-            if(el) el.scrollIntoView({ behavior: 'smooth' });
-        };
-
-        /* =========================
-           AUTHENTIFICATION
-        ========================= */
         const ACCOUNTS = { "Axel": "Axel30", "Alden": "Alden30" };
-
         get('btnLoginAction').onclick = () => {
-            const u = get('userLogin').value;
-            const p = get('passLogin').value;
-
+            const u = get('userLogin').value, p = get('passLogin').value;
             if(ACCOUNTS[u] === p){
                 sessionStorage.setItem('arcadia_user', u);
                 location.reload();
-            } else alert("Identifiants incorrects");
+            } else alert("Erreur identifiants");
         };
-
         get('btnLogout')?.addEventListener('click', () => {
             sessionStorage.removeItem('arcadia_user');
             location.reload();
         });
-
         if(sessionStorage.getItem('arcadia_user')){
             document.body.classList.add('is-admin');
             get('activeUserDisplay').innerText = sessionStorage.getItem('arcadia_user');
         }
 
         /* =========================
-           FIREBASE & RENDER
+           DEVIS & MESSAGES
+        ========================= */
+        window.openDevis = () => get('devisBox').classList.remove('hidden');
+        window.closeDevis = () => get('devisBox').classList.add('hidden');
+
+        window.sendDevis = () => {
+            const name = get('devisName').value, email = get('devisEmail').value, msg = get('devisMsg').value;
+            if(!name || !email || !msg){ alert("Veuillez remplir tous les champs"); return; }
+            push(ref(db, 'messages'), { name, email, msg, date: new Date().toLocaleString() }).then(() => {
+                alert("Demande envoyée ✅"); closeDevis();
+                get('devisName').value = ""; get('devisEmail').value = ""; get('devisMsg').value = "";
+            });
+        };
+
+        // Lecture des messages pour l'admin
+        onValue(ref(db, 'messages'), (snap) => {
+            const messages = snap.val() || {};
+            const container = get('adminMessages');
+            let html = "";
+            let count = 0;
+            
+            Object.entries(messages).reverse().forEach(([id, m]) => {
+                count++;
+                html += `
+                <div class="bg-white p-6 rounded-3xl shadow-lg border-l-4 border-amber-500 relative">
+                    <button onclick="deleteMsg('${id}')" class="absolute top-4 right-4 text-red-400 hover:text-red-600">✕</button>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">${m.date}</p>
+                    <h4 class="font-bold text-slate-900">${m.name}</h4>
+                    <p class="text-xs text-amber-600 mb-3">${m.email}</p>
+                    <p class="text-sm text-slate-600 italic">"${m.msg}"</p>
+                </div>`;
+            });
+            container.innerHTML = html || "<p class='text-slate-400 text-sm'>Aucun nouveau message.</p>";
+            get('msgCount').innerText = count;
+        });
+
+        window.deleteMsg = (id) => {
+            if(confirm("Supprimer ce message ?")) remove(ref(db, `messages/${id}`));
+        };
+
+        /* =========================
+           DATA & RENDERING SITE
         ========================= */
         onValue(ref(db, 'content'), (snap) => {
             globalData = snap.val() || {};
-            renderAll();
-            renderFavs();
+            renderAll(); renderFavs();
         });
 
         function renderAll(){
             let html = "";
             ['villas','creations','articles'].forEach(cat => {
-                if(globalData[cat]){
-                    Object.entries(globalData[cat]).forEach(([id, item]) => {
-                        html += createCard(id, item, cat);
-                    });
-                }
+                if(globalData[cat]) Object.entries(globalData[cat]).forEach(([id, item]) => html += createCard(id, item, cat));
             });
-            get('allContent').innerHTML = html || "<p class='text-center col-span-3 text-slate-400'>Aucun contenu disponible</p>";
+            get('allContent').innerHTML = html || "<p class='text-center col-span-3 text-slate-400'>Aucun bien disponible</p>";
         }
 
         function createCard(id, item, cat){
@@ -203,123 +276,68 @@
                 <div class="p-8">
                     <span class="text-[9px] font-black text-amber-600 uppercase tracking-widest">${cat}</span>
                     <h4 class="text-2xl font-serif font-bold mt-1">${item.title}</h4>
-                    <p class="text-amber-700 font-bold mt-2">${item.price || 'Prix sur demande'}</p>
-                    <button onclick="generatePDF('${item.title}','${item.price}')" 
-                    class="mt-4 text-[10px] bg-slate-900 text-white px-4 py-2 rounded-xl uppercase font-bold tracking-tighter hover:bg-amber-600 transition">
-                    Télécharger PDF
-                    </button>
+                    <p class="text-amber-700 font-bold mt-2">${item.price || 'Sur demande'}</p>
+                    <button onclick="generatePDF('${item.title}','${item.price}')" class="mt-4 text-[10px] bg-slate-900 text-white px-4 py-2 rounded-xl uppercase font-bold tracking-tighter hover:bg-amber-600 transition">PDF</button>
                 </div>
             </div>`;
         }
 
-        /* =========================
-           LOGIQUE FAVORIS
-        ========================= */
         window.toggleFav = (id) => {
             let favs = JSON.parse(localStorage.getItem("favs") || "[]");
-            if(favs.includes(id)) favs = favs.filter(f => f !== id);
-            else favs.push(id);
+            favs = favs.includes(id) ? favs.filter(f => f !== id) : [...favs, id];
             localStorage.setItem("favs", JSON.stringify(favs));
             renderFavs();
         };
 
         function renderFavs(){
-            let favs = JSON.parse(localStorage.getItem("favs") || "[]");
-            let html = "";
-            let count = 0;
-
+            let favs = JSON.parse(localStorage.getItem("favs") || "[]"), html = "", count = 0;
             ['villas','creations','articles'].forEach(cat => {
-                if(globalData[cat]){
-                    Object.entries(globalData[cat]).forEach(([id, item]) => {
-                        if(favs.includes(id)){
-                            html += createCard(id, item, cat);
-                            count++;
-                        }
-                    });
-                }
+                if(globalData[cat]) Object.entries(globalData[cat]).forEach(([id, item]) => {
+                    if(favs.includes(id)){ html += createCard(id, item, cat); count++; }
+                });
             });
-
-            get('favContent').innerHTML = html;
-            get('favCount').innerText = count;
+            get('favContent').innerHTML = html; get('favCount').innerText = count;
             get('favSection').classList.toggle('hidden', count === 0);
         }
 
         /* =========================
-           FONCTIONS CLIENTS (PDF, CHAT, LANGUE)
+           PREVIEW & PUBLISH
         ========================= */
-        window.generatePDF = (title, price) => {
+        let currentImg = "";
+        get('inTitle').addEventListener('input', e => get('previewTitle').innerText = e.target.value || "Titre du bien");
+        get('inPrice').addEventListener('input', e => get('previewPrice').innerText = e.target.value || "Prix");
+        get('fileInput').addEventListener('change', e => {
+            const file = e.target.files[0]; if(!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                currentImg = reader.result; get('previewImg').src = currentImg; get('previewImg').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        get('btnPublish').onclick = () => {
+            const title = get('inTitle').value, price = get('inPrice').value;
+            if(!title || !currentImg){ alert("Image et titre requis"); return; }
+            push(ref(db, 'content/villas'), { title, price, img: currentImg }).then(() => location.reload());
+        };
+
+        window.generatePDF = (t, p) => {
             const win = window.open('', '', 'width=600,height=600');
-            win.document.write(`
-            <html><body style="font-family:serif;text-align:center;padding:50px; border:10px solid #b45309">
-                <h1 style="font-size:40px; color:#0f172a">ARCADIA PRESTIGE</h1>
-                <p style="text-transform:uppercase; letter-spacing:5px">Document Confidentiel</p>
-                <hr style="margin:40px 0">
-                <h2 style="font-size:30px">${title}</h2>
-                <h3 style="color:#b45309; font-size:24px">${price}</h3>
-                <p style="margin-top:50px; font-style:italic">Contactez notre conciergerie pour plus de détails.</p>
-            </body></html>`);
+            win.document.write(`<html><body style="font-family:serif;text-align:center;padding:50px;border:10px solid #b45309"><h1>ARCADIA PRESTIGE</h1><hr><h2>${t}</h2><h3>${p}</h3></body></html>`);
             win.print();
         };
 
         window.toggleChat = () => get('chatBox').classList.toggle("hidden");
-
         get('sendChat').onclick = () => {
-            const input = get('chatInput');
-            const msg = input.value.trim().toLowerCase();
-            if(!msg) return;
-
-            const box = get('chatMessages');
-            box.innerHTML += `<div class="text-right text-xs mb-2"><span class="bg-slate-200 p-2 rounded-lg inline-block">${msg}</span></div>`;
-
-            let reply = "Notre concierge traite votre demande immédiatement.";
-            if(msg.includes("prix")) reply = "Nos tarifs sont exclusifs. Un expert vous contactera pour un devis personnalisé.";
-            if(msg.includes("visite")) reply = "Nous pouvons organiser une visite privée sous 24h.";
-
+            const input = get('chatInput'), msg = input.value.trim(); if(!msg) return;
+            get('chatMessages').innerHTML += `<div class="text-right text-xs mb-2"><span class="bg-slate-200 p-2 rounded-lg inline-block">${msg}</span></div>`;
             setTimeout(() => {
-                box.innerHTML += `<div class="text-left text-xs text-amber-600 font-bold">IA: ${reply}</div>`;
-                box.scrollTop = box.scrollHeight;
+                get('chatMessages').innerHTML += `<div class="text-left text-xs text-amber-600 font-bold">IA: Un expert vous répondra sous peu.</div>`;
+                get('chatMessages').scrollTop = get('chatMessages').scrollHeight;
             }, 700);
-
             input.value = "";
         };
 
-        get('langSelect').onchange = (e) => {
-            const l = e.target.value;
-            document.body.style.direction = (l === "ar") ? "rtl" : "ltr";
-            document.body.style.textAlign = (l === "ar") ? "right" : "left";
-        };
-
-        /* =========================
-           UPLOAD ADMIN
-        ========================= */
-        let currentImg = "";
-
-        get('fileInput').onchange = e => {
-            const file = e.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = () => currentImg = reader.result;
-            reader.readAsDataURL(file);
-        };
-
-        get('btnPublish').onclick = () => {
-            const title = get('inTitle').value;
-            const price = get('inPrice').value;
-
-            if(!title || !currentImg){
-                alert("Veuillez remplir le titre et charger une image.");
-                return;
-            }
-
-            push(ref(db, 'content/villas'), {
-                title,
-                price,
-                img: currentImg
-            }).then(() => {
-                alert("Bien publié avec succès !");
-                location.reload();
-            });
-        };
     </script>
 </body>
 </html>
