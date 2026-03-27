@@ -32,8 +32,6 @@
         .active-view { display: block; animation: fadeIn 0.8s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .whatsapp-btn { position: fixed; bottom: 30px; right: 20px; background: #25d366; color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; z-index: 1000; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        
         /* Style Preview */
         .preview-label { background: #d4af37; color: black; padding: 4px 12px; font-size: 10px; font-weight: 900; border-radius: 4px; display: inline-block; margin-bottom: 10px; text-transform: uppercase; }
     </style>
@@ -68,7 +66,12 @@
         <section class="h-[75vh] flex flex-col items-center justify-center text-center px-6 navy-gradient text-white relative">
             <h1 class="text-7xl md:text-[8rem] font-serif italic font-bold mb-4">Arcadia</h1>
             <p class="text-amber-500 font-bold uppercase tracking-[0.8em] text-[10px] mb-10">L'Immobilier de Collection Arma 3</p>
-            <button onclick="document.getElementById('collection').scrollIntoView()" class="bg-white text-slate-900 px-12 py-4 rounded-full font-bold text-[10px] uppercase tracking-widest hover:gold-gradient hover:text-white transition">Découvrir</button>
+            <button onclick="document.getElementById('collection').scrollIntoView()" class="bg-white text-slate-900 px-12 py-4 rounded-full font-bold text-[10px] uppercase tracking-widest hover:gold-gradient hover:text-white transition mb-6">Découvrir</button>
+            
+            <div class="glass px-6 py-2 rounded-full border border-amber-500/30">
+                <p class="text-[9px] text-amber-500 font-bold uppercase tracking-widest">Ligne Privée Conciergerie (RP)</p>
+                <p class="text-xs font-mono text-white tracking-wider mt-1">Arcadia-Prestige-01</p>
+            </div>
         </section>
 
         <section id="collection" class="py-24 container mx-auto px-6">
@@ -91,6 +94,7 @@
                     <select id="inCat" onchange="updateListingPreview()" class="w-full p-4 rounded-xl bg-slate-100 dark:bg-slate-800 outline-none">
                         <option value="Villa">Villa d'Exception</option>
                         <option value="Penthouse">Penthouse Signature</option>
+                        <option value="Appartement">Appartement Noble</option>
                     </select>
                     <textarea id="inDesc" oninput="updateListingPreview()" placeholder="Description..." class="w-full p-4 rounded-xl bg-slate-100 dark:bg-slate-800 h-32 outline-none"></textarea>
                     <input type="file" id="multiFileInput" class="text-xs">
@@ -140,7 +144,7 @@
     </main>
 
     <div id="loginOverlay" class="fixed inset-0 z-[2500] hidden flex items-center justify-center bg-black/90 backdrop-blur-xl">
-        <div class="bg-white p-12 rounded-[3.5rem] w-full max-w-sm text-center shadow-2xl">
+        <div class="bg-white p-16 rounded-[3.5rem] w-full max-w-sm text-center shadow-2xl">
             <h3 class="text-2xl font-serif italic mb-8">Prestige Login</h3>
             <input type="text" id="userLogin" placeholder="Staff ID" class="w-full p-4 bg-slate-100 rounded-xl mb-4 outline-none">
             <input type="password" id="passLogin" placeholder="Code Secret" class="w-full p-4 bg-slate-100 rounded-xl mb-8 outline-none">
@@ -148,8 +152,6 @@
             <button onclick="closeLogin()" class="mt-6 text-slate-400 text-[10px] font-bold uppercase">Fermer</button>
         </div>
     </div>
-
-    <a href="https://wa.me/votre_num_rp" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i></a>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -245,7 +247,7 @@
             let html = ""; const data = snap.val();
             if(data) Object.entries(data).reverse().forEach(([id, it]) => {
                 html += `
-                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-xl hover:-translate-y-2 transition duration-500">
+                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-xl hover:-translate-y-2 transition duration-500 border border-amber-500/10">
                     <img src="${it.images[0]}" class="h-[350px] w-full object-cover">
                     <div class="p-10">
                         <span class="text-[9px] font-black text-amber-600 uppercase tracking-widest">${it.cat}</span>
@@ -266,7 +268,7 @@
                     <div class="h-[450px] rounded-[3rem] overflow-hidden mb-6 shadow-2xl">
                         <img src="${it.img}" class="w-full h-full object-cover group-hover:scale-105 transition duration-1000">
                     </div>
-                    <h3 class="text-3xl font-serif italic mb-4">${it.title}</h3>
+                    <h3 class="text-3xl font-serif italic mb-4 leading-tight">${it.title}</h3>
                     ${localStorage.getItem('arcadia_staff') ? `<button onclick="del('blog/${id}')" class="text-red-400 text-xs">Supprimer</button>` : ''}
                 </div>`;
             });
@@ -292,6 +294,7 @@
         window.del = (p) => { if(confirm("Supprimer ?")) remove(ref(db, p)); };
         window.sendMessage = () => {
             const d = { name: get('msgName').value, email: get('msgEmail').value, body: get('msgBody').value, date: new Date().toLocaleString() };
+            if(!d.name || !d.body) return alert("Champs requis");
             push(ref(db, 'messages'), d).then(() => { alert("Transmis à la conciergerie."); location.reload(); });
         };
 
