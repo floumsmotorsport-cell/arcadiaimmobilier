@@ -19,7 +19,6 @@
         .btn-view:hover { background: var(--gold); color: black; }
         .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05); }
         
-        /* Modal Style */
         #orderModal { display:none; position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.9); align-items:center; justify-content:center; }
         .input-arcadia { width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; color:white; margin-bottom:12px; outline:none; }
         .input-arcadia:focus { border-color: var(--gold); }
@@ -34,8 +33,8 @@
             <p id="orderSummary" class="text-gold text-center text-[10px] uppercase tracking-widest mb-8"></p>
             
             <div id="userInfoFields">
-                <input type="text" id="custNom" placeholder="Nom" class="input-arcadia">
-                <input type="text" id="custPrenom" placeholder="Prénom" class="input-arcadia">
+                <input type="text" id="custNom" placeholder="Nom RP" class="input-arcadia">
+                <input type="text" id="custPrenom" placeholder="Prénom RP" class="input-arcadia">
                 <input type="tel" id="custTel" placeholder="Numéro de Téléphone" class="input-arcadia">
             </div>
 
@@ -65,6 +64,15 @@
         </div>
     </section>
 
+    <section id="clientDashboard" class="hidden py-10 px-6 max-w-7xl mx-auto">
+        <div class="glass p-8 rounded-3xl border-l-4 border-gold">
+            <h3 class="font-serif text-2xl italic mb-6">Suivi de mes demandes RP</h3>
+            <div id="myOrdersList" class="space-y-4 text-sm">
+                <p class="opacity-50 italic">Aucune demande en cours...</p>
+            </div>
+        </div>
+    </section>
+
     <section class="py-24 px-6 max-w-7xl mx-auto">
         <div class="grid md:grid-cols-2 gap-12">
             <div class="glass p-8 rounded-3xl">
@@ -84,13 +92,6 @@
                         </div>
                         <button onclick="openOrder('Alarme Niveau 2', '2 000 000 €')" class="btn-view">Choisir</button>
                     </div>
-                    <div class="flex justify-between items-center p-4 bg-white/5 rounded-xl hover:border-gold border border-transparent transition-all">
-                        <div>
-                            <p class="font-bold text-gold">Alarme Niveau 3</p>
-                            <p class="text-[10px] opacity-40">5 000 000 € • Alerte Exclusive</p>
-                        </div>
-                        <button onclick="openOrder('Alarme Niveau 3', '5 000 000 €')" class="btn-view">Choisir</button>
-                    </div>
                 </div>
             </div>
 
@@ -99,7 +100,7 @@
                     <h3 class="font-serif text-4xl mb-8 italic">Stockage Entreprise</h3>
                     <div class="p-8 bg-white/5 rounded-2xl border border-white/10">
                         <p class="text-4xl font-serif text-gold">+20 000 places</p>
-                        <p class="text-xs opacity-50 mt-4 leading-relaxed uppercase tracking-widest">Extension de capacité immédiate pour votre société.</p>
+                        <p class="text-xs opacity-50 mt-4 leading-relaxed uppercase tracking-widest">Extension de capacité immédiate.</p>
                     </div>
                 </div>
                 <div class="mt-8 flex justify-between items-center">
@@ -117,7 +118,7 @@
 
     <footer class="py-20 bg-white/5 border-t border-white/10 text-center">
         <p class="font-serif text-2xl italic mb-6">Arcadia Studio</p>
-        <a href="https://discord.gg/MtmDydQApw" class="text-gold text-[10px] tracking-[5px] uppercase border border-gold px-8 py-3 hover:bg-gold hover:text-black transition-all">
+        <a href="https://discord.gg/MtmDydQApw" target="_blank" class="text-gold text-[10px] tracking-[5px] uppercase border border-gold px-8 py-3 hover:bg-gold hover:text-black transition-all">
             Rejoindre le Discord
         </a>
     </footer>
@@ -131,11 +132,15 @@
         const db = getDatabase(app);
 
         let currentOrder = null;
-        const activeUser = JSON.parse(localStorage.getItem('arcadia_user'));
 
+        // --- GESTION DU COMPTE RP ---
+        const activeUser = JSON.parse(localStorage.getItem('arcadia_user_rp'));
+        
         if(activeUser) {
-            document.getElementById('userGreeting').innerText = `Client: ${activeUser.prenom} ${activeUser.nom}`;
+            document.getElementById('userGreeting').innerText = `Citoyen: ${activeUser.prenom} ${activeUser.nom}`;
             document.getElementById('userInfoFields').style.display = 'none';
+            document.getElementById('clientDashboard').classList.remove('hidden');
+            loadMyOrders(activeUser.nom, activeUser.prenom);
         }
 
         // --- GESTION COMMANDE ---
@@ -151,29 +156,53 @@
 
         window.confirmOrder = () => {
             let userData = activeUser;
-
-            // Si pas de compte, on récupère les champs
             if(!userData) {
                 userData = {
                     nom: document.getElementById('custNom').value,
                     prenom: document.getElementById('custPrenom').value,
-                    tel: document.getElementById('custTel').value
+                    tel: document.getElementById('custTel').value || "Non renseigné"
                 };
-                if(!userData.nom || !userData.tel) return alert("Veuillez remplir vos coordonnées.");
-                // Optionnel : Sauvegarder pour la prochaine fois
-                localStorage.setItem('arcadia_user', JSON.stringify(userData));
+                if(!userData.nom || !userData.prenom) return alert("Nom et Prénom RP obligatoires !");
+                localStorage.setItem('arcadia_user_rp', JSON.stringify(userData));
             }
 
             push(ref(db, 'orders'), {
                 ...userData,
                 ...currentOrder,
                 date: new Date().toLocaleString('fr-FR'),
-                status: 'Nouveau'
+                status: 'En attente',
+                reponseStaff: 'Votre demande est en cours de traitement...'
             }).then(() => {
-                alert("Votre demande a été transmise au Staff Arcadia !");
+                alert("Transmis au Staff Arcadia !");
                 location.reload();
             });
         };
+
+        // --- SUIVI DES RÉPONSES ---
+        function loadMyOrders(nom, prenom) {
+            onValue(ref(db, 'orders'), (snap) => {
+                const data = snap.val();
+                const list = document.getElementById('myOrdersList');
+                if(!data) return;
+                
+                let html = "";
+                Object.entries(data).reverse().forEach(([id, ord]) => {
+                    if(ord.nom === nom && ord.prenom === prenom) {
+                        const statusColor = ord.status === 'Répondu' ? 'text-green-400' : 'text-gold';
+                        html += `
+                        <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                            <div class="flex justify-between mb-2">
+                                <span class="font-bold uppercase text-[10px] tracking-widest">${ord.service}</span>
+                                <span class="${statusColor} font-bold text-[10px] uppercase">${ord.status}</span>
+                            </div>
+                            <p class="text-white/90 text-xs italic">"${ord.reponseStaff}"</p>
+                            <p class="text-[9px] opacity-30 mt-2 italic">Dernière mise à jour : ${ord.date}</p>
+                        </div>`;
+                    }
+                });
+                if(html !== "") list.innerHTML = html;
+            });
+        }
 
         // --- CHARGEMENT CATALOGUE ---
         onValue(ref(db, 'listings'), (snap) => {
