@@ -2,46 +2,45 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Staff | Arcadia Studio</title>
+    <title>Arcadia Staff | Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:italic,wght@0,300;1,300&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
     <style>
-        body { background:#0a0a0a; color:white; font-family:'Montserrat'; }
+        body { background:#0a0a0a; color:white; font-family:'Montserrat', sans-serif; }
         .glass { background:#111; border:1px solid rgba(255,255,255,0.05); border-radius:15px; }
-        .input-staff { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:5px; color:white; font-size:12px; }
+        .input-staff { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:8px; color:white; width:100%; margin-bottom:10px; font-size:12px; }
+        .btn-gold { background:#b38e44; color:black; font-weight:bold; padding:10px; border-radius:5px; text-transform:uppercase; font-size:10px; width:100%; }
         #mainContent { display:none; }
     </style>
 </head>
-<body class="p-6">
+<body class="p-8">
 
-    <div id="mainContent" class="authorized">
-        <header class="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
-            <h1 class="font-serif text-4xl italic">Staff Control Panel</h1>
+    <div id="mainContent">
+        <header class="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
+            <h1 class="text-3xl font-serif italic">Arcadia Staff Suite</h1>
             <div class="flex gap-4">
-                <a href="index.html" class="text-xs uppercase tracking-widest bg-white/10 px-4 py-2 rounded">Site Live</a>
-                <button onclick="sessionStorage.clear(); location.reload();" class="text-xs uppercase tracking-widest bg-red-900/20 text-red-500 px-4 py-2 rounded">Déconnexion</button>
+                <a href="index.html" class="text-[10px] bg-white/5 px-4 py-2 rounded">← Retour au Site</a>
+                <button onclick="sessionStorage.clear(); location.reload();" class="text-[10px] text-red-500 border border-red-500/20 px-4 py-2 rounded">Quitter</button>
             </div>
         </header>
 
-        <div class="grid lg:grid-cols-3 gap-8">
-            
-            <div class="glass p-6">
-                <h2 class="text-gold uppercase text-[10px] tracking-[4px] mb-6">Ajouter un Bien / Article</h2>
-                <input type="text" id="bTitle" placeholder="Titre" class="input-staff w-full mb-3">
-                <input type="text" id="bPrice" placeholder="Prix" class="input-staff w-full mb-3">
-                <select id="bCat" class="input-staff w-full mb-3">
+        <div class="grid lg:grid-cols-3 gap-10">
+            <div class="glass p-6 h-fit">
+                <h3 class="text-gold text-[10px] tracking-[3px] uppercase mb-6 font-bold">Publier un nouveau bien</h3>
+                <input type="text" id="bTitle" placeholder="Nom du bien" class="input-staff">
+                <input type="text" id="bPrice" placeholder="Prix" class="input-staff">
+                <select id="bCat" class="input-staff">
                     <option value="Villa">Villa</option>
-                    <option value="Article">Article Blog</option>
+                    <option value="Manoir">Manoir</option>
                     <option value="Service">Service</option>
                 </select>
-                <textarea id="bDesc" placeholder="Description" class="input-staff w-full h-24 mb-3"></textarea>
+                <textarea id="bDesc" placeholder="Description" class="input-staff h-24"></textarea>
                 <input type="file" id="bFiles" class="text-[10px] mb-4" multiple>
-                <button id="btnPublish" class="w-full bg-gold text-black font-bold p-3 rounded uppercase text-[10px]">Publier</button>
+                <button id="btnPublish" class="btn-gold">Enregistrer le bien</button>
             </div>
 
             <div class="lg:col-span-2 glass p-6">
-                <h2 class="text-gold uppercase text-[10px] tracking-[4px] mb-6">Commandes Clients & Visualisation</h2>
-                <div id="orderList" class="space-y-4">
+                <h3 class="text-gold text-[10px] tracking-[3px] uppercase mb-6 font-bold">Demandes en attente</h3>
+                <div id="orderContainer" class="space-y-4">
                     </div>
             </div>
         </div>
@@ -55,55 +54,59 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // --- AUTH ---
         if(sessionStorage.getItem('arcadia_auth') === 'true') {
             document.getElementById('mainContent').style.display = 'block';
         } else {
-            let p = prompt("Clé d'accès :");
-            if(p === "Immo30") { sessionStorage.setItem('arcadia_auth', 'true'); location.reload(); }
+            let pass = prompt("Mot de passe Staff :");
+            if(pass === "Immo30") { sessionStorage.setItem('arcadia_auth', 'true'); location.reload(); }
         }
 
-        // --- GESTION COMMANDES ---
+        // --- VISUALISATION COMMANDES ---
         onValue(ref(db, 'orders'), (snap) => {
-            const orders = snap.val();
-            const container = document.getElementById('orderList');
-            if(!orders) { container.innerHTML = "Aucun message."; return; }
+            const data = snap.val();
+            const container = document.getElementById('orderContainer');
+            if(!data) { container.innerHTML = "<p class='opacity-20'>Aucune demande pour le moment.</p>"; return; }
 
             let html = "";
-            Object.entries(orders).reverse().forEach(([id, ord]) => {
+            Object.entries(data).reverse().forEach(([id, ord]) => {
                 html += `
-                <div class="bg-white/5 p-4 rounded-lg border border-white/10 flex flex-col md:flex-row justify-between gap-4">
-                    <div>
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="bg-gold text-black text-[8px] font-bold px-2 py-0.5 rounded">${ord.status}</span>
-                            <span class="text-xs font-bold">${ord.prenom} ${ord.nom}</span>
-                            <span class="text-[10px] opacity-40">— ${ord.tel}</span>
+                <div class="bg-white/5 p-5 rounded-xl border border-white/5 flex flex-col md:flex-row justify-between gap-6">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-[9px] bg-gold/20 text-gold px-2 py-0.5 rounded font-bold uppercase">${ord.status}</span>
+                            <p class="font-bold text-sm">${ord.prenom} ${ord.nom}</p>
+                            <p class="text-xs opacity-50 font-mono">${ord.tel}</p>
                         </div>
-                        <p class="text-sm italic text-white/80">"Commande de ${ord.service} pour ${ord.prix}"</p>
-                        <p class="text-[9px] opacity-30 mt-2">Reçu le : ${ord.date}</p>
+                        <p class="text-xs text-white/80 italic">"Intéressé par : ${ord.service} (${ord.prix})"</p>
+                        <p class="text-[9px] opacity-30 mt-3 uppercase tracking-tighter">Reçu le : ${ord.date}</p>
                     </div>
                     <div class="flex flex-col gap-2 min-w-[200px]">
-                        <select onchange="reply('${id}', this.value)" class="input-staff text-[10px]">
-                            <option>Réponse rapide...</option>
-                            <option value="Demande acceptée, un agent va vous appeler.">Accepter</option>
-                            <option value="Désolé, ce service est indisponible actuellement.">Refuser</option>
-                            <option value="Votre rendez-vous est fixé pour demain 14h.">RDV Demain</option>
+                        <select onchange="replyOrder('${id}', this.value)" class="input-staff text-[10px] mb-0">
+                            <option>Choisir une réponse...</option>
+                            <option value="Validé : Votre demande est acceptée. Un agent vous contactera en ville.">✅ Accepter la demande</option>
+                            <option value="Refusé : Malheureusement, nous ne pouvons pas honorer votre demande.">❌ Refuser</option>
+                            <option value="Rendez-vous : Merci de vous présenter au studio demain à 21h.">📅 Fixer RDV</option>
                         </select>
-                        <button onclick="delOrder('${id}')" class="text-[9px] uppercase text-red-500 hover:bg-red-500/10 p-2 rounded">Supprimer</button>
+                        <button onclick="deleteOrder('${id}')" class="text-[9px] text-red-500 uppercase tracking-widest hover:bg-red-500/10 py-2 rounded transition-all">Supprimer l'archive</button>
                     </div>
                 </div>`;
             });
             container.innerHTML = html;
         });
 
-        window.reply = (id, msg) => {
-            if(msg === "Réponse rapide...") return;
-            alert("Réponse simulée envoyée au client : " + msg);
-            update(ref(db, `orders/${id}`), { status: 'Traité' });
+        // ACTIONS STAFF
+        window.replyOrder = (id, text) => {
+            if(text.includes("Choisir")) return;
+            alert("RÉPONSE ENVOYÉE (Simulée) :\n" + text);
+            update(ref(db, `orders/${id}`), { status: 'Répondu' });
         };
 
-        window.delOrder = (id) => { if(confirm("Supprimer ce message ?")) remove(ref(db, `orders/${id}`)); };
+        window.deleteOrder = (id) => {
+            if(confirm("Supprimer définitivement ce message ?")) remove(ref(db, `orders/${id}`));
+        };
 
-        // --- LOGIQUE PUBLICATION (Similaire à avant) ---
+        // --- LOGIQUE PUBLICATION (Comme avant) ---
         let currentImgs = [];
         document.getElementById('bFiles').onchange = (e) => {
             currentImgs = [];
@@ -114,14 +117,15 @@
         };
 
         document.getElementById('btnPublish').onclick = () => {
-            const data = {
+            const val = {
                 title: document.getElementById('bTitle').value,
                 price: document.getElementById('bPrice').value,
                 cat: document.getElementById('bCat').value,
                 desc: document.getElementById('bDesc').value,
                 images: currentImgs
             };
-            push(ref(db, 'listings'), data).then(() => { alert("Publié !"); location.reload(); });
+            if(!val.title || currentImgs.length === 0) return alert("Données manquantes");
+            push(ref(db, 'listings'), val).then(() => location.reload());
         };
     </script>
 </body>
