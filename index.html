@@ -66,10 +66,55 @@
     </div>
 </section>
 
+<section id="propos" class="py-32 px-10 border-b border-white/5">
+    <div class="max-w-5xl mx-auto text-center">
+        <h2 class="text-gold text-xs uppercase tracking-[10px] mb-8">Notre Héritage</h2>
+        <p class="text-2xl md:text-4xl font-serif italic leading-relaxed">
+            "Arcadia Immobilier ne se contente pas de vendre des murs. Nous bâtissons des sanctuaires où le luxe rencontre la sérénité absolue."
+        </p>
+        <p class="mt-10 text-gray-500 max-w-2xl mx-auto text-sm leading-loose">
+            Depuis notre implantation à Paros, nous accompagnons l'élite dans l'acquisition de propriétés uniques, tout en garantissant une protection inégalée grâce à nos systèmes de sécurité.
+        </p>
+    </div>
+</section>
+
 <section id="villas" class="py-32 px-10 bg-[#030303]">
     <div class="max-w-7xl mx-auto">
         <h3 class="text-5xl font-serif italic mb-16">Collection Privée</h3>
         <div id="listingGrid" class="grid md:grid-cols-3 gap-10"></div>
+    </div>
+</section>
+
+<section id="services" class="py-32 px-10">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="text-gold text-xs uppercase tracking-[10px] mb-16 text-center">Arcadia Immobilier • Services</h2>
+        <div class="grid md:grid-cols-2 gap-20">
+            <div data-aos="fade-right">
+                <h3 class="text-3xl font-serif italic mb-8">Sécurité Domiciliaire</h3>
+                <div class="space-y-4">
+                    <div class="service-card p-6 glass-card">
+                        <h4 class="text-gold font-bold text-xs uppercase">Niveau 1 — 850 000 €</h4>
+                        <p class="text-[11px] text-gray-400 mt-2">Nécessite 2 GN pour toute tentative d’effraction.</p>
+                    </div>
+                    <div class="service-card p-6 glass-card">
+                        <h4 class="text-gold font-bold text-xs uppercase">Niveau 2 — 2 000 000 €</h4>
+                        <p class="text-[11px] text-gray-400 mt-2">Alerte immédiate du propriétaire et de la gendarmerie.</p>
+                    </div>
+                    <div class="service-card p-6 glass-card">
+                        <h4 class="text-gold font-bold text-xs uppercase">Niveau 3 — 5 000 000 €</h4>
+                        <p class="text-[11px] text-gray-400 mt-2">Alerte directe et exclusive du propriétaire.</p>
+                    </div>
+                </div>
+            </div>
+            <div data-aos="fade-left">
+                <h3 class="text-3xl font-serif italic mb-8">Stockage Entreprise</h3>
+                <div class="service-card p-10 glass-card h-full flex flex-col justify-center border-white/10">
+                    <p class="text-4xl font-serif italic mb-4">+20 000 Places</p>
+                    <p class="text-gold font-bold text-xl mb-6">10 000 000 €</p>
+                    <button onclick="openOrderModal()" class="btn-gold py-4 text-[10px] uppercase">Améliorer ma société</button>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -132,27 +177,40 @@
     </div>
 </div>
 
+<div id="orderModal" class="fixed inset-0 z-[3000] bg-black/98 hidden flex items-center justify-center p-4">
+    <div class="max-w-md w-full glass-card p-10 border-gold/20">
+        <button onclick="document.getElementById('orderModal').classList.add('hidden')" class="absolute top-6 right-6 opacity-30">&times;</button>
+        <h2 class="text-3xl font-serif italic mb-8 text-center text-gold">Contact Arcadia</h2>
+        <form class="space-y-4" onsubmit="event.preventDefault(); alert('Demande transmise.'); this.reset(); document.getElementById('orderModal').classList.add('hidden');">
+            <input type="text" placeholder="NOM COMPLET" class="arcadia-input" required>
+            <select class="arcadia-input" required>
+                <option value="" disabled selected>SERVICE</option>
+                <option>Immobilier</option>
+                <option>Sécurité</option>
+                <option>Stockage</option>
+            </select>
+            <textarea placeholder="MESSAGE..." class="arcadia-input h-24"></textarea>
+            <button type="submit" class="btn-gold w-full py-4 text-xs">Envoyer</button>
+        </form>
+    </div>
+</div>
+
 <script>
-    // Initialisation des données
     let listings = JSON.parse(localStorage.getItem('arcadia_v4')) || [
-        { id: 1, title: "Villa Syrta", price: 128000000, status: "vendu", loc: "Côte Ouest", desc: "Un joyau architectural.", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800" }
+        { id: 1, title: "Villa Syrta", price: 128000000, status: "vendu", loc: "Côte Ouest", desc: "Un joyau architectural avec vue imprenable.", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800" }
     ];
 
-    // Fonctions de rendu (MISE À JOUR)
     function render() {
         const grid = document.getElementById('listingGrid');
         const adminList = document.getElementById('adminList');
-        
         if (!grid || !adminList) return;
 
-        grid.innerHTML = ""; 
-        adminList.innerHTML = "";
+        grid.innerHTML = ""; adminList.innerHTML = "";
 
         listings.forEach(v => {
             const location = v.loc || "Paros, International";
             const prix = (v.price || 0).toLocaleString();
 
-            // Rendu Catalogue Public
             grid.innerHTML += `
                 <div onclick="showDetails(${v.id})" class="glass-card group cursor-pointer relative" data-aos="fade-up">
                     <div class="status-badge bg-${v.status}">${v.status}</div>
@@ -166,7 +224,6 @@
                     </div>
                 </div>`;
 
-            // Rendu Liste Admin
             adminList.innerHTML += `
                 <div class="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/5">
                     <div class="flex items-center gap-3">
@@ -182,11 +239,9 @@
                     </div>
                 </div>`;
         });
-
         localStorage.setItem('arcadia_v4', JSON.stringify(listings));
     }
 
-    // Fonction de sauvegarde (MISE À JOUR)
     function saveListing() {
         const id = document.getElementById('editId').value;
         const title = document.getElementById('vTitle').value;
@@ -200,27 +255,21 @@
 
         const data = {
             id: id ? parseInt(id) : Date.now(),
-            title: title,
-            loc: loc,
-            price: price,
-            status: status,
-            desc: desc,
-            img: img
+            title: title, loc: loc, price: price, status: status, desc: desc, img: img
         };
 
-        if(id) { 
-            const index = listings.findIndex(l => l.id == id);
-            listings[index] = data; 
-        } else { 
-            listings.push(data); 
-        }
+        if(id) { listings[listings.findIndex(l => l.id == id)] = data; } 
+        else { listings.push(data); }
 
-        render();
-        closeStaffModal(); 
-        resetForm();
+        render(); closeStaffModal(); resetForm();
     }
 
-    // --- Reste des fonctions utilitaires ---
+    // Gestion Fichiers / Preview
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    dropZone.onclick = () => fileInput.click();
+    fileInput.onchange = (e) => handleFile(e.target.files[0]);
+
     function handleFile(file) {
         if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
@@ -232,11 +281,6 @@
             reader.readAsDataURL(file);
         }
     }
-
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    dropZone.onclick = () => fileInput.click();
-    fileInput.onchange = (e) => handleFile(e.target.files[0]);
 
     function updatePreview() {
         document.getElementById('preTitle').innerText = document.getElementById('vTitle').value || "Nom";
