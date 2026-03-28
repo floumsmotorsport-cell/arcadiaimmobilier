@@ -2,195 +2,184 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcadia Immobilier | Prestige & Sécurité</title>
+    <title>Arcadia Staff | Management Console</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --gold:#b38e44; --dark:#0a0a0a; --glass: rgba(255,255,255,0.03); }
-        body { font-family: 'Montserrat', sans-serif; background: var(--dark); color:white; overflow-x:hidden; scroll-behavior: smooth; }
-        .font-serif { font-family:'Cormorant Garamond', serif; }
-        .glass { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.08); transition: 0.4s; }
-        .btn-gold { border: 1px solid var(--gold); color: var(--gold); padding: 12px 24px; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; transition: 0.4s; cursor: pointer; background: transparent; }
-        .btn-gold:hover { background: var(--gold); color: black; box-shadow: 0 0 20px rgba(179, 142, 68, 0.4); }
-        #orderModal { display:none; position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.95); align-items:center; justify-content:center; padding: 20px; }
-        .input-arcadia { width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:14px; border-radius:8px; color:white; margin-bottom:12px; outline:none; }
-        .logo-nav { height: 40px; }
+        body { background:#050505; color:white; font-family:'Montserrat', sans-serif; }
+        .glass { background:#111; border:1px solid rgba(255,255,255,0.05); border-radius:15px; }
+        .input-staff { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:8px; color:white; width:100%; margin-bottom:10px; font-size:12px; }
+        .btn-gold { background:#b38e44; color:black; font-weight:bold; padding:10px; border-radius:8px; text-transform:uppercase; font-size:10px; width:100%; cursor: pointer; }
+        
+        /* ZONE VERTE : Visualisation */
+        .viz-container { border: 2px solid #10b981; background: rgba(16, 185, 129, 0.05); box-shadow: 0 0 20px rgba(16, 185, 129, 0.1); color: #10b981; }
+        
+        /* ZONE BLANCHE : Dossiers standards */
+        .border-standard { border: 1px solid rgba(255,255,255,0.1); }
+        
+        .chat-box { height: 120px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 10px; font-size: 11px; margin-top: 10px; border-radius: 8px; }
+        .logo-img { height: 50px; }
+        #mainContent { display:none; }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-8">
 
-    <div id="orderModal">
-        <div class="glass p-10 rounded-3xl max-w-md w-full relative">
-            <button onclick="closeOrder()" class="absolute top-6 right-6 text-2xl opacity-50 hover:opacity-100">✕</button>
-            <h2 class="font-serif text-4xl italic mb-2 text-center">Réservation</h2>
-            <p id="orderSummary" class="text-gold text-center text-[11px] uppercase tracking-[3px] mb-8 font-semibold"></p>
-            <div id="userInfoFields">
-                <input type="text" id="custNom" placeholder="Nom de famille" class="input-arcadia">
-                <input type="text" id="custPrenom" placeholder="Prénom" class="input-arcadia">
-                <input type="tel" id="custTel" placeholder="Numéro de téléphone" class="input-arcadia">
+    <div id="mainContent" class="max-w-7xl mx-auto">
+        <header class="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
+            <div class="flex items-center gap-4">
+                <img src="https://image2url.com/r2/default/images/1774658704727-764cccce-eee7-41c4-a48c-90c16f0acc69.png" class="logo-img">
+                <h1 class="text-2xl font-serif italic text-gold">Staff Console</h1>
             </div>
-            <button onclick="confirmOrder()" class="w-full bg-gold text-black font-bold py-5 rounded-xl uppercase text-xs tracking-widest hover:scale-[1.02] transition-transform">Confirmer la demande</button>
+            <div class="flex gap-4">
+                <button id="statusToggle" class="px-4 py-2 rounded text-[9px] font-bold border border-white/10">CHARGEMENT...</button>
+                <button onclick="sessionStorage.clear(); location.reload();" class="text-[9px] text-red-500 underline">Quitter</button>
+            </div>
+        </header>
+
+        <div class="grid lg:grid-cols-4 gap-8">
+            <div class="space-y-6">
+                <div class="glass p-6 viz-container" id="liveViz" style="display: none;">
+                    <h3 class="text-[10px] uppercase font-bold mb-4 tracking-widest text-green-400">Aperçu Réponse Client</h3>
+                    <p class="text-[9px] opacity-60 mb-2">Destinataire : <span id="vizTarget" class="font-bold text-white"></span></p>
+                    <div class="text-xs italic bg-black/40 p-4 rounded-lg border border-green-500/30 min-h-[60px] text-white" id="vizContent"></div>
+                    <p class="mt-4 text-[8px] opacity-40 uppercase tracking-widest text-center">Visualisation active</p>
+                </div>
+
+                <div class="glass p-6">
+                    <h3 class="text-gold text-[10px] uppercase font-bold mb-4 tracking-widest">Nouveau Post</h3>
+                    <input type="text" id="bTitle" placeholder="Titre" class="input-staff">
+                    <input type="text" id="bPrice" placeholder="Prix ou Date" class="input-staff">
+                    <select id="bCat" class="input-staff">
+                        <option value="Villa">🏠 Villa</option>
+                        <option value="Manoir">🏰 Manoir</option>
+                        <option value="Service">🛡️ Service</option>
+                        <option value="Article">📰 Article de Presse</option>
+                    </select>
+                    <textarea id="bDesc" placeholder="Description..." class="input-staff h-20"></textarea>
+                    <input type="file" id="bFiles" class="text-[10px] mb-4" multiple>
+                    <button id="btnPublish" class="btn-gold">Publier</button>
+                </div>
+            </div>
+
+            <div class="lg:col-span-3">
+                <div class="glass p-8">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="text-gold text-[10px] uppercase font-bold tracking-widest">Dossiers & Chat Direct</h3>
+                        <span class="text-[9px] text-white/30">Interface Standard (Mode Blanc)</span>
+                    </div>
+                    <div id="orderContainer" class="space-y-6"></div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-10 py-6 backdrop-blur-xl border-b border-white/5">
-        <div class="flex items-center gap-4">
-            <img src="https://image2url.com/r2/default/images/1774658704727-764cccce-eee7-41c4-a48c-90c16f0acc69.png" class="logo-nav">
-            <span id="studioBadge" class="text-[8px] px-2 py-1 rounded-full border font-bold uppercase tracking-tighter transition-all">Chargement...</span>
-        </div>
-        <div class="flex items-center gap-8">
-            <a href="#news" class="hidden md:block text-[10px] uppercase tracking-widest opacity-60 hover:opacity-100">Presse</a>
-            <a href="#catalogue" class="text-[10px] uppercase tracking-widest opacity-60 hover:opacity-100">Collection</a>
-            <a href="admin.html" class="px-4 py-2 border border-gold/20 text-[9px] uppercase hover:bg-gold hover:text-black transition-all">Staff</a>
-        </div>
-    </nav>
-
-    <section class="h-screen flex items-center justify-center relative overflow-hidden">
-        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-40">
-            <source src="https://cdn.coverr.co/videos/coverr-luxury-house-1574/1080p.mp4" type="video/mp4">
-        </video>
-        <div class="relative text-center z-10 px-4">
-            <h1 class="font-serif text-7xl md:text-[10rem] italic leading-none mb-4">Arcadia</h1>
-            <p class="text-gold tracking-[10px] text-xs uppercase mb-12">L'excellence immobilière & sécuritaire</p>
-            <a href="#catalogue" class="btn-gold">Voir la collection</a>
-        </div>
-    </section>
-
-    <section id="clientDashboard" class="hidden py-20 px-6 max-w-7xl mx-auto">
-        <div class="glass p-8 md:p-12 rounded-[40px] border-l-8 border-gold">
-            <div class="flex justify-between items-center mb-10">
-                <h3 class="font-serif text-4xl italic">Suivi de vos <span class="text-gold">Dossiers</span></h3>
-                <button onclick="localStorage.clear(); location.reload();" class="text-[9px] uppercase opacity-40">Déconnexion</button>
-            </div>
-            <div id="myOrdersList" class="grid md:grid-cols-2 gap-6"></div>
-        </div>
-    </section>
-
-    <section id="news" class="py-24 px-6 max-w-7xl mx-auto">
-        <h2 class="font-serif text-5xl italic mb-12">Arcadia <span class="text-gold">Presse</span></h2>
-        <div id="newsContainer" class="grid md:grid-cols-2 gap-8">
-            </div>
-    </section>
-
-    <section id="catalogue" class="py-24 px-6 max-w-7xl mx-auto">
-        <h2 class="font-serif text-5xl italic mb-12 text-right">La <span class="text-gold">Collection</span></h2>
-        <div id="catalogContainer" class="grid md:grid-cols-3 gap-10"></div>
-    </section>
-
-    <footer class="py-20 bg-white/5 text-center border-t border-white/5">
-        <img src="https://image2url.com/r2/default/images/1774658704727-764cccce-eee7-41c4-a48c-90c16f0acc69.png" class="h-16 mx-auto mb-8 opacity-50">
-        <p class="text-[9px] opacity-20 uppercase tracking-[5px]">© 2026 Arcadia Group • Los Santos</p>
-    </footer>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, push, remove, update, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = { databaseURL: "https://arcadiaimmobilier-ee335-default-rtdb.europe-west1.firebasedatabase.app" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        const activeUser = JSON.parse(localStorage.getItem('arcadia_user_rp'));
-        let currentOrder = null;
+        // AUTH
+        if(sessionStorage.getItem('arcadia_auth') === 'true') { document.getElementById('mainContent').style.display = 'block'; }
+        else { if(prompt("Code Staff :") === "Immo30") { sessionStorage.setItem('arcadia_auth', 'true'); location.reload(); } }
 
-        // --- ÉTAT DU STUDIO ---
+        // ÉTAT STUDIO
+        const statusBtn = document.getElementById('statusToggle');
         onValue(ref(db, 'studioStatus'), (snap) => {
             const isOpen = snap.val();
-            const badge = document.getElementById('studioBadge');
-            badge.innerText = isOpen ? "Studio Ouvert" : "Studio Fermé";
-            badge.className = isOpen ? "text-[8px] px-2 py-1 rounded-full border border-green-500/30 text-green-400 bg-green-500/10 font-bold uppercase tracking-tighter" 
-                                     : "text-[8px] px-2 py-1 rounded-full border border-red-500/30 text-red-400 bg-red-500/10 font-bold uppercase tracking-tighter";
+            statusBtn.innerText = isOpen ? "OUVERT" : "FERMÉ";
+            statusBtn.style.color = isOpen ? "#10b981" : "#ef4444";
         });
+        statusBtn.onclick = () => set(ref(db, 'studioStatus'), statusBtn.innerText !== "OUVERT");
 
-        // --- DASHBOARD & CHAT ---
-        if(activeUser) {
-            document.getElementById('clientDashboard').classList.remove('hidden');
-            document.getElementById('userInfoFields').style.display = 'none';
-            onValue(ref(db, 'orders'), (snap) => {
-                const data = snap.val();
-                const list = document.getElementById('myOrdersList');
-                let html = "";
-                if(data) {
-                    Object.entries(data).reverse().forEach(([id, ord]) => {
-                        if(ord.nom === activeUser.nom && ord.prenom === activeUser.prenom) {
-                            html += `
-                            <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
-                                <div class="flex justify-between mb-4">
-                                    <span class="text-[10px] font-bold uppercase text-gold">${ord.service}</span>
-                                    <span class="text-[9px] px-2 py-0.5 rounded bg-white/10">${ord.status}</span>
-                                </div>
-                                <div class="text-xs italic opacity-70 bg-black/30 p-4 rounded-lg border-l-2 border-gold mb-2">
-                                    "${ord.reponseStaff || 'En attente de réponse...'}"
-                                </div>
-                                <p class="text-[8px] opacity-20 uppercase">${ord.date}</p>
-                            </div>`;
-                        }
-                    });
-                }
-                list.innerHTML = html || "<p class='opacity-30'>Aucun dossier en cours.</p>";
-            });
-        }
+        // GESTION LIVE VIZ
+        const viz = document.getElementById('liveViz');
+        const vizTarget = document.getElementById('vizTarget');
+        const vizContent = document.getElementById('vizContent');
 
-        // --- CATALOGUE & NEWS ---
-        onValue(ref(db, 'listings'), (snap) => {
+        // ORDERS
+        onValue(ref(db, 'orders'), (snap) => {
             const data = snap.val();
-            const catContainer = document.getElementById('catalogContainer');
-            const newsContainer = document.getElementById('newsContainer');
-            catContainer.innerHTML = "";
-            newsContainer.innerHTML = "";
-            
-            if(data) {
-                Object.entries(data).reverse().forEach(([id, it]) => {
-                    if(it.cat === 'Article') {
-                        newsContainer.innerHTML += `
-                        <div class="glass flex flex-col md:flex-row overflow-hidden rounded-3xl">
-                            <img src="${it.images[0]}" class="md:w-1/3 object-cover h-48 md:h-auto">
-                            <div class="p-6 flex-1">
-                                <span class="text-gold text-[9px] uppercase tracking-widest">${it.price}</span>
-                                <h4 class="font-serif text-2xl italic my-2">${it.title}</h4>
-                                <p class="text-xs opacity-60 mb-4">${it.desc}</p>
+            const container = document.getElementById('orderContainer');
+            if(!data) { container.innerHTML = "Aucune demande."; return; }
+            let html = "";
+            Object.entries(data).reverse().forEach(([id, ord]) => {
+                html += `
+                <div class="glass p-6 border-standard">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <p class="font-bold text-sm text-white">${ord.prenom} ${ord.nom} <span class="text-gold">#${ord.tel}</span></p>
+                            <p class="text-[10px] uppercase opacity-50 text-white">${ord.service} — ${ord.prix || 'Sur mesure'}</p>
+                            <div class="chat-box" id="chat-${id}">
+                                <p class="text-white/40">Système: Reçu le ${ord.date}</p>
+                                <p class="text-gold mt-2"><b>Staff:</b> ${ord.reponseStaff || 'Aucun message.'}</p>
                             </div>
-                        </div>`;
-                    } else {
-                        catContainer.innerHTML += `
-                        <div class="glass group rounded-3xl overflow-hidden shadow-2xl">
-                            <div class="h-64 overflow-hidden relative">
-                                <img src="${it.images[0]}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                <span class="absolute top-4 left-4 bg-black/60 text-gold text-[8px] uppercase px-3 py-1 rounded-full border border-gold/30">${it.cat}</span>
+                            <div class="flex mt-2 gap-2">
+                                <input type="text" id="input-${id}" placeholder="Réponse libre..." class="input-staff !mb-0">
+                                <button onclick="sendChat('${id}')" class="bg-gold text-black px-4 rounded font-bold text-[10px]">OK</button>
                             </div>
-                            <div class="p-8">
-                                <h4 class="font-serif text-3xl italic mb-4">${it.title}</h4>
-                                <div class="flex justify-between items-center">
-                                    <span class="font-serif text-xl">${it.price}</span>
-                                    <button onclick="openOrder('${it.title}', '${it.price}')" class="btn-gold !py-2 !px-4 !text-[8px]">Réserver</button>
-                                </div>
-                            </div>
-                        </div>`;
-                    }
-                });
-            }
+                        </div>
+                        <div class="flex flex-col gap-2 w-48 ml-6">
+                            <select onchange="previewReply('${id}', '${ord.prenom}', this.value)" class="input-staff text-[10px]">
+                                <option>Action rapide...</option>
+                                <option value="✅ Demande acceptée. Un agent vous contactera en ville.">Valider</option>
+                                <option value="📅 RDV fixé. Merci de vous présenter au studio prochainement.">RDV</option>
+                                <option value="❌ Demande refusée.">Refuser</option>
+                            </select>
+                            <button onclick="confirmStatusUpdate('${id}')" id="confirm-${id}" class="bg-green-500 text-black py-2 px-3 rounded text-[9px] font-bold" style="display:none;">CONFIRMER L'ENVOI</button>
+                            <button onclick="deleteOrder('${id}')" class="text-[9px] opacity-30 mt-4 text-red-500 hover:opacity-100">Archiver le dossier</button>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
         });
 
-        // --- FONCTIONS LOGIQUES ---
-        window.openOrder = (service, prix) => {
-            currentOrder = { service, prix };
-            document.getElementById('orderSummary').innerText = `${service} • ${prix}`;
-            document.getElementById('orderModal').style.display = 'flex';
+        let currentPendingId = null;
+        let currentPendingText = null;
+
+        window.previewReply = (id, clientName, text) => {
+            if(text.includes("Action")) {
+                viz.style.display = 'none';
+                document.getElementById(`confirm-${id}`).style.display = 'none';
+                return;
+            }
+            viz.style.display = 'block';
+            vizTarget.innerText = clientName;
+            vizContent.innerText = text;
+            currentPendingId = id;
+            currentPendingText = text;
+            document.querySelectorAll('[id^="confirm-"]').forEach(btn => btn.style.display = 'none');
+            document.getElementById(`confirm-${id}`).style.display = 'block';
         };
-        window.closeOrder = () => document.getElementById('orderModal').style.display = 'none';
-        window.confirmOrder = () => {
-            let userData = activeUser || {
-                nom: document.getElementById('custNom').value,
-                prenom: document.getElementById('custPrenom').value,
-                tel: document.getElementById('custTel').value
-            };
-            if(!userData.nom || !userData.prenom) return alert("Nom et prénom requis.");
-            localStorage.setItem('arcadia_user_rp', JSON.stringify(userData));
-            push(ref(db, 'orders'), {
-                ...userData, ...currentOrder,
-                status: 'En attente', date: new Date().toLocaleString('fr-FR')
-            }).then(() => { alert("Demande envoyée !"); location.reload(); });
+
+        window.confirmStatusUpdate = (id) => {
+            const statusType = currentPendingText.includes("✅") ? "Validé" : currentPendingText.includes("📅") ? "RDV" : "Refusé";
+            update(ref(db, `orders/${id}`), { status: statusType, reponseStaff: currentPendingText });
+            viz.style.display = 'none';
+        };
+
+        window.sendChat = (id) => {
+            const msg = document.getElementById(`input-${id}`).value;
+            if(!msg) return;
+            update(ref(db, `orders/${id}`), { reponseStaff: msg, status: 'Répondu' });
+        };
+        window.deleteOrder = (id) => { if(confirm("Archiver ?")) remove(ref(db, `orders/${id}`)); };
+
+        // PUBLICATION
+        let currentImgs = [];
+        document.getElementById('bFiles').onchange = (e) => {
+            currentImgs = [];
+            Array.from(e.target.files).forEach(f => {
+                const r = new FileReader(); r.onload = ev => currentImgs.push(ev.target.result); r.readAsDataURL(f);
+            });
+        };
+        document.getElementById('btnPublish').onclick = () => {
+            const val = { title: document.getElementById('bTitle').value, price: document.getElementById('bPrice').value, cat: document.getElementById('bCat').value, desc: document.getElementById('bDesc').value, images: currentImgs, date: new Date().toLocaleDateString() };
+            if(!val.title) return;
+            push(ref(db, 'listings'), val).then(() => location.reload());
         };
     </script>
 </body>
