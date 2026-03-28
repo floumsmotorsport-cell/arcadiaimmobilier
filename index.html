@@ -2,45 +2,43 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Arcadia | Infinite Luxury & Management</title>
+    <title>Arcadia | L'Héritage du Luxe</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;700&family=Playfair+Display:italic,wght@700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
-        :root { --gold: #b38e44; --gold-light: #ffdf91; --black: #020202; --glass-border: rgba(255, 255, 255, 0.08); }
+        :root { --gold: #b38e44; --gold-bright: #d4af37; --black: #050505; }
         body { background: var(--black); color: white; font-family: 'Montserrat', sans-serif; overflow-x: hidden; cursor: none; }
         .font-serif { font-family: 'Playfair Display', serif; }
         
-        /* 1. Custom Cursor Ultra-Réactif */
-        #cursor { width: 10px; height: 10px; background: var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transition: transform 0.1s ease; }
-        #cursor-follower { width: 40px; height: 40px; border: 1px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.15s ease, opacity 0.3s; }
+        #cursor { width: 10px; height: 10px; background: var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; }
+        #cursor-follower { width: 45px; height: 45px; border: 1px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.15s ease; }
 
-        /* 2. Glassmorphism Amélioré */
-        .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 30px; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        .glass:hover { border-color: var(--gold); background: rgba(179, 142, 68, 0.05); transform: translateY(-15px) rotateX(5deg); box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 20px rgba(179, 142, 68, 0.1); }
-
-        /* 3. Boutons & Textes Magiques */
-        .btn-premium { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%); color: black; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; transition: 0.5s; overflow: hidden; position: relative; }
-        .btn-premium:hover { letter-spacing: 5px; transform: scale(1.05); box-shadow: 0 0 30px var(--gold); }
-        .text-reveal { background: linear-gradient(to right, #fff 20%, var(--gold) 40%, var(--gold) 60%, #fff 80%); background-size: 200% auto; color: #000; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 3s linear infinite; }
-        @keyframes shine { to { background-position: 200% center; } }
-
-        /* 4. Scroll Progress */
-        #progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--gold); z-index: 10001; transition: width 0.2s; }
-
-        /* 5. Images Parallax */
-        .img-container { overflow: hidden; border-radius: 20px; }
-        .img-container img { transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
-        .img-container:hover img { transform: scale(1.1); }
-
-        /* Admin Dashboard spécifique */
-        .stat-card { background: linear-gradient(145deg, #0a0a0a, #111); border: 1px solid var(--glass-border); }
-        .sidebar-item:hover { border-left: 3px solid var(--gold); background: rgba(179, 142, 68, 0.1); }
+        .glass-card { background: linear-gradient(145deg, rgba(20,20,20,0.9) 0%, rgba(5,5,5,1) 100%); border: 1px solid rgba(179, 142, 68, 0.15); border-radius: 40px; transition: 0.6s cubic-bezier(0.2, 1, 0.2, 1); position: relative; }
         
-        .notification { position: fixed; bottom: 20px; right: 20px; background: var(--gold); color: black; padding: 15px 30px; border-radius: 10px; z-index: 10002; transform: translateY(100px); transition: 0.5s; font-weight: bold; }
-        .notification.active { transform: translateY(0); }
+        /* Badges de Statut */
+        .status-badge { position: absolute; top: 25px; left: 25px; z-index: 20; padding: 8px 18px; border-radius: 50px; font-weight: 700; text-[9px] uppercase tracking-widest shadow-2xl; }
+        .status-vendu { background: #ff4b4b; color: white; }
+        .status-promo { background: var(--gold-bright); color: black; }
+        .status-creation { background: #4b90ff; color: white; }
+        .status-dispo { background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2); }
+
+        .btn-gold { background: linear-gradient(90deg, #8a6d3b, #b38e44, #8a6d3b); background-size: 200% auto; color: black; font-weight: 800; letter-spacing: 2px; transition: 0.5s; }
+        .btn-gold:hover { background-position: right center; transform: scale(1.05); box-shadow: 0 0 30px rgba(179,142,68,0.4); }
+
+        .filter-btn { border-bottom: 2px solid transparent; transition: 0.3s; opacity: 0.5; font-size: 10px; letter-spacing: 3px; }
+        .filter-btn.active { border-color: var(--gold); opacity: 1; color: var(--gold); }
+
+        #progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: linear-gradient(90deg, var(--gold), #fff); z-index: 10001; width: 0%; }
+        
+        select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23b38e44'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; }
+
+        /* Custom Scrollbar for Admin */
+        #adminList::-webkit-scrollbar { width: 4px; }
+        #adminList::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        #adminList::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -48,306 +46,211 @@
 <div id="progress-bar"></div>
 <div id="cursor"></div>
 <div id="cursor-follower"></div>
-<div id="notification" class="notification">Action effectuée avec succès</div>
 
-<nav class="fixed w-full z-50 px-12 py-8 flex justify-between items-center transition-all duration-500" id="mainNav">
-    <div class="group">
-        <span class="text-3xl font-serif italic tracking-tighter cursor-pointer">Arcadia<span class="text-gold group-hover:animate-ping">.</span></span>
-    </div>
-    <div class="hidden md:flex gap-12 items-center">
-        <a href="#about" class="text-[10px] uppercase tracking-[4px] opacity-50 hover:opacity-100 hover:text-gold transition">L'Héritage</a>
-        <a href="#services" class="text-[10px] uppercase tracking-[4px] opacity-50 hover:opacity-100 hover:text-gold transition">Expertise</a>
-        <a href="#villas" class="text-[10px] uppercase tracking-[4px] opacity-50 hover:opacity-100 hover:text-gold transition">Le Catalogue</a>
-        <button onclick="toggleModal('staffModal')" class="bg-white/5 border border-gold/20 px-8 py-3 rounded-full text-gold text-[10px] tracking-[4px] uppercase hover:bg-gold hover:text-black transition">Panel Staff</button>
+<nav class="fixed w-full z-50 px-12 py-10 flex justify-between items-center transition-all duration-500" id="mainNav">
+    <div class="text-4xl font-serif italic tracking-tighter">Arcadia<span class="text-gold">.</span></div>
+    <div class="hidden md:flex gap-14 items-center text-[10px] uppercase tracking-[5px] font-bold">
+        <a href="#villas" class="hover:text-gold transition">Catalogue</a>
+        <button onclick="toggleModal('serviceEmbed')" class="text-gold border border-gold/40 px-8 py-3 rounded-full hover:bg-gold hover:text-black transition">Expertise</button>
+        <button onclick="checkStaffAccess()" class="opacity-30 hover:opacity-100 transition">Terminal</button>
     </div>
 </nav>
 
-<section class="h-screen flex flex-col justify-center items-center relative overflow-hidden">
-    <div class="absolute inset-0 z-0 scale-110" id="heroBg">
-        <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1920" class="w-full h-full object-cover opacity-30">
+<section class="h-screen flex flex-col justify-center items-center relative text-center">
+    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1600607687940-477a284e6923?q=80&w=2070')] bg-cover bg-center opacity-40 mix-blend-overlay"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black"></div>
+    <div class="relative z-10 space-y-8" data-aos="zoom-in">
+        <h2 class="text-gold tracking-[25px] text-[12px] uppercase opacity-80 font-bold">L'Excellence Immobilière</h2>
+        <h1 class="text-8xl md:text-[11rem] font-serif italic leading-[0.85] mb-4">Pureté<br>& Pouvoir</h1>
+        <button onclick="document.getElementById('villas').scrollIntoView({behavior:'smooth'})" class="btn-gold px-12 py-5 rounded-full uppercase mt-10">Explorer</button>
     </div>
-    <div class="relative z-10 text-center px-6" data-aos="fade-up">
-        <h2 class="text-gold uppercase tracking-[20px] text-[10px] mb-6 opacity-0 translate-y-10" id="heroSubtitle">L'Excellence Sans Compromis</h2>
-        <h1 class="text-7xl md:text-9xl font-serif italic mb-10 leading-none">Vivre l'Exception</h1>
-        <div class="flex gap-6 justify-center">
-            <button class="btn-premium px-10 py-5 rounded-full text-[10px]">Voir les Propriétés</button>
-            <button class="px-10 py-5 rounded-full text-[10px] border border-white/20 hover:border-gold transition">Nous Contacter</button>
-        </div>
-    </div>
-    <div class="absolute bottom-10 left-12 opacity-20 text-[9px] tracking-[5px] uppercase">Paros • Los Santos • Dubai</div>
 </section>
 
-<section id="about" class="py-40 px-12 bg-[#030303]">
-    <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-24 items-center">
-        <div data-aos="fade-right">
-            <h2 class="text-gold uppercase tracking-widest text-xs mb-6 font-bold">Notre Maison</h2>
-            <h3 class="text-5xl font-serif italic mb-8">Plus qu'une agence, une institution de prestige.</h3>
-            <p class="text-gray-400 leading-relaxed mb-8 text-lg font-light">
-                Depuis plus de deux décennies, Arcadia redéfinit les codes de l'immobilier ultra-luxe. Nous ne vendons pas des maisons, nous transmettons des chefs-d'œuvre architecturaux protégés par les protocoles de sécurité les plus avancés au monde.
-            </p>
-            <div class="grid grid-cols-2 gap-8 border-t border-white/10 pt-10">
-                <div>
-                    <p class="text-3xl font-serif text-gold">42</p>
-                    <p class="text-[10px] uppercase tracking-widest text-gray-500">Ventes Records</p>
-                </div>
-                <div>
-                    <p class="text-3xl font-serif text-gold">100%</p>
-                    <p class="text-[10px] uppercase tracking-widest text-gray-500">Confidentialité</p>
-                </div>
+<section id="villas" class="py-40 px-12 bg-[#020202]">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+            <div>
+                <h2 class="text-gold tracking-[10px] text-[11px] uppercase mb-4 font-bold">Collection Privée</h2>
+                <p class="text-6xl font-serif italic">Le Catalogue</p>
+            </div>
+            <div class="flex gap-10">
+                <button onclick="sortList('default')" class="filter-btn active" id="btn-default">RÉCENT</button>
+                <button onclick="sortList('asc')" class="filter-btn" id="btn-asc">PRIX +</button>
+                <button onclick="sortList('desc')" class="filter-btn" id="btn-desc">PRIX -</button>
             </div>
         </div>
-        <div class="relative" data-aos="zoom-in">
-            <div class="img-container aspect-[4/5] relative z-10">
-                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000" class="w-full h-full object-cover">
-            </div>
-            <div class="absolute -bottom-10 -left-10 w-64 h-64 border border-gold/20 -z-0"></div>
-        </div>
+        <div id="listingGrid" class="grid md:grid-cols-3 gap-14"></div>
     </div>
 </section>
 
-<section id="services" class="py-32 px-12">
-    <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-12">
-        <div class="glass p-12 group" data-aos="fade-up">
-            <div class="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center text-gold text-3xl mb-8 group-hover:bg-gold group-hover:text-black transition-all">🛡️</div>
-            <h3 class="text-2xl font-serif italic mb-6">Sécurité Totale</h3>
-            <p class="text-gray-400 text-sm leading-relaxed mb-6">Intégration native de protocoles de défense de zone et de coffres biométriques de dernière génération.</p>
-            <ul class="text-[10px] space-y-2 text-gold opacity-0 group-hover:opacity-100 transition-all">
-                <li>• SCANNER RÉTINIEN</li>
-                <li>• VITRAGE NIVEAU 7</li>
-                <li>• PANIC ROOMS</li>
-            </ul>
-        </div>
-        <div class="glass p-12 group" data-aos="fade-up" data-aos-delay="200">
-            <div class="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center text-gold text-3xl mb-8 group-hover:bg-gold group-hover:text-black transition-all">🚁</div>
-            <h3 class="text-2xl font-serif italic mb-6">Conciergerie</h3>
-            <p class="text-gray-400 text-sm leading-relaxed mb-6">Un service de majordome disponible 24/7 pour vos déplacements et besoins les plus extravagants.</p>
-        </div>
-        <div class="glass p-12 group" data-aos="fade-up" data-aos-delay="400">
-            <div class="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center text-gold text-3xl mb-8 group-hover:bg-gold group-hover:text-black transition-all">🏛️</div>
-            <h3 class="text-2xl font-serif italic mb-6">Patrimoine</h3>
-            <p class="text-gray-400 text-sm leading-relaxed mb-6">Gestion fiscale et optimisation de vos actifs immobiliers sur le long terme à Paros.</p>
-        </div>
-    </div>
-</section>
-
-<section id="villas" class="py-20 px-12">
-    <div class="max-w-7xl mx-auto mb-20 flex flex-col md:flex-row justify-between items-center gap-8">
-        <div>
-            <h2 class="text-gold text-xs uppercase tracking-[10px] mb-4">Collection</h2>
-            <p class="text-6xl font-serif italic">Le Catalogue</p>
-        </div>
-        <div class="flex gap-4">
-            <button onclick="filterList('Toutes')" class="px-6 py-2 text-[10px] uppercase tracking-widest border-b-2 border-gold">Toutes</button>
-            <button onclick="filterList('Unique')" class="px-6 py-2 text-[10px] uppercase tracking-widest opacity-40 hover:opacity-100 transition">Unique</button>
-            <button onclick="filterList('Villas')" class="px-6 py-2 text-[10px] uppercase tracking-widest opacity-40 hover:opacity-100 transition">Villas</button>
-        </div>
-    </div>
-
-    <div id="listingGrid" class="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-16">
-        </div>
-</section>
-
-<div id="staffModal" class="fixed inset-0 z-[100] bg-black/98 hidden flex items-center justify-center p-4 md:p-12 backdrop-blur-3xl">
-    <div class="w-full max-w-7xl h-[90vh] bg-[#080808] border border-gold/10 rounded-[40px] flex flex-col overflow-hidden shadow-2xl">
+<div id="staffModal" class="fixed inset-0 z-[3000] bg-black/95 hidden flex items-center justify-center p-6 backdrop-blur-md">
+    <div class="w-full max-w-6xl h-[85vh] glass-card flex flex-col overflow-hidden border-gold/30 shadow-[0_0_50px_rgba(179,142,68,0.2)]">
         <div class="p-8 border-b border-white/5 flex justify-between items-center bg-white/5">
-            <div class="flex items-center gap-6">
-                <span class="text-gold font-serif italic text-2xl">Terminal Admin</span>
-                <div class="flex gap-4 text-[9px] uppercase tracking-widest">
-                    <span class="text-green-500">● Système Online</span>
-                    <span class="opacity-40" id="statsCount">0 Propriétés</span>
-                </div>
+            <div class="flex items-center gap-4">
+                <div class="w-3 h-3 bg-gold rounded-full animate-pulse"></div>
+                <span class="font-serif italic text-2xl text-gold">Arcadia Management Terminal</span>
             </div>
-            <button onclick="toggleModal('staffModal')" class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-red-500 transition-all">&times;</button>
+            <button onclick="toggleModal('staffModal')" class="text-3xl hover:text-gold transition">&times;</button>
         </div>
+        
+        <div class="flex-1 p-12 overflow-hidden flex flex-col md:flex-row gap-12">
+            <div class="w-full md:w-1/2 space-y-6">
+                <h4 id="formTitle" class="text-[10px] uppercase tracking-widest font-bold text-gold">Nouvelle Inscription</h4>
+                <input type="hidden" id="editId">
+                <input type="text" id="vTitle" placeholder="Nom de l'unité" class="w-full bg-zinc-900 border border-white/5 p-4 rounded-2xl outline-none focus:border-gold transition">
+                <input type="number" id="vPrice" placeholder="Prix (ex: 5000000)" class="w-full bg-zinc-900 border border-white/5 p-4 rounded-2xl outline-none focus:border-gold transition">
+                
+                <select id="vStatus" class="w-full bg-zinc-900 border border-white/5 p-4 rounded-2xl outline-none focus:border-gold transition text-gray-400">
+                    <option value="dispo">Disponible</option>
+                    <option value="vendu">Vendu</option>
+                    <option value="promo">En Promotion</option>
+                    <option value="creation">Bientôt en Création</option>
+                </select>
 
-        <div class="flex-1 flex overflow-hidden">
-            <div class="w-64 border-r border-white/5 p-6 flex flex-col gap-2">
-                <button class="sidebar-item w-full text-left p-4 rounded-xl text-[10px] uppercase tracking-widest font-bold">Tableau de bord</button>
-                <button class="sidebar-item w-full text-left p-4 rounded-xl text-[10px] uppercase tracking-widest opacity-40">Messages Clients</button>
-                <button class="sidebar-item w-full text-left p-4 rounded-xl text-[10px] uppercase tracking-widest opacity-40">Logs Systèmes</button>
+                <textarea id="vDesc" placeholder="Description de prestige..." class="w-full bg-zinc-900 border border-white/5 p-4 rounded-2xl h-24 outline-none focus:border-gold"></textarea>
+                <input type="text" id="vImg" placeholder="Lien Image (Unsplash)" class="w-full bg-zinc-900 border border-white/5 p-4 rounded-2xl outline-none focus:border-gold">
+                
+                <div class="flex gap-4">
+                    <button id="mainBtn" onclick="addListing()" class="flex-1 btn-gold py-4 rounded-2xl uppercase font-bold text-[11px]">Publier</button>
+                    <button id="cancelBtn" onclick="resetForm()" class="hidden px-6 border border-white/10 rounded-2xl text-[10px] uppercase hover:bg-white/5">Annuler</button>
+                </div>
             </div>
 
-            <div class="flex-1 p-10 overflow-y-auto">
-                <div class="grid lg:grid-cols-3 gap-12">
-                    <div class="lg:col-span-1 space-y-6">
-                        <div class="p-8 glass bg-white/5 border-gold/30">
-                            <h3 class="text-gold text-xs uppercase tracking-widest mb-8">Éditeur Arcadia</h3>
-                            <div class="space-y-4">
-                                <input type="text" id="vTitle" placeholder="Nom de la villa" class="w-full bg-black border border-white/10 p-4 rounded-xl outline-none focus:border-gold">
-                                <input type="text" id="vPrice" placeholder="Prix (ex: 15.000.000 €)" class="w-full bg-black border border-white/10 p-4 rounded-xl outline-none focus:border-gold">
-                                <select id="vTag" class="w-full bg-black border border-white/10 p-4 rounded-xl outline-none focus:border-gold text-gray-400">
-                                    <option value="Unique">Unique (Gold)</option>
-                                    <option value="Nouveauté">Nouveauté</option>
-                                    <option value="Vendu">Marquer comme Vendu</option>
-                                </select>
-                                <textarea id="vDesc" placeholder="Description de prestige..." class="w-full bg-black border border-white/10 p-4 rounded-xl outline-none h-32"></textarea>
-                                <input type="text" id="vImg" placeholder="Lien image Unsplash" class="w-full bg-black border border-white/10 p-4 rounded-xl outline-none">
-                                <button onclick="addListing()" class="w-full btn-premium py-5 rounded-xl text-[11px]">Inscrire au catalogue</button>
-                            </div>
-                        </div>
+            <div class="w-full md:w-1/2 flex flex-col">
+                <h4 class="text-[10px] uppercase tracking-widest font-bold opacity-40 mb-6">Unités Actives</h4>
+                <div id="adminList" class="flex-1 overflow-y-auto pr-4 space-y-4">
                     </div>
-
-                    <div class="lg:col-span-2 space-y-6">
-                        <h3 class="text-xs uppercase tracking-widest opacity-40">Base de données active</h3>
-                        <div id="adminList" class="space-y-4">
-                            </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 </div>
 
+<div id="lightbox" class="fixed inset-0 z-[5000] bg-black/98 hidden flex items-center justify-center p-12 backdrop-blur-2xl" onclick="this.classList.add('hidden')">
+    <img id="lightboxImg" src="" class="max-w-full max-h-full rounded-2xl shadow-2xl border border-gold/20">
+</div>
+
 <script>
-    // 1. DATA & SYNC
     let listings = JSON.parse(localStorage.getItem('arcadia_villas')) || [
-        { id: 1, title: "Palais d'Hélios", price: "24.500.000 €", desc: "Chef-d'œuvre de marbre face à la mer, sécurité militaire.", tag: "Unique", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800" },
-        { id: 2, title: "Manoir Obsidian", price: "18.000.000 €", desc: "Lignes brutales et luxe obscur pour clients discrets.", tag: "Nouveauté", img: "https://images.unsplash.com/photo-1600607687940-477a284e6923?auto=format&fit=crop&w=800" }
+        { id: 1, title: "Palais d'Hélios", price: 24500000, status: "dispo", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1000" },
+        { id: 2, title: "Manoir Obsidian", price: 18000000, status: "vendu", img: "https://images.unsplash.com/photo-1600607687940-477a284e6923?w=1000" }
     ];
 
-    // 2. CURSOR & INTERACTION SYSTEM (100+ micro-interactions via GSAP)
-    const cursor = document.getElementById('cursor');
-    const follower = document.getElementById('cursor-follower');
-    
-    document.addEventListener('mousemove', e => {
-        gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
-        gsap.to(follower, { x: e.clientX - 15, y: e.clientY - 15, duration: 0.3 });
-    });
+    const statusLabels = { dispo: "Disponible", vendu: "Vendu", promo: "En Promotion", creation: "Bientôt en Création" };
 
-    document.querySelectorAll('button, a').forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            gsap.to(follower, { scale: 2, borderColor: '#b38e44', duration: 0.3 });
-        });
-        el.addEventListener('mouseleave', () => {
-            gsap.to(follower, { scale: 1, borderColor: '#b38e44', duration: 0.3 });
-        });
-    });
-
-    // 3. RENDER SYSTEM
     function render() {
         const grid = document.getElementById('listingGrid');
         const adminList = document.getElementById('adminList');
-        const stats = document.getElementById('statsCount');
-        
         grid.innerHTML = ""; adminList.innerHTML = "";
-        stats.innerText = `${listings.length} Propriétés`;
 
         listings.forEach(v => {
-            // Public Grid
+            // Vue Publique
             grid.innerHTML += `
-                <div class="glass relative overflow-hidden group" data-aos="fade-up">
-                    <div class="absolute top-6 right-6 z-20">
-                        <span class="bg-gold text-black text-[9px] font-black px-4 py-1 rounded-full uppercase tracking-tighter shadow-xl">${v.tag}</span>
-                    </div>
-                    <div class="img-container aspect-video">
-                        <img src="${v.img}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700">
+                <div class="glass-card overflow-hidden group" data-aos="fade-up">
+                    <div class="status-badge status-${v.status}">${statusLabels[v.status]}</div>
+                    <div class="h-80 overflow-hidden relative">
+                        <div class="absolute inset-0 bg-black/40 group-hover:bg-transparent transition duration-700 z-10 cursor-pointer" onclick="openLightbox('${v.img}')"></div>
+                        <img src="${v.img}" class="w-full h-full object-cover transition duration-1000 group-hover:scale-110 ${v.status === 'vendu' ? 'grayscale opacity-50' : ''}">
                     </div>
                     <div class="p-10">
-                        <div class="flex justify-between items-start mb-6">
-                            <h3 class="font-serif italic text-3xl group-hover:text-gold transition-colors">${v.title}</h3>
-                        </div>
-                        <p class="text-gold text-sm font-bold tracking-widest mb-4">${v.price}</p>
-                        <p class="text-gray-500 text-xs leading-relaxed mb-8 line-clamp-2">${v.desc}</p>
-                        <button class="w-full py-4 border border-white/10 text-[9px] uppercase tracking-[3px] font-bold group-hover:border-gold group-hover:bg-gold group-hover:text-black transition-all">Dossier de vente</button>
+                        <h3 class="font-serif italic text-3xl mb-4 group-hover:text-gold transition">${v.title}</h3>
+                        <p class="text-2xl font-bold tracking-tighter mb-6">${v.price.toLocaleString()} €</p>
+                        <button class="w-full py-4 border border-white/10 text-[9px] uppercase tracking-[3px] font-bold hover:bg-gold hover:text-black transition">Dossier Complet</button>
                     </div>
-                </div>
-            `;
-
-            // Admin List
+                </div>`;
+            
+            // Vue Admin avec Images
             adminList.innerHTML += `
-                <div class="p-6 bg-white/5 border border-white/5 rounded-2xl flex justify-between items-center hover:border-gold/30 transition-all">
-                    <div class="flex items-center gap-6">
-                        <img src="${v.img}" class="w-16 h-16 rounded-lg object-cover">
-                        <div>
-                            <p class="font-serif italic text-lg">${v.title}</p>
-                            <p class="text-gold text-[10px] uppercase font-bold tracking-widest">${v.price}</p>
-                        </div>
+                <div class="p-3 bg-white/5 rounded-2xl flex items-center gap-4 border border-white/5 hover:border-gold/30 transition group">
+                    <img src="${v.img}" class="w-16 h-16 object-cover rounded-xl grayscale group-hover:grayscale-0 transition">
+                    <div class="flex-1">
+                        <p class="font-serif italic text-sm">${v.title}</p>
+                        <p class="text-gold text-[9px] font-bold uppercase">${statusLabels[v.status]} — ${v.price.toLocaleString()}€</p>
                     </div>
                     <div class="flex gap-3">
-                        <button onclick="editPrice(${v.id})" class="p-3 bg-white/5 rounded-lg hover:text-gold transition">Éditer</button>
-                        <button onclick="deleteListing(${v.id})" class="p-3 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition">Supprimer</button>
+                        <button onclick="loadEdit(${v.id})" class="text-[9px] font-bold tracking-widest text-blue-400 hover:text-white transition">MODIFIER</button>
+                        <button onclick="deleteListing(${v.id})" class="text-[9px] font-bold tracking-widest text-red-500 hover:text-white transition">RADIER</button>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
         localStorage.setItem('arcadia_villas', JSON.stringify(listings));
     }
 
-    // 4. ADMIN ACTIONS
-    window.addListing = () => {
-        const title = document.getElementById('vTitle').value;
-        const price = document.getElementById('vPrice').value;
-        const tag = document.getElementById('vTag').value;
-        const desc = document.getElementById('vDesc').value;
-        const img = document.getElementById('vImg').value || "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=800";
+    // FONCTION MODIFIER
+    window.loadEdit = (id) => {
+        const item = listings.find(l => l.id === id);
+        if(!item) return;
 
-        if(!title || !price) return showNotif("Erreur : Titre et Prix requis", true);
+        document.getElementById('editId').value = item.id;
+        document.getElementById('vTitle').value = item.title;
+        document.getElementById('vPrice').value = item.price;
+        document.getElementById('vStatus').value = item.status;
+        document.getElementById('vImg').value = item.img;
+        document.getElementById('vDesc').value = item.desc || "";
 
-        listings.push({ id: Date.now(), title, price, tag, desc, img });
-        render();
-        showNotif("Propriété inscrite au catalogue");
-        resetAdminForm();
+        document.getElementById('formTitle').innerText = "Modification du Dossier";
+        document.getElementById('mainBtn').innerText = "Mettre à jour";
+        document.getElementById('cancelBtn').classList.remove('hidden');
+        
+        gsap.fromTo("#formTitle", { x: -10, color: "#fff" }, { x: 0, color: "#b38e44", duration: 0.5 });
     };
 
-    window.deleteListing = (id) => {
-        if(confirm("Confirmer la radiation de cette propriété ?")) {
-            listings = listings.filter(v => v.id !== id);
-            render();
-            showNotif("Propriété supprimée");
-        }
-    };
-
-    window.editPrice = (id) => {
-        const newPrice = prompt("Nouveau prix Arcadia :");
-        if(newPrice) {
-            listings = listings.map(v => v.id === id ? {...v, price: newPrice} : v);
-            render();
-            showNotif("Prix actualisé");
-        }
-    }
-
-    // UTILS
-    function showNotif(text, isError = false) {
-        const n = document.getElementById('notification');
-        n.innerText = text;
-        n.style.background = isError ? "#ff4b4b" : "#b38e44";
-        n.classList.add('active');
-        setTimeout(() => n.classList.remove('active'), 3000);
-    }
-
-    function resetAdminForm() {
+    window.resetForm = () => {
+        document.getElementById('editId').value = "";
         document.getElementById('vTitle').value = "";
         document.getElementById('vPrice').value = "";
+        document.getElementById('vStatus').value = "dispo";
+        document.getElementById('vImg').value = "";
         document.getElementById('vDesc').value = "";
-    }
-
-    window.toggleModal = (id) => {
-        const m = document.getElementById(id);
-        m.classList.toggle('hidden');
-        gsap.from(m.children[0], { scale: 0.9, opacity: 0, duration: 0.5, ease: "back.out" });
+        
+        document.getElementById('formTitle').innerText = "Nouvelle Inscription";
+        document.getElementById('mainBtn').innerText = "Publier";
+        document.getElementById('cancelBtn').classList.add('hidden');
     };
 
-    // Parallax Scroll
-    window.addEventListener('scroll', () => {
-        const scrolled = window.pageYOffset;
-        const winHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        document.getElementById('progress-bar').style.width = (scrolled / winHeight) * 100 + "%";
-        
-        gsap.to("#heroBg", { y: scrolled * 0.4, duration: 0 });
-        if(scrolled > 50) {
-            document.getElementById('mainNav').classList.add('bg-black/90', 'py-4', 'backdrop-blur-md');
+    window.addListing = () => {
+        const id = document.getElementById('editId').value;
+        const title = document.getElementById('vTitle').value;
+        const price = parseInt(document.getElementById('vPrice').value);
+        const status = document.getElementById('vStatus').value;
+        const img = document.getElementById('vImg').value || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000";
+        const desc = document.getElementById('vDesc').value;
+
+        if(!title || !price) return alert("Champs obligatoires manquants.");
+
+        if(id) {
+            // Update
+            const index = listings.findIndex(l => l.id == id);
+            listings[index] = { ...listings[index], title, price, status, img, desc };
         } else {
-            document.getElementById('mainNav').classList.remove('bg-black/90', 'py-4');
+            // Create
+            listings.push({ id: Date.now(), title, price, status, img, desc });
         }
+
+        render();
+        resetForm();
+    };
+
+    window.sortList = (mode) => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`btn-${mode}`).classList.add('active');
+        if(mode === 'asc') listings.sort((a, b) => a.price - b.price);
+        else if(mode === 'desc') listings.sort((a, b) => b.price - a.price);
+        else listings = JSON.parse(localStorage.getItem('arcadia_villas')) || [];
+        render();
+    };
+
+    window.deleteListing = (id) => { if(confirm("Confirmer la radiation ?")) { listings = listings.filter(l => l.id !== id); render(); } };
+    window.openLightbox = (src) => { document.getElementById('lightboxImg').src = src; document.getElementById('lightbox').classList.remove('hidden'); };
+    window.checkStaffAccess = () => { if(prompt("Identification Terminal :") === "Immo30") toggleModal('staffModal'); };
+    window.toggleModal = (id) => document.getElementById(id).classList.toggle('hidden');
+
+    document.addEventListener('mousemove', e => {
+        gsap.to('#cursor', { x: e.clientX, y: e.clientY, duration: 0.1 });
+        gsap.to('#cursor-follower', { x: e.clientX - 22, y: e.clientY - 22, duration: 0.3 });
     });
 
-    // INIT
-    AOS.init({ duration: 1200, once: false });
+    AOS.init({ duration: 1200 });
     render();
-    
-    // Intro Animation
-    gsap.to("#heroSubtitle", { opacity: 1, y: 0, duration: 1, delay: 0.5 });
 </script>
-
 </body>
 </html>
