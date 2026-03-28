@@ -2,96 +2,46 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcadia Studio | Management</title>
+    <title>Staff | Arcadia Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:italic,wght@0,300;1,300&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #b38e44; --dark: #0a0a0a; --panel: #111111; }
-        * { transition: all 0.25s ease; cursor: crosshair; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--dark); color: white; overflow-x: hidden; min-height: 100vh; }
-        .font-serif { font-family: 'Cormorant Garamond', serif; }
-
-        /* Login Screen Overlay */
-        #loginOverlay {
-            position: fixed; inset: 0; background: var(--dark); z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-        }
-
-        .input-pro { 
-            width: 100%; border: 1px solid rgba(255,255,255,0.1); padding: 14px; 
-            border-radius: 8px; outline: none; margin-bottom: 15px; font-size: 13px; 
-            background: rgba(255,255,255,0.03); color: white;
-        }
-        .input-pro:focus { border-color: var(--gold); background: rgba(255,255,255,0.07); }
-        
-        .btn-gold { 
-            background: var(--gold); color: black; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 2px; font-size: 10px;
-            padding: 12px 30px; border-radius: 4px;
-        }
-
-        .glass-panel { background: var(--panel); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; }
-        
-        #mainContent { display: none; }
-        #mainContent.authorized { display: block; }
+        body { background:#0a0a0a; color:white; font-family:'Montserrat'; }
+        .glass { background:#111; border:1px solid rgba(255,255,255,0.05); border-radius:15px; }
+        .input-staff { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:5px; color:white; font-size:12px; }
+        #mainContent { display:none; }
     </style>
 </head>
-<body>
+<body class="p-6">
 
-    <div id="loginOverlay">
-        <div class="text-center p-10 glass-panel max-w-sm w-full border border-gold/20">
-            <h1 class="font-serif text-4xl italic mb-2 text-gold">Arcadia</h1>
-            <p class="text-[10px] tracking-[5px] uppercase opacity-50 mb-8">Espace Réservé</p>
-            <input type="password" id="passInput" placeholder="Clé d'accès" class="input-pro text-center">
-            <button onclick="checkPass()" class="btn-gold w-full">Entrer dans le Studio</button>
-            <p id="errorMsg" class="text-red-500 text-[10px] mt-4 opacity-0 uppercase tracking-widest">Accès Refusé</p>
-        </div>
-    </div>
-
-    <div id="mainContent">
-        <section class="h-40 flex items-center justify-between px-10 relative overflow-hidden border-b border-gold/20">
-            <div class="flex-1">
-                <a href="index.html" class="text-[9px] uppercase tracking-[3px] text-gold border border-gold/30 px-4 py-2 hover:bg-gold hover:text-black transition-all">
-                    ← Voir le site live
-                </a>
+    <div id="mainContent" class="authorized">
+        <header class="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
+            <h1 class="font-serif text-4xl italic">Staff Control Panel</h1>
+            <div class="flex gap-4">
+                <a href="index.html" class="text-xs uppercase tracking-widest bg-white/10 px-4 py-2 rounded">Site Live</a>
+                <button onclick="sessionStorage.clear(); location.reload();" class="text-xs uppercase tracking-widest bg-red-900/20 text-red-500 px-4 py-2 rounded">Déconnexion</button>
             </div>
+        </header>
+
+        <div class="grid lg:grid-cols-3 gap-8">
             
-            <div class="text-center">
-                <h1 class="font-serif text-5xl italic">Management Suite</h1>
+            <div class="glass p-6">
+                <h2 class="text-gold uppercase text-[10px] tracking-[4px] mb-6">Ajouter un Bien / Article</h2>
+                <input type="text" id="bTitle" placeholder="Titre" class="input-staff w-full mb-3">
+                <input type="text" id="bPrice" placeholder="Prix" class="input-staff w-full mb-3">
+                <select id="bCat" class="input-staff w-full mb-3">
+                    <option value="Villa">Villa</option>
+                    <option value="Article">Article Blog</option>
+                    <option value="Service">Service</option>
+                </select>
+                <textarea id="bDesc" placeholder="Description" class="input-staff w-full h-24 mb-3"></textarea>
+                <input type="file" id="bFiles" class="text-[10px] mb-4" multiple>
+                <button id="btnPublish" class="w-full bg-gold text-black font-bold p-3 rounded uppercase text-[10px]">Publier</button>
             </div>
 
-            <div class="flex-1 text-right">
-                <button onclick="logout()" class="text-[9px] uppercase tracking-[3px] opacity-50 hover:opacity-100 hover:text-red-500 transition-all">
-                    Quitter la session
-                </button>
-            </div>
-        </section>
-
-        <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div class="glass-panel p-8">
-                <h3 class="font-serif text-2xl italic mb-6 border-b border-white/5 pb-4 text-gold">Nouvelle Propriété</h3>
-                <input type="hidden" id="edit_id_bien">
-                <input type="text" id="bTitle" placeholder="Nom du bien" class="input-pro">
-                <div class="grid grid-cols-2 gap-4">
-                    <input type="text" id="bPrice" placeholder="Prix (ex: 1 200 000€)" class="input-pro">
-                    <select id="bCat" class="input-pro">
-                        <option value="Villa">Villa Exclusive</option>
-                        <option value="Penthouse">Penthouse Skyline</option>
-                        <option value="Manoir">Manoir Royal</option>
-                    </select>
-                </div>
-                <textarea id="bDesc" placeholder="Description poétique et luxueuse..." class="input-pro h-32"></textarea>
-                <label class="text-[9px] uppercase tracking-widest opacity-40 mb-2 block">Médias haute résolution</label>
-                <input type="file" id="bFiles" class="text-xs mb-4 text-gray-500" multiple>
-                <div id="bImgGrid" class="grid grid-cols-4 gap-2 mb-6"></div>
-                <button id="btnPublish" class="btn-gold w-full">Enregistrer dans le Catalogue</button>
-            </div>
-
-            <div>
-                <h3 class="text-[10px] font-bold uppercase tracking-[4px] mb-6 opacity-40 italic">Catalogue Actuel</h3>
-                <div id="listBiensAdmin" class="space-y-4">
+            <div class="lg:col-span-2 glass p-6">
+                <h2 class="text-gold uppercase text-[10px] tracking-[4px] mb-6">Commandes Clients & Visualisation</h2>
+                <div id="orderList" class="space-y-4">
                     </div>
             </div>
         </div>
@@ -105,98 +55,74 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- AUTHENTIFICATION ---
-        const MASTER_PASS = "Immo30"; 
-
-        window.checkPass = () => {
-            const val = document.getElementById('passInput').value;
-            if(val === MASTER_PASS) {
-                sessionStorage.setItem('arcadia_auth', 'true');
-                showAdmin();
-            } else {
-                document.getElementById('errorMsg').style.opacity = "1";
-            }
-        };
-
-        function showAdmin() {
-            if(sessionStorage.getItem('arcadia_auth') === 'true') {
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('mainContent').classList.add('authorized');
-            }
+        if(sessionStorage.getItem('arcadia_auth') === 'true') {
+            document.getElementById('mainContent').style.display = 'block';
+        } else {
+            let p = prompt("Clé d'accès :");
+            if(p === "Immo30") { sessionStorage.setItem('arcadia_auth', 'true'); location.reload(); }
         }
 
-        window.logout = () => {
-            sessionStorage.removeItem('arcadia_auth');
-            window.location.href = 'index.html'; 
+        // --- GESTION COMMANDES ---
+        onValue(ref(db, 'orders'), (snap) => {
+            const orders = snap.val();
+            const container = document.getElementById('orderList');
+            if(!orders) { container.innerHTML = "Aucun message."; return; }
+
+            let html = "";
+            Object.entries(orders).reverse().forEach(([id, ord]) => {
+                html += `
+                <div class="bg-white/5 p-4 rounded-lg border border-white/10 flex flex-col md:flex-row justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="bg-gold text-black text-[8px] font-bold px-2 py-0.5 rounded">${ord.status}</span>
+                            <span class="text-xs font-bold">${ord.prenom} ${ord.nom}</span>
+                            <span class="text-[10px] opacity-40">— ${ord.tel}</span>
+                        </div>
+                        <p class="text-sm italic text-white/80">"Commande de ${ord.service} pour ${ord.prix}"</p>
+                        <p class="text-[9px] opacity-30 mt-2">Reçu le : ${ord.date}</p>
+                    </div>
+                    <div class="flex flex-col gap-2 min-w-[200px]">
+                        <select onchange="reply('${id}', this.value)" class="input-staff text-[10px]">
+                            <option>Réponse rapide...</option>
+                            <option value="Demande acceptée, un agent va vous appeler.">Accepter</option>
+                            <option value="Désolé, ce service est indisponible actuellement.">Refuser</option>
+                            <option value="Votre rendez-vous est fixé pour demain 14h.">RDV Demain</option>
+                        </select>
+                        <button onclick="delOrder('${id}')" class="text-[9px] uppercase text-red-500 hover:bg-red-500/10 p-2 rounded">Supprimer</button>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        });
+
+        window.reply = (id, msg) => {
+            if(msg === "Réponse rapide...") return;
+            alert("Réponse simulée envoyée au client : " + msg);
+            update(ref(db, `orders/${id}`), { status: 'Traité' });
         };
 
-        showAdmin();
+        window.delOrder = (id) => { if(confirm("Supprimer ce message ?")) remove(ref(db, `orders/${id}`)); };
 
-        // --- GESTION DES DONNÉES ---
+        // --- LOGIQUE PUBLICATION (Similaire à avant) ---
         let currentImgs = [];
-        const get = id => document.getElementById(id);
-
-        get('bFiles').onchange = (e) => {
-            currentImgs = []; get('bImgGrid').innerHTML = "";
+        document.getElementById('bFiles').onchange = (e) => {
+            currentImgs = [];
             Array.from(e.target.files).forEach(f => {
-                const r = new FileReader(); r.onload = ev => {
-                    currentImgs.push(ev.target.result);
-                    get('bImgGrid').innerHTML += `<img src="${ev.target.result}" class="w-full aspect-square object-cover rounded border border-white/10">`;
-                }; r.readAsDataURL(f);
+                const r = new FileReader(); r.onload = ev => currentImgs.push(ev.target.result);
+                r.readAsDataURL(f);
             });
         };
 
-        get('btnPublish').onclick = () => {
-            const id = get('edit_id_bien').value;
+        document.getElementById('btnPublish').onclick = () => {
             const data = {
-                title: get('bTitle').value, 
-                price: get('bPrice').value,
-                cat: get('bCat').value, 
-                desc: get('bDesc').value,
-                images: currentImgs, 
-                date: Date.now()
+                title: document.getElementById('bTitle').value,
+                price: document.getElementById('bPrice').value,
+                cat: document.getElementById('bCat').value,
+                desc: document.getElementById('bDesc').value,
+                images: currentImgs
             };
-
-            if(!data.title || currentImgs.length === 0) return alert("Veuillez remplir au moins le titre et une image.");
-
-            if(id) {
-                update(ref(db, `listings/${id}`), data).then(() => location.reload());
-            } else {
-                push(ref(db, 'listings'), data).then(() => location.reload());
-            }
+            push(ref(db, 'listings'), data).then(() => { alert("Publié !"); location.reload(); });
         };
-
-        onValue(ref(db, 'listings'), (snap) => {
-            let html = "";
-            const data = snap.val();
-            if(data) {
-                Object.entries(data).reverse().forEach(([id, it]) => {
-                    html += `
-                    <div class="glass-panel p-4 flex items-center justify-between border-l-2 border-l-gold">
-                        <div class="flex items-center gap-4">
-                            <img src="${it.images[0]}" class="w-12 h-12 rounded object-cover border border-white/10">
-                            <div>
-                                <p class="text-[10px] font-bold uppercase">${it.title}</p>
-                                <p class="text-[9px] text-gold tracking-widest">${it.price}</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="del('${id}')" class="text-red-500 text-[9px] uppercase tracking-widest px-3 py-1 border border-red-900/20 hover:bg-red-500/10 transition-colors">Suppr</button>
-                        </div>
-                    </div>`;
-                });
-            } else {
-                html = "<p class='opacity-20 text-xs italic uppercase tracking-widest'>Aucun bien en ligne</p>";
-            }
-            get('listBiensAdmin').innerHTML = html;
-        });
-
-        window.del = (id) => { 
-            if(confirm("Confirmer la suppression définitive de ce bien ?")) {
-                remove(ref(db, `listings/${id}`)); 
-            }
-        };
-
     </script>
 </body>
 </html>
