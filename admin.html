@@ -8,83 +8,60 @@
     <style>
         body { background:#050505; color:white; font-family:'Montserrat', sans-serif; }
         .glass { background:#111; border:1px solid rgba(255,255,255,0.05); border-radius:15px; }
-        .input-staff { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; color:white; width:100%; margin-bottom:10px; font-size:12px; transition: 0.3s; }
-        .input-staff:focus { border-color: #b38e44; background: rgba(255,255,255,0.08); outline: none; }
-        .btn-gold { background:#b38e44; color:black; font-weight:bold; padding:12px; border-radius:8px; text-transform:uppercase; font-size:10px; width:100%; transition: 0.3s; }
-        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(179, 142, 68, 0.3); }
+        .input-staff { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:8px; color:white; width:100%; margin-bottom:10px; font-size:12px; }
+        .btn-gold { background:#b38e44; color:black; font-weight:bold; padding:10px; border-radius:8px; text-transform:uppercase; font-size:10px; width:100%; cursor: pointer; }
+        
+        /* ALERTE ACTION : Vert Émeraude */
+        .border-need-validation { border: 2px solid #10b981 !important; background: rgba(16, 185, 129, 0.05); box-shadow: 0 0 20px rgba(16, 185, 129, 0.1); }
+        
+        .chat-box { height: 120px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 10px; font-size: 11px; margin-top: 10px; border-radius: 8px; }
+        .logo-img { height: 50px; }
         #mainContent { display:none; }
-        .last-reply { font-size: 10px; color: #b38e44; margin-top: 8px; border-top: 1px solid rgba(179, 142, 68, 0.1); padding-top: 6px; }
-        .badge { padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: bold; text-transform: uppercase; }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
     <div id="mainContent" class="max-w-7xl mx-auto">
-        <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6 border-b border-white/10 pb-8">
-            <div>
-                <h1 class="text-3xl font-serif italic text-gold" style="font-family: serif;">Arcadia Staff Suite</h1>
-                <p class="text-[10px] opacity-40 tracking-[3px] uppercase mt-1">Gestion de l'empire immobilier</p>
+        <header class="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
+            <div class="flex items-center gap-4">
+                <img src="https://image2url.com/r2/default/images/1774658704727-764cccce-eee7-41c4-a48c-90c16f0acc69.png" class="logo-img">
+                <h1 class="text-2xl font-serif italic text-gold">Staff Console</h1>
             </div>
-            
-            <div class="flex items-center gap-6">
-                <div class="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10">
-                    <span class="text-[9px] uppercase tracking-widest opacity-60">État Studio :</span>
-                    <button id="statusToggle" class="badge bg-green-500/20 text-green-500 border border-green-500/50">Ouvert</button>
-                </div>
-                <button onclick="sessionStorage.clear(); location.reload();" class="text-[10px] text-red-500 border border-red-500/20 px-4 py-2 rounded-lg hover:bg-red-500/10 transition-all">Quitter</button>
+            <div class="flex gap-4">
+                <button id="statusToggle" class="px-4 py-2 rounded text-[9px] font-bold border border-white/10">CHARGEMENT...</button>
+                <button onclick="sessionStorage.clear(); location.reload();" class="text-[9px] text-red-500 underline">Quitter</button>
             </div>
         </header>
 
         <div class="grid lg:grid-cols-4 gap-8">
-            
-            <div class="lg:col-span-1 space-y-6">
+            <div class="space-y-6">
                 <div class="glass p-6">
-                    <h3 class="text-gold text-[10px] uppercase mb-6 font-bold tracking-widest border-b border-gold/10 pb-2">Nouveau Bien</h3>
-                    
-                    <input type="text" id="bTitle" placeholder="Nom du bien (ex: Villa Del Perro)" class="input-staff">
-                    <input type="text" id="bPrice" placeholder="Prix (ex: 2 500 000 €)" class="input-staff">
-                    
+                    <h3 class="text-gold text-[10px] uppercase font-bold mb-4 tracking-widest">Nouveau Post</h3>
+                    <input type="text" id="bTitle" placeholder="Titre" class="input-staff">
+                    <input type="text" id="bPrice" placeholder="Prix ou Date (Presse)" class="input-staff">
                     <select id="bCat" class="input-staff">
-                        <option value="Villa">Villa de Luxe</option>
-                        <option value="Manoir">Manoir</option>
-                        <option value="Appartement">Appartement</option>
-                        <option value="Service">Service / Sécurité</option>
-                        <option value="Entreprise">Extension Entreprise</option>
+                        <option value="Villa">🏠 Villa</option>
+                        <option value="Manoir">🏰 Manoir</option>
+                        <option value="Service">🛡️ Service</option>
+                        <option value="Article">📰 Article de Presse</option>
                     </select>
-
-                    <div class="mt-4">
-                        <label class="text-[9px] opacity-40 uppercase block mb-2">Photos du bien</label>
-                        <input type="file" id="bFiles" class="text-[10px] mb-4 block w-full file:bg-white/10 file:text-white file:border-0 file:px-3 file:py-1 file:rounded file:mr-4 cursor-pointer" multiple>
-                        <div id="imgPreview" class="grid grid-cols-3 gap-2 mb-4"></div>
-                    </div>
-
-                    <button id="btnPublish" class="btn-gold">Mettre en vente</button>
+                    <textarea id="bDesc" placeholder="Description (obligatoire pour Article)" class="input-staff h-24"></textarea>
+                    <input type="file" id="bFiles" class="text-[10px] mb-4" multiple>
+                    <button id="btnPublish" class="btn-gold">Publier</button>
                 </div>
 
                 <div class="glass p-6">
-                    <h3 class="text-white/40 text-[9px] uppercase tracking-widest mb-4">Activité</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <p class="text-2xl font-light" id="statOrders">0</p>
-                            <p class="text-[9px] opacity-40 uppercase">Demandes totales</p>
-                        </div>
-                    </div>
+                    <h3 class="text-white/30 text-[9px] uppercase mb-4">Archives Site</h3>
+                    <div id="inventoryList" class="space-y-2 text-[10px] max-h-48 overflow-auto"></div>
                 </div>
             </div>
 
             <div class="lg:col-span-3">
                 <div class="glass p-8">
-                    <div class="flex justify-between items-center mb-8">
-                        <h3 class="text-gold text-[10px] uppercase font-bold tracking-widest">Flux des demandes clients</h3>
-                        <span class="text-[10px] opacity-30">Mise à jour en direct</span>
-                    </div>
-                    
-                    <div id="orderContainer" class="space-y-4">
-                        <p class="text-center py-10 opacity-20 italic">Aucune demande dans le flux...</p>
-                    </div>
+                    <h3 class="text-gold text-[10px] uppercase font-bold mb-8 tracking-widest">Dossiers & Chat Direct</h3>
+                    <div id="orderContainer" class="space-y-6"></div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -96,125 +73,91 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- AUTHENTIFICATION ---
-        if(sessionStorage.getItem('arcadia_auth') === 'true') {
-            document.getElementById('mainContent').style.display = 'block';
-        } else {
-            let pass = prompt("Code d'accès Staff :");
-            if(pass === "Immo30") { 
-                sessionStorage.setItem('arcadia_auth', 'true'); 
-                location.reload(); 
-            } else {
-                alert("Accès refusé.");
-                window.location.href = "index.html";
-            }
-        }
+        // AUTH
+        if(sessionStorage.getItem('arcadia_auth') === 'true') { document.getElementById('mainContent').style.display = 'block'; }
+        else { if(prompt("Code Staff :") === "Immo30") { sessionStorage.setItem('arcadia_auth', 'true'); location.reload(); } }
 
-        // --- GESTION ÉTAT STUDIO ---
+        // ÉTAT STUDIO
         const statusBtn = document.getElementById('statusToggle');
         onValue(ref(db, 'studioStatus'), (snap) => {
             const isOpen = snap.val();
-            statusBtn.innerText = isOpen ? "Ouvert" : "Fermé";
-            statusBtn.className = isOpen ? "badge bg-green-500/20 text-green-500 border border-green-500/50" : "badge bg-red-500/20 text-red-500 border border-red-500/50";
+            statusBtn.innerText = isOpen ? "OUVERT" : "FERMÉ";
+            statusBtn.style.color = isOpen ? "#10b981" : "#ef4444";
         });
+        statusBtn.onclick = () => set(ref(db, 'studioStatus'), statusBtn.innerText !== "OUVERT");
 
-        statusBtn.onclick = () => {
-            const current = statusBtn.innerText === "Ouvert";
-            set(ref(db, 'studioStatus'), !current);
-        };
+        // LISTINGS
+        onValue(ref(db, 'listings'), (snap) => {
+            const data = snap.val();
+            const inv = document.getElementById('inventoryList');
+            inv.innerHTML = "";
+            if(data) Object.entries(data).forEach(([id, it]) => {
+                inv.innerHTML += `<div class="flex justify-between border-b border-white/5 pb-1"><span>${it.title}</span><button onclick="deleteListing('${id}')" class="text-red-500">X</button></div>`;
+            });
+        });
+        window.deleteListing = (id) => { if(confirm("Supprimer ?")) remove(ref(db, `listings/${id}`)); };
 
-        // --- FLUX DES COMMANDES ---
+        // ORDERS & CHAT
         onValue(ref(db, 'orders'), (snap) => {
             const data = snap.val();
             const container = document.getElementById('orderContainer');
-            document.getElementById('statOrders').innerText = data ? Object.keys(data).length : 0;
-
-            if(!data) { container.innerHTML = "<p class='text-center py-10 opacity-20'>Le flux est vide.</p>"; return; }
-            
+            if(!data) { container.innerHTML = "Aucune demande."; return; }
             let html = "";
             Object.entries(data).reverse().forEach(([id, ord]) => {
                 const isNew = ord.status === 'En attente';
                 html += `
-                <div class="bg-white/5 p-6 rounded-2xl border ${isNew ? 'border-gold/30' : 'border-white/5'} flex flex-col md:flex-row justify-between items-center gap-6 transition-all hover:bg-white/[0.07]">
-                    <div class="flex-1 w-full">
-                        <div class="flex items-center gap-3 mb-2">
-                            <span class="badge ${isNew ? 'bg-gold text-black' : 'bg-white/10 text-white/40'}">${ord.status}</span>
-                            <h4 class="font-bold text-sm">${ord.prenom} ${ord.nom}</h4>
-                            <span class="text-[10px] font-mono opacity-40">Tél: ${ord.tel}</span>
+                <div class="glass p-6 ${isNew ? 'border-need-validation' : ''}">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-bold text-sm">${ord.prenom} ${ord.nom} <span class="text-gold">#${ord.tel}</span></p>
+                            <p class="text-[10px] uppercase opacity-50">${ord.service} — ${ord.prix || 'Sur mesure'}</p>
+                            <div class="chat-box" id="chat-${id}">
+                                <p class="text-white/40">Système: Reçu le ${ord.date}</p>
+                                <p class="text-gold mt-2"><b>Staff:</b> ${ord.reponseStaff || 'Aucun message.'}</p>
+                            </div>
+                            <div class="flex mt-2 gap-2">
+                                <input type="text" id="input-${id}" placeholder="Répondre..." class="input-staff !mb-0">
+                                <button onclick="sendChat('${id}')" class="bg-gold text-black px-4 rounded font-bold text-[10px]">OK</button>
+                            </div>
                         </div>
-                        <p class="text-xs text-white/70 italic">Souhaite acquérir : <span class="text-gold font-medium">${ord.service}</span> (${ord.prix})</p>
-                        ${ord.reponseStaff ? `<div class="last-reply"><b>Dernière réponse :</b> ${ord.reponseStaff}</div>` : ""}
-                        <p class="text-[8px] opacity-20 uppercase mt-4 tracking-widest">${ord.date}</p>
-                    </div>
-
-                    <div class="flex flex-col gap-2 w-full md:w-48">
-                        <select onchange="replyOrder('${id}', this.value)" class="input-staff !mb-0 text-[10px]">
-                            <option>Action rapide...</option>
-                            <option value="✅ Demande acceptée. Un agent vous contactera en ville sous peu.">Accepter</option>
-                            <option value="❌ Demande refusée. Nous ne pouvons honorer cette requête pour le moment.">Refuser</option>
-                            <option value="📅 RDV fixé. Merci de vous présenter au Studio Arcadia.">Fixer RDV</option>
-                            <option value="⚠️ Dossier incomplet. Merci de repasser au studio.">Incomplet</option>
-                        </select>
-                        <button onclick="deleteOrder('${id}')" class="text-[9px] text-red-500/50 hover:text-red-500 uppercase tracking-tighter transition-colors">Supprimer l'archive</button>
+                        <div class="flex flex-col gap-2">
+                            <button onclick="updateStatus('${id}', '✅ Validé')" class="bg-green-500/20 text-green-500 border border-green-500/50 py-1 px-3 rounded text-[9px] font-bold">VALIDER</button>
+                            <button onclick="updateStatus('${id}', '📅 RDV Fixé')" class="bg-blue-500/20 text-blue-500 border border-blue-500/50 py-1 px-3 rounded text-[9px] font-bold">RDV</button>
+                            <button onclick="deleteOrder('${id}')" class="text-[9px] opacity-30 mt-4 text-red-500">Archiver</button>
+                        </div>
                     </div>
                 </div>`;
             });
             container.innerHTML = html;
         });
 
-        window.replyOrder = (id, text) => {
-            if(text.includes("Action")) return;
-            update(ref(db, `orders/${id}`), { 
-                status: 'Répondu', 
-                reponseStaff: text 
-            });
+        window.sendChat = (id) => {
+            const msg = document.getElementById(`input-${id}`).value;
+            if(!msg) return;
+            update(ref(db, `orders/${id}`), { reponseStaff: msg, status: 'Répondu' });
         };
+        window.updateStatus = (id, s) => update(ref(db, `orders/${id}`), { status: s });
+        window.deleteOrder = (id) => remove(ref(db, `orders/${id}`));
 
-        window.deleteOrder = (id) => {
-            if(confirm("Voulez-vous vraiment supprimer définitivement ce dossier client ?")) {
-                remove(ref(db, `orders/${id}`));
-            }
-        };
-
-        // --- LOGIQUE PUBLICATION BIENS ---
+        // PUBLICATION
         let currentImgs = [];
         document.getElementById('bFiles').onchange = (e) => {
             currentImgs = [];
-            const preview = document.getElementById('imgPreview');
-            preview.innerHTML = "";
-            
             Array.from(e.target.files).forEach(f => {
-                const r = new FileReader(); 
-                r.onload = ev => {
-                    currentImgs.push(ev.target.result);
-                    const img = document.createElement('img');
-                    img.src = ev.target.result;
-                    img.className = "h-12 w-12 object-cover rounded border border-white/10";
-                    preview.appendChild(img);
-                };
-                r.readAsDataURL(f);
+                const r = new FileReader(); r.onload = ev => currentImgs.push(ev.target.result); r.readAsDataURL(f);
             });
         };
-
         document.getElementById('btnPublish').onclick = () => {
-            const title = document.getElementById('bTitle').value;
-            const price = document.getElementById('bPrice').value;
-            const cat = document.getElementById('bCat').value;
-
-            if(!title || currentImgs.length === 0) return alert("Le titre et au moins une image sont obligatoires.");
-
             const val = {
-                title,
-                price,
-                cat,
+                title: document.getElementById('bTitle').value,
+                price: document.getElementById('bPrice').value,
+                cat: document.getElementById('bCat').value,
+                desc: document.getElementById('bDesc').value,
                 images: currentImgs,
-                date: new Date().toLocaleString('fr-FR')
+                date: new Date().toLocaleDateString()
             };
-
-            push(ref(db, 'listings'), val).then(() => {
-                alert("Bien publié avec succès !");
-                location.reload();
-            });
+            if(!val.title) return;
+            push(ref(db, 'listings'), val).then(() => location.reload());
         };
     </script>
 </body>
