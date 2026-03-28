@@ -24,16 +24,11 @@
         .arcadia-input { background: #111; border: 1px solid #222; border-radius: 12px; color: white; padding: 15px; width: 100%; outline: none; transition: 0.3s; }
         .arcadia-input:focus { border-color: var(--gold); }
 
-        .drop-zone { border: 2px dashed #333; border-radius: 15px; padding: 25px; text-align: center; cursor: pointer; transition: 0.3s; background: #0c0c0c; }
-        .drop-zone.dragover { border-color: var(--gold); background: rgba(179, 142, 68, 0.1); }
-
-        .discord-embed { background: #121212; border-left: 4px solid var(--gold); border-radius: 4px; padding: 15px; max-width: 100%; }
-        
-        .status-badge { position: absolute; top: 20px; left: 20px; padding: 6px 15px; border-radius: 20px; font-size: 10px; font-weight: bold; text-transform: uppercase; z-index: 10; }
-        .bg-vendu { background: #ef4444; } .bg-dispo { background: #22c55e; }
-
         .service-card { border-left: 2px solid var(--gold); transition: 0.4s; }
         .service-card:hover { background: rgba(179, 142, 68, 0.05); transform: translateX(10px); }
+
+        .status-badge { position: absolute; top: 20px; left: 20px; padding: 6px 15px; border-radius: 20px; font-size: 10px; font-weight: bold; text-transform: uppercase; z-index: 10; }
+        .bg-vendu { background: #ef4444; } .bg-dispo { background: #22c55e; }
     </style>
 </head>
 <body>
@@ -49,7 +44,7 @@
     <div class="hidden lg:flex gap-10 items-center">
         <a href="#propos" class="text-[10px] uppercase tracking-[3px] opacity-60 hover:opacity-100 transition">À Propos</a>
         <a href="#villas" class="text-[10px] uppercase tracking-[3px] opacity-60 hover:opacity-100 transition">Catalogue</a>
-        <a href="#services" class="text-[10px] uppercase tracking-[3px] opacity-60 hover:opacity-100 transition">Services & Sécurité</a>
+        <a href="#services" class="text-[10px] uppercase tracking-[3px] opacity-60 hover:opacity-100 transition">Services</a>
         <a href="tel:0629070034" class="text-gold font-bold tracking-widest text-xs">06 29 07 00 34</a>
     </div>
     <div class="flex items-center gap-6">
@@ -66,12 +61,70 @@
     </div>
 </section>
 
+<section id="propos" class="py-32 px-10 border-b border-white/5">
+    <div class="max-w-5xl mx-auto text-center">
+        <h2 class="text-gold text-xs uppercase tracking-[10px] mb-8">Notre Héritage</h2>
+        <p class="text-2xl md:text-4xl font-serif italic leading-relaxed">
+            "Arcadia Immobilier ne se contente pas de vendre des murs. Nous bâtissons des sanctuaires où le luxe rencontre la sérénité absolue."
+        </p>
+        <p class="mt-10 text-gray-500 max-w-2xl mx-auto text-sm leading-loose">
+            Depuis notre implantation à Paros, nous accompagnons l'élite dans l'acquisition de propriétés uniques, tout en garantissant une protection inégalée grâce à nos systèmes de sécurité et notre expertise locale.
+        </p>
+    </div>
+</section>
+
 <section id="villas" class="py-32 px-10 bg-[#030303]">
     <div class="max-w-7xl mx-auto">
         <h3 class="text-5xl font-serif italic mb-16">Collection Privée</h3>
         <div id="listingGrid" class="grid md:grid-cols-3 gap-10"></div>
     </div>
 </section>
+
+<section id="services" class="py-32 px-10">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="text-gold text-xs uppercase tracking-[10px] mb-16 text-center">Expertise & Services</h2>
+        <div class="grid md:grid-cols-2 gap-20">
+            <div data-aos="fade-right">
+                <h3 class="text-3xl font-serif italic mb-8">Sécurité Domiciliaire</h3>
+                <div class="space-y-4">
+                    <div class="service-card p-6 glass-card">
+                        <h4 class="text-gold font-bold text-xs uppercase">Niveau 1 — 850 000 €</h4>
+                        <p class="text-[11px] text-gray-400 mt-2">Dispositif standard renforcé pour résidences privées.</p>
+                    </div>
+                    <div class="service-card p-6 glass-card">
+                        <h4 class="text-gold font-bold text-xs uppercase">Niveau 2 — 2 000 000 €</h4>
+                        <p class="text-[11px] text-gray-400 mt-2">Protection biométrique et alerte gendarmerie immédiate.</p>
+                    </div>
+                    <div class="service-card p-6 glass-card">
+                        <h4 class="text-gold font-bold text-xs uppercase">Niveau 3 — 5 000 000 €</h4>
+                        <p class="text-[11px] text-gray-400 mt-2">Sécurité maximale : discrétion totale et accès exclusif.</p>
+                    </div>
+                </div>
+            </div>
+            <div data-aos="fade-left">
+                <h3 class="text-3xl font-serif italic mb-8">Stockage & Logistique</h3>
+                <div class="service-card p-10 glass-card h-full flex flex-col justify-center border-white/10">
+                    <p class="text-4xl font-serif italic mb-4">+20 000 Places</p>
+                    <p class="text-gold font-bold text-xl mb-6">10 000 000 €</p>
+                    <p class="text-gray-400 text-sm mb-8 italic">Optimisez les capacités de stockage de votre entreprise avec nos solutions haut de gamme.</p>
+                    <button onclick="openOrderModal('Amélioration Stockage')" class="btn-gold py-4 text-[10px] uppercase">Améliorer ma société</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="py-20 px-10 border-t border-white/5 text-center">
+    <div class="max-w-7xl mx-auto">
+        <div class="font-serif italic text-2xl mb-4">Arcadia<span class="text-gold">.</span></div>
+        <p class="text-gold text-[10px] tracking-[4px] uppercase mb-8">L'Héritage du Luxe</p>
+        <div class="flex flex-col md:flex-row justify-center gap-10 text-[11px] opacity-40 uppercase tracking-widest">
+            <p>📍 123 Rue de Paros, Paros</p>
+            <p>📞 06 29 07 00 34</p>
+            <p>© 2026 Arcadia International</p>
+        </div>
+    </div>
+</footer>
 
 <div id="orderModal" class="fixed inset-0 z-[3000] bg-black/98 hidden flex items-center justify-center p-4">
     <div class="max-w-md w-full glass-card p-10 border-gold/20">
@@ -105,7 +158,6 @@
             <div class="space-y-4 mb-10">
                 <p class="text-[10px] uppercase tracking-widest text-gold">Localisation</p>
                 <p id="detLoc" class="text-gray-300 text-sm"></p>
-                <p class="text-[10px] uppercase tracking-widest text-gold mt-6">Description</p>
                 <p id="detDesc" class="text-gray-400 text-sm leading-relaxed"></p>
             </div>
             <button id="detOfferBtn" class="btn-gold w-full py-4 text-xs">Faire une offre</button>
@@ -130,17 +182,16 @@
                     <option value="vendu">Vendu</option>
                 </select>
                 <textarea id="vDesc" placeholder="DESCRIPTION" class="arcadia-input h-20" oninput="updatePreview()"></textarea>
-                <div id="dropZone" class="drop-zone">
-                    <p id="dropText" class="text-[10px] uppercase tracking-widest opacity-40">Glisser image ou cliquer</p>
+                <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInput').click()">
+                    <p id="dropText" class="text-[10px] uppercase tracking-widest opacity-40">Charger Image</p>
                     <input type="file" id="fileInput" hidden accept="image/*">
                     <input type="hidden" id="vImg">
                 </div>
-                <div class="discord-embed">
+                <div class="discord-embed" id="adminPreview">
                     <div class="text-white font-bold text-sm mb-1" id="preTitle">Aperçu</div>
-                    <div class="text-[10px] text-gray-400"><span id="preLoc">Localisation</span> • <span id="prePrice">0 €</span></div>
-                    <img src="" id="preImg" class="w-full h-24 object-cover rounded mt-3 hidden border border-white/10">
+                    <img src="" id="preImg" class="w-full h-24 object-cover rounded mt-3 hidden">
                 </div>
-                <button onclick="saveListing()" class="btn-gold w-full py-4 text-xs" id="saveBtn">Publier l'unité</button>
+                <button onclick="saveListing()" class="btn-gold w-full py-4 text-xs" id="saveBtn">Publier</button>
             </div>
             <div class="w-full md:w-1/2 p-8 overflow-y-auto bg-black/40">
                 <div id="adminList" class="space-y-3"></div>
@@ -160,124 +211,101 @@
         if (!grid || !adminList) return;
         grid.innerHTML = ""; adminList.innerHTML = "";
         listings.forEach(v => {
-            const location = v.loc || "Paros, International";
             const prix = (v.price || 0).toLocaleString();
-            grid.innerHTML += `<div onclick="showDetails(${v.id})" class="glass-card group cursor-pointer relative" data-aos="fade-up"><div class="status-badge bg-${v.status}">${v.status}</div><div class="h-64 overflow-hidden"><img src="${v.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000"></div><div class="p-8"><p class="text-[9px] text-gold uppercase tracking-widest mb-2">${location}</p><h3 class="text-2xl font-serif italic mb-2">${v.title}</h3><p class="text-gold font-bold text-lg">${prix} €</p></div></div>`;
-            adminList.innerHTML += `<div class="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/5"><div class="flex items-center gap-3"><img src="${v.img}" class="w-10 h-10 rounded-lg object-cover"><div><p class="font-bold text-[11px]">${v.title}</p><p class="text-[9px] opacity-40">${prix} € - ${v.status}</p></div></div><div class="flex gap-3"><button onclick="loadEdit(${v.id})" class="text-[9px] text-blue-400 font-bold uppercase">Editer</button><button onclick="deleteListing(${v.id})" class="text-[9px] text-red-500 font-bold uppercase">Radier</button></div></div>`;
+            grid.innerHTML += `<div onclick="showDetails(${v.id})" class="glass-card group cursor-pointer relative" data-aos="fade-up"><div class="status-badge bg-${v.status}">${v.status}</div><div class="h-64 overflow-hidden"><img src="${v.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000"></div><div class="p-8"><p class="text-[9px] text-gold uppercase tracking-widest mb-2">${v.loc}</p><h3 class="text-2xl font-serif italic mb-2">${v.title}</h3><p class="text-gold font-bold text-lg">${prix} €</p></div></div>`;
+            adminList.innerHTML += `<div class="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/5"><div><p class="font-bold text-[11px]">${v.title}</p><p class="text-[9px] opacity-40">${prix} €</p></div><div class="flex gap-3"><button onclick="loadEdit(${v.id})" class="text-[9px] text-blue-400 uppercase">Editer</button><button onclick="deleteListing(${v.id})" class="text-[9px] text-red-500 uppercase">Radier</button></div></div>`;
         });
         localStorage.setItem('arcadia_v4', JSON.stringify(listings));
     }
 
-    // GESTION DU WEBHOOK DISCORD AVEC NUMÉRO DE TÉLÉPHONE
+    // WEBHOOK DISCORD
     document.getElementById('orderForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const webhookURL = "https://discord.com/api/webhooks/1429322898367315968/im9bCVJmDKWPmcWMyTtyn4MaqOOC03hBWadHq7eoj7BXIGfhBGE3-fD3LFlr1pVU6WhA";
-        
-        const clientName = document.getElementById('orderName').value;
-        const clientPhone = document.getElementById('orderPhone').value; // Nouveau champ
-        const service = document.getElementById('orderService').value;
-        const message = document.getElementById('orderMsg').value || "Aucun détail supplémentaire";
         
         const data = {
             username: "Arcadia Management Terminal",
             avatar_url: "https://i.imgur.com/4E6v9RY.png",
             embeds: [{
                 title: "💎 Nouvelle Commande Client",
-                description: "Une demande prioritaire a été soumise.",
                 color: 11767364,
                 thumbnail: { url: "https://i.imgur.com/G56KzN7.png" },
                 fields: [
-                    { name: "👤 Client", value: `\`${clientName}\``, inline: true },
-                    { name: "📞 Téléphone", value: `\`${clientPhone}\``, inline: true },
-                    { name: "🛠️ Service Demandé", value: `**${service}**`, inline: false },
-                    { name: "📝 Message", value: `>>> ${message}`, inline: false }
+                    { name: "👤 Client", value: `\`${document.getElementById('orderName').value}\``, inline: true },
+                    { name: "📞 Téléphone", value: `\`${document.getElementById('orderPhone').value}\``, inline: true },
+                    { name: "🛠️ Service", value: `**${document.getElementById('orderService').value}**`, inline: false },
+                    { name: "📝 Message", value: `>>> ${document.getElementById('orderMsg').value || "Aucun détail"}`, inline: false }
                 ],
-                footer: { text: "Système de Gestion Arcadia • Paros", icon_url: "https://i.imgur.com/4E6v9RY.png" },
+                footer: { text: "Arcadia Management • 123 Rue de Paros", icon_url: "https://i.imgur.com/4E6v9RY.png" },
                 timestamp: new Date()
             }]
         };
 
-        fetch(webhookURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }).then(() => {
-            alert("Votre demande a bien été transmise. Un agent Arcadia vous contactera sous peu.");
-            document.getElementById('orderModal').classList.add('hidden');
-            this.reset();
-        }).catch(err => {
-            alert("Erreur de transmission.");
-            console.error(err);
-        });
+        fetch(webhookURL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+        .then(() => { alert("Demande transmise avec succès."); document.getElementById('orderModal').classList.add('hidden'); this.reset(); })
+        .catch(() => alert("Erreur de liaison."));
     });
 
-    // SCRIPTS DE GESTION GÉNÉRALE
+    // FONCTIONS UTILITAIRES
     function showDetails(id) {
         const v = listings.find(l => l.id == id);
         document.getElementById('detTitle').innerText = v.title;
-        document.getElementById('detLoc').innerText = v.loc || "Paros";
         document.getElementById('detPrice').innerText = v.price.toLocaleString() + " €";
-        document.getElementById('detDesc').innerText = v.desc || "Pas de description.";
+        document.getElementById('detLoc').innerText = v.loc;
+        document.getElementById('detDesc').innerText = v.desc;
         document.getElementById('detImg').src = v.img;
         document.getElementById('detBadge').innerText = v.status;
         document.getElementById('detBadge').className = `status-badge bg-${v.status}`;
-        document.getElementById('detOfferBtn').onclick = () => openOrderModal(`Offre pour : ${v.title}`);
         document.getElementById('detailModal').classList.remove('hidden');
     }
 
     function openOrderModal(context = "") {
-        if(context) {
-            document.getElementById('orderMsg').value = context + "\n-------------------\n";
-            document.getElementById('orderService').value = "Immobilier";
-        }
+        if(context) document.getElementById('orderMsg').value = context + "\n-------------------\n";
         document.getElementById('orderModal').classList.remove('hidden');
     }
 
     function saveListing() {
-        const id = document.getElementById('editId').value;
         const title = document.getElementById('vTitle').value;
-        const loc = document.getElementById('vLoc').value;
-        const price = parseInt(document.getElementById('vPrice').value) || 0;
-        const status = document.getElementById('vStatus').value;
-        const desc = document.getElementById('vDesc').value;
-        const img = document.getElementById('vImg').value || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800";
-        if(!title) return alert("Veuillez donner un nom au bien.");
-        const data = { id: id ? parseInt(id) : Date.now(), title, loc, price, status, desc, img };
-        if(id) { listings[listings.findIndex(l => l.id == id)] = data; } else { listings.push(data); }
+        if(!title) return alert("Nom requis.");
+        const data = {
+            id: document.getElementById('editId').value ? parseInt(document.getElementById('editId').value) : Date.now(),
+            title, 
+            loc: document.getElementById('vLoc').value,
+            price: parseInt(document.getElementById('vPrice').value) || 0,
+            status: document.getElementById('vStatus').value,
+            desc: document.getElementById('vDesc').value,
+            img: document.getElementById('vImg').value || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800"
+        };
+        const idx = listings.findIndex(l => l.id == data.id);
+        if(idx > -1) listings[idx] = data; else listings.push(data);
         render(); closeStaffModal(); resetForm();
     }
 
-    const fileInput = document.getElementById('fileInput');
-    document.getElementById('dropZone').onclick = () => fileInput.click();
-    fileInput.onchange = (e) => {
-        const reader = new FileReader();
-        reader.onload = (ev) => { document.getElementById('vImg').value = ev.target.result; updatePreview(); document.getElementById('dropText').innerText = "IMAGE CHARGÉE ✓"; };
-        reader.readAsDataURL(e.target.files[0]);
-    };
+    function deleteListing(id) { if(confirm("Supprimer ?")) { listings = listings.filter(l => l.id != id); render(); } }
+    
+    function loadEdit(id) {
+        const v = listings.find(l => l.id == id);
+        document.getElementById('editId').value = v.id;
+        document.getElementById('vTitle').value = v.title;
+        document.getElementById('vLoc').value = v.loc;
+        document.getElementById('vPrice').value = v.price;
+        document.getElementById('vStatus').value = v.status;
+        document.getElementById('vDesc').value = v.desc;
+        document.getElementById('vImg').value = v.img;
+        updatePreview();
+    }
 
     function updatePreview() {
-        document.getElementById('preTitle').innerText = document.getElementById('vTitle').value || "Nom";
-        document.getElementById('preLoc').innerText = document.getElementById('vLoc').value || "Localisation";
-        document.getElementById('prePrice').innerText = (parseInt(document.getElementById('vPrice').value) || 0).toLocaleString() + " €";
+        document.getElementById('preTitle').innerText = document.getElementById('vTitle').value || "Aperçu";
         const img = document.getElementById('vImg').value;
         if(img) { document.getElementById('preImg').src = img; document.getElementById('preImg').classList.remove('hidden'); }
     }
 
-    function deleteListing(id) { if(confirm("Radier ce bien ?")) { listings = listings.filter(l => l.id != id); render(); } }
-    function loadEdit(id) {
-        const v = listings.find(l => l.id == id);
-        document.getElementById('editId').value = v.id; document.getElementById('vTitle').value = v.title;
-        document.getElementById('vLoc').value = v.loc; document.getElementById('vPrice').value = v.price;
-        document.getElementById('vStatus').value = v.status; document.getElementById('vDesc').value = v.desc;
-        document.getElementById('vImg').value = v.img; document.getElementById('saveBtn').innerText = "Enregistrer"; updatePreview();
-    }
-
-    function resetForm() {
-        document.querySelectorAll('.arcadia-input').forEach(i => i.value = "");
-        document.getElementById('editId').value = ""; document.getElementById('vImg').value = "";
-        document.getElementById('preImg').classList.add('hidden'); document.getElementById('dropText').innerText = "Glisser image ou cliquer";
-        document.getElementById('saveBtn').innerText = "Publier l'unité";
-    }
+    document.getElementById('fileInput').onchange = (e) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => { document.getElementById('vImg').value = ev.target.result; updatePreview(); };
+        reader.readAsDataURL(e.target.files[0]);
+    };
 
     window.closeDetailModal = () => document.getElementById('detailModal').classList.add('hidden');
     window.closeStaffModal = () => document.getElementById('staffModal').classList.add('hidden');
@@ -288,7 +316,8 @@
         gsap.to('#cursor-follower', { x: e.clientX - 22, y: e.clientY - 22, duration: 0.3 });
     });
 
-    AOS.init({ duration: 1200 }); render();
+    AOS.init({ duration: 1200 });
+    render();
 </script>
 </body>
 </html>
