@@ -1,4 +1,4 @@
-*<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -10,160 +10,77 @@
         :root { --gold:#b38e44; --dark:#0a0a0a; --glass: rgba(255,255,255,0.03); }
         body { font-family: 'Montserrat', sans-serif; background: var(--dark); color:white; overflow-x:hidden; scroll-behavior: smooth; }
         .font-serif { font-family:'Cormorant Garamond', serif; }
-        
-        /* Animations */
-        .fade-in { animation: fadeIn 1.5s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Hero & Glass */
-        .hero { height:100vh; position:relative; display: flex; align-items: center; justify-content: center; }
-        .hero video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity: 0.6; }
         .glass { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.08); transition: 0.4s; }
-        .glass:hover { border-color: var(--gold); }
-
-        /* Buttons */
         .btn-gold { border: 1px solid var(--gold); color: var(--gold); padding: 12px 24px; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; transition: 0.4s; cursor: pointer; background: transparent; }
         .btn-gold:hover { background: var(--gold); color: black; box-shadow: 0 0 20px rgba(179, 142, 68, 0.4); }
-
-        /* Modal */
         #orderModal { display:none; position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.95); align-items:center; justify-content:center; padding: 20px; }
-        .input-arcadia { width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:14px; border-radius:8px; color:white; margin-bottom:12px; outline:none; transition: 0.3s; }
-        .input-arcadia:focus { border-color: var(--gold); background: rgba(255,255,255,0.1); }
+        .input-arcadia { width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:14px; border-radius:8px; color:white; margin-bottom:12px; outline:none; }
+        .logo-nav { height: 40px; }
     </style>
 </head>
 <body>
 
     <div id="orderModal">
-        <div class="glass p-10 rounded-3xl max-w-md w-full relative fade-in">
+        <div class="glass p-10 rounded-3xl max-w-md w-full relative">
             <button onclick="closeOrder()" class="absolute top-6 right-6 text-2xl opacity-50 hover:opacity-100">✕</button>
             <h2 class="font-serif text-4xl italic mb-2 text-center">Réservation</h2>
             <p id="orderSummary" class="text-gold text-center text-[11px] uppercase tracking-[3px] mb-8 font-semibold"></p>
-            
             <div id="userInfoFields">
-                <p class="text-[10px] opacity-50 mb-4 text-center uppercase">Identité Citoyenne Requise</p>
                 <input type="text" id="custNom" placeholder="Nom de famille" class="input-arcadia">
                 <input type="text" id="custPrenom" placeholder="Prénom" class="input-arcadia">
                 <input type="tel" id="custTel" placeholder="Numéro de téléphone" class="input-arcadia">
             </div>
-
-            <button onclick="confirmOrder()" class="w-full bg-gold text-black font-bold py-5 rounded-xl uppercase text-xs tracking-widest hover:scale-[1.02] transition-transform">
-                Confirmer la demande RP
-            </button>
+            <button onclick="confirmOrder()" class="w-full bg-gold text-black font-bold py-5 rounded-xl uppercase text-xs tracking-widest hover:scale-[1.02] transition-transform">Confirmer la demande</button>
         </div>
     </div>
 
-    <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-10 py-6 backdrop-blur-xl border-b border-white/5">
+    <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-10 py-6 backdrop-blur-xl border-b border-white/5">
         <div class="flex items-center gap-4">
-            <h1 class="font-serif text-3xl italic tracking-tighter">Arcadia</h1>
-            <span class="bg-green-500/20 text-green-400 text-[8px] px-2 py-1 rounded-full border border-green-500/30 font-bold uppercase tracking-tighter">Studio Ouvert</span>
+            <img src="https://image2url.com/r2/default/images/1774658704727-764cccce-eee7-41c4-a48c-90c16f0acc69.png" class="logo-nav">
+            <span id="studioBadge" class="text-[8px] px-2 py-1 rounded-full border font-bold uppercase tracking-tighter transition-all">Chargement...</span>
         </div>
-        
-        <div id="userGreeting" class="hidden md:block text-[10px] tracking-[3px] uppercase text-gold font-medium"></div>
-
         <div class="flex items-center gap-8">
-            <a href="#services" class="text-[10px] uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity">Services</a>
-            <a href="#catalogue" class="text-[10px] uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity">Collection</a>
-            <a href="admin.html" class="px-4 py-2 border border-gold/20 text-[9px] uppercase hover:bg-gold hover:text-black transition-all">Panel Staff</a>
+            <a href="#news" class="hidden md:block text-[10px] uppercase tracking-widest opacity-60 hover:opacity-100">Presse</a>
+            <a href="#catalogue" class="text-[10px] uppercase tracking-widest opacity-60 hover:opacity-100">Collection</a>
+            <a href="admin.html" class="px-4 py-2 border border-gold/20 text-[9px] uppercase hover:bg-gold hover:text-black transition-all">Staff</a>
         </div>
     </nav>
 
-    <section class="hero">
-        <video autoplay muted loop playsinline>
+    <section class="h-screen flex items-center justify-center relative overflow-hidden">
+        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-40">
             <source src="https://cdn.coverr.co/videos/coverr-luxury-house-1574/1080p.mp4" type="video/mp4">
         </video>
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-dark/50 to-dark"></div>
-        <div class="relative text-center z-10 px-4 fade-in">
-            <h2 class="text-gold tracking-[12px] text-sm mb-4 font-light">L'ART DE VIVRE</h2>
-            <h1 class="font-serif text-7xl md:text-[10rem] italic leading-none mb-8">Arcadia</h1>
-            <p class="max-w-xl mx-auto opacity-60 text-sm leading-relaxed font-light tracking-wide">
-                Expertise en immobilier de prestige et solutions de sécurité avancées pour les citoyens les plus exigeants.
-            </p>
-            <div class="mt-12">
-                <a href="#catalogue" class="btn-gold">Explorer la collection</a>
-            </div>
+        <div class="relative text-center z-10 px-4">
+            <h1 class="font-serif text-7xl md:text-[10rem] italic leading-none mb-4">Arcadia</h1>
+            <p class="text-gold tracking-[10px] text-xs uppercase mb-12">L'excellence immobilière & sécuritaire</p>
+            <a href="#catalogue" class="btn-gold">Voir la collection</a>
         </div>
     </section>
 
     <section id="clientDashboard" class="hidden py-20 px-6 max-w-7xl mx-auto">
-        <div class="glass p-10 rounded-[40px] border-l-8 border-gold shadow-2xl">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-                <h3 class="font-serif text-4xl italic">Tableau de bord <span class="text-gold">Privé</span></h3>
-                <button onclick="localStorage.clear(); location.reload();" class="text-[9px] uppercase opacity-40 hover:text-red-500">Déconnexion</button>
+        <div class="glass p-8 md:p-12 rounded-[40px] border-l-8 border-gold">
+            <div class="flex justify-between items-center mb-10">
+                <h3 class="font-serif text-4xl italic">Suivi de vos <span class="text-gold">Dossiers</span></h3>
+                <button onclick="localStorage.clear(); location.reload();" class="text-[9px] uppercase opacity-40">Déconnexion</button>
             </div>
-            <div id="myOrdersList" class="grid md:grid-cols-2 gap-6">
-                <p class="opacity-40 italic">Chargement de vos dossiers...</p>
-            </div>
+            <div id="myOrdersList" class="grid md:grid-cols-2 gap-6"></div>
         </div>
     </section>
 
-    <section id="services" class="py-32 px-6 max-w-7xl mx-auto">
-        <div class="grid lg:grid-cols-2 gap-16">
-            <div class="glass p-12 rounded-[40px]">
-                <h3 class="font-serif text-5xl mb-12 italic">Sécurité <span class="text-gold">Avancée</span></h3>
-                <div class="space-y-6">
-                    <div class="flex justify-between items-center p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-all border border-white/5">
-                        <div>
-                            <p class="font-bold text-gold text-lg">Alarme Niveau 1</p>
-                            <p class="text-[10px] opacity-50 uppercase tracking-widest mt-1">850 000 € • Protection GN</p>
-                        </div>
-                        <button onclick="openOrder('Alarme Niveau 1', '850 000 €')" class="btn-gold !py-2 !px-6">Acheter</button>
-                    </div>
-                    <div class="flex justify-between items-center p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-all border border-white/5">
-                        <div>
-                            <p class="font-bold text-gold text-lg">Alarme Niveau 2</p>
-                            <p class="text-[10px] opacity-50 uppercase tracking-widest mt-1">2 000 000 € • Alerte Directe</p>
-                        </div>
-                        <button onclick="openOrder('Alarme Niveau 2', '2 000 000 €')" class="btn-gold !py-2 !px-6">Acheter</button>
-                    </div>
-                    <div class="flex justify-between items-center p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-all border border-white/5">
-                        <div>
-                            <p class="font-bold text-gold text-lg">Alarme Niveau 3</p>
-                            <p class="text-[10px] opacity-50 uppercase tracking-widest mt-1">5 000 000 € • Sécurité Max</p>
-                        </div>
-                        <button onclick="openOrder('Alarme Niveau 3', '5 000 000 €')" class="btn-gold !py-2 !px-6">Acheter</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex flex-col gap-8">
-                <div class="glass p-12 rounded-[40px] flex-1 relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">
-                        <svg width="100" height="100" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>
-                    </div>
-                    <h3 class="font-serif text-5xl mb-6 italic">Extension <span class="text-gold">Entreprise</span></h3>
-                    <p class="text-4xl font-serif text-gold mb-4">+20 000 Places</p>
-                    <p class="opacity-50 text-xs uppercase tracking-[4px] leading-loose mb-10">Optimisez votre logistique dès maintenant.</p>
-                    <div class="flex justify-between items-center mt-auto">
-                        <span class="text-2xl font-serif tracking-tighter">10 000 000 €</span>
-                        <button onclick="openOrder('Extension Stockage', '10 000 000 €')" class="btn-gold">Améliorer</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="catalogue" class="py-32 px-6 max-w-7xl mx-auto">
-        <div class="flex justify-between items-end mb-16">
-            <div>
-                <h2 class="font-serif text-6xl italic">La Collection</h2>
-                <p class="text-gold text-[10px] tracking-[5px] uppercase mt-4">Sélection exclusive Arcadia</p>
-            </div>
-        </div>
-        
-        <div id="catalogContainer" class="grid md:grid-cols-3 gap-10">
+    <section id="news" class="py-24 px-6 max-w-7xl mx-auto">
+        <h2 class="font-serif text-5xl italic mb-12">Arcadia <span class="text-gold">Presse</span></h2>
+        <div id="newsContainer" class="grid md:grid-cols-2 gap-8">
             </div>
     </section>
 
-    <footer class="py-24 bg-white/5 border-t border-white/5 text-center px-6">
-        <h2 class="font-serif text-4xl italic mb-10">Arcadia Studio</h2>
-        <div class="flex flex-wrap justify-center gap-10 mb-16 opacity-40 text-[10px] uppercase tracking-[4px]">
-            <span>Luxe</span>
-            <span>Sécurité</span>
-            <span>Prestige</span>
-            <span>Confidentialité</span>
-        </div>
-        <a href="https://discord.gg/MtmDydQApw" target="_blank" class="btn-gold px-12 py-4">Rejoindre l'expérience Discord</a>
-        <p class="mt-20 text-[9px] opacity-20 uppercase tracking-widest">© 2026 Arcadia Group. Tous droits réservés.</p>
+    <section id="catalogue" class="py-24 px-6 max-w-7xl mx-auto">
+        <h2 class="font-serif text-5xl italic mb-12 text-right">La <span class="text-gold">Collection</span></h2>
+        <div id="catalogContainer" class="grid md:grid-cols-3 gap-10"></div>
+    </section>
+
+    <footer class="py-20 bg-white/5 text-center border-t border-white/5">
+        <img src="https://image2url.com/r2/default/images/1774658704727-764cccce-eee7-41c4-a48c-90c16f0acc69.png" class="h-16 mx-auto mb-8 opacity-50">
+        <p class="text-[9px] opacity-20 uppercase tracking-[5px]">© 2026 Arcadia Group • Los Santos</p>
     </footer>
 
     <script type="module">
@@ -174,106 +91,107 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        let currentOrder = null;
         const activeUser = JSON.parse(localStorage.getItem('arcadia_user_rp'));
+        let currentOrder = null;
 
-        // --- GESTION UTILISATEUR ---
+        // --- ÉTAT DU STUDIO ---
+        onValue(ref(db, 'studioStatus'), (snap) => {
+            const isOpen = snap.val();
+            const badge = document.getElementById('studioBadge');
+            badge.innerText = isOpen ? "Studio Ouvert" : "Studio Fermé";
+            badge.className = isOpen ? "text-[8px] px-2 py-1 rounded-full border border-green-500/30 text-green-400 bg-green-500/10 font-bold uppercase tracking-tighter" 
+                                     : "text-[8px] px-2 py-1 rounded-full border border-red-500/30 text-red-400 bg-red-500/10 font-bold uppercase tracking-tighter";
+        });
+
+        // --- DASHBOARD & CHAT ---
         if(activeUser) {
-            document.getElementById('userGreeting').innerText = `Citoyen : ${activeUser.prenom} ${activeUser.nom}`;
-            document.getElementById('userGreeting').classList.remove('hidden');
-            document.getElementById('userInfoFields').style.display = 'none';
             document.getElementById('clientDashboard').classList.remove('hidden');
-            loadMyOrders(activeUser.nom, activeUser.prenom);
+            document.getElementById('userInfoFields').style.display = 'none';
+            onValue(ref(db, 'orders'), (snap) => {
+                const data = snap.val();
+                const list = document.getElementById('myOrdersList');
+                let html = "";
+                if(data) {
+                    Object.entries(data).reverse().forEach(([id, ord]) => {
+                        if(ord.nom === activeUser.nom && ord.prenom === activeUser.prenom) {
+                            html += `
+                            <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
+                                <div class="flex justify-between mb-4">
+                                    <span class="text-[10px] font-bold uppercase text-gold">${ord.service}</span>
+                                    <span class="text-[9px] px-2 py-0.5 rounded bg-white/10">${ord.status}</span>
+                                </div>
+                                <div class="text-xs italic opacity-70 bg-black/30 p-4 rounded-lg border-l-2 border-gold mb-2">
+                                    "${ord.reponseStaff || 'En attente de réponse...'}"
+                                </div>
+                                <p class="text-[8px] opacity-20 uppercase">${ord.date}</p>
+                            </div>`;
+                        }
+                    });
+                }
+                list.innerHTML = html || "<p class='opacity-30'>Aucun dossier en cours.</p>";
+            });
         }
 
-        // --- GESTION MODAL ---
+        // --- CATALOGUE & NEWS ---
+        onValue(ref(db, 'listings'), (snap) => {
+            const data = snap.val();
+            const catContainer = document.getElementById('catalogContainer');
+            const newsContainer = document.getElementById('newsContainer');
+            catContainer.innerHTML = "";
+            newsContainer.innerHTML = "";
+            
+            if(data) {
+                Object.entries(data).reverse().forEach(([id, it]) => {
+                    if(it.cat === 'Article') {
+                        newsContainer.innerHTML += `
+                        <div class="glass flex flex-col md:flex-row overflow-hidden rounded-3xl">
+                            <img src="${it.images[0]}" class="md:w-1/3 object-cover h-48 md:h-auto">
+                            <div class="p-6 flex-1">
+                                <span class="text-gold text-[9px] uppercase tracking-widest">${it.price}</span>
+                                <h4 class="font-serif text-2xl italic my-2">${it.title}</h4>
+                                <p class="text-xs opacity-60 mb-4">${it.desc}</p>
+                            </div>
+                        </div>`;
+                    } else {
+                        catContainer.innerHTML += `
+                        <div class="glass group rounded-3xl overflow-hidden shadow-2xl">
+                            <div class="h-64 overflow-hidden relative">
+                                <img src="${it.images[0]}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                <span class="absolute top-4 left-4 bg-black/60 text-gold text-[8px] uppercase px-3 py-1 rounded-full border border-gold/30">${it.cat}</span>
+                            </div>
+                            <div class="p-8">
+                                <h4 class="font-serif text-3xl italic mb-4">${it.title}</h4>
+                                <div class="flex justify-between items-center">
+                                    <span class="font-serif text-xl">${it.price}</span>
+                                    <button onclick="openOrder('${it.title}', '${it.price}')" class="btn-gold !py-2 !px-4 !text-[8px]">Réserver</button>
+                                </div>
+                            </div>
+                        </div>`;
+                    }
+                });
+            }
+        });
+
+        // --- FONCTIONS LOGIQUES ---
         window.openOrder = (service, prix) => {
             currentOrder = { service, prix };
             document.getElementById('orderSummary').innerText = `${service} • ${prix}`;
             document.getElementById('orderModal').style.display = 'flex';
         };
-
-        window.closeOrder = () => {
-            document.getElementById('orderModal').style.display = 'none';
-        };
-
-        // --- CONFIRMER COMMANDE ---
+        window.closeOrder = () => document.getElementById('orderModal').style.display = 'none';
         window.confirmOrder = () => {
-            let userData = activeUser;
-            if(!userData) {
-                userData = {
-                    nom: document.getElementById('custNom').value,
-                    prenom: document.getElementById('custPrenom').value,
-                    tel: document.getElementById('custTel').value || "Non renseigné"
-                };
-                if(!userData.nom || !userData.prenom) return alert("Veuillez remplir vos coordonnées RP.");
-                localStorage.setItem('arcadia_user_rp', JSON.stringify(userData));
-            }
-
+            let userData = activeUser || {
+                nom: document.getElementById('custNom').value,
+                prenom: document.getElementById('custPrenom').value,
+                tel: document.getElementById('custTel').value
+            };
+            if(!userData.nom || !userData.prenom) return alert("Nom et prénom requis.");
+            localStorage.setItem('arcadia_user_rp', JSON.stringify(userData));
             push(ref(db, 'orders'), {
-                ...userData,
-                ...currentOrder,
-                date: new Date().toLocaleString('fr-FR'),
-                status: 'En attente',
-                reponseStaff: 'Votre demande est en cours de traitement par nos agents.'
-            }).then(() => {
-                alert("Votre demande a été transmise au Staff Arcadia !");
-                location.reload();
-            });
+                ...userData, ...currentOrder,
+                status: 'En attente', date: new Date().toLocaleString('fr-FR')
+            }).then(() => { alert("Demande envoyée !"); location.reload(); });
         };
-
-        // --- CHARGER MES COMMANDES ---
-        function loadMyOrders(nom, prenom) {
-            onValue(ref(db, 'orders'), (snap) => {
-                const data = snap.val();
-                const list = document.getElementById('myOrdersList');
-                if(!data) { list.innerHTML = "<p class='opacity-30 italic'>Aucune demande active.</p>"; return; }
-                
-                let html = "";
-                Object.entries(data).reverse().forEach(([id, ord]) => {
-                    if(ord.nom === nom && ord.prenom === prenom) {
-                        const statusColor = ord.status === 'Répondu' ? 'text-green-400' : 'text-gold';
-                        html += `
-                        <div class="bg-white/5 p-6 rounded-2xl border border-white/5 hover:bg-white/10 transition-all">
-                            <div class="flex justify-between items-start mb-4">
-                                <span class="text-xs font-bold uppercase tracking-widest text-white/90">${ord.service}</span>
-                                <span class="${statusColor} text-[10px] font-bold uppercase bg-white/5 px-3 py-1 rounded-full border border-current">${ord.status}</span>
-                            </div>
-                            <p class="text-xs text-white/60 leading-relaxed italic mb-4">"${ord.reponseStaff}"</p>
-                            <p class="text-[8px] opacity-20 uppercase tracking-tighter">Référence Arcadia : ${id.slice(-6)} • ${ord.date}</p>
-                        </div>`;
-                    }
-                });
-                list.innerHTML = html || "<p class='opacity-30 italic'>Aucune demande active.</p>";
-            });
-        }
-
-        // --- CHARGER CATALOGUE ---
-        onValue(ref(db, 'listings'), (snap) => {
-            const data = snap.val();
-            const container = document.getElementById('catalogContainer');
-            if(!data) { container.innerHTML = "<p class='opacity-20'>La collection est en cours de mise à jour.</p>"; return; }
-            
-            let html = "";
-            Object.entries(data).reverse().forEach(([id, it]) => {
-                html += `
-                <div class="glass group rounded-3xl overflow-hidden shadow-2xl">
-                    <div class="relative overflow-hidden h-64">
-                        <img src="${it.images[0]}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                        <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-60"></div>
-                        <span class="absolute top-4 left-4 bg-black/60 backdrop-blur-md text-[8px] text-gold uppercase tracking-[3px] px-3 py-1.5 rounded-full border border-gold/30">${it.cat}</span>
-                    </div>
-                    <div class="p-8">
-                        <h4 class="font-serif text-3xl italic mb-4 group-hover:text-gold transition-colors">${it.title}</h4>
-                        <div class="flex justify-between items-center mt-6">
-                            <span class="font-serif text-xl tracking-tighter text-white/90">${it.price}</span>
-                            <button onclick="openOrder('${it.title}', '${it.price}')" class="btn-gold !py-2 !px-6 !text-[9px]">Réserver</button>
-                        </div>
-                    </div>
-                </div>`;
-            });
-            container.innerHTML = html;
-        });
     </script>
 </body>
 </html>
