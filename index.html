@@ -6,154 +6,120 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:italic,wght@700&display=swap" rel="stylesheet">
     <style>
-        body { background:#050505; color:white; font-family:'Montserrat', sans-serif; scroll-behavior: smooth; }
+        body { background:#050505; color:white; font-family:'Montserrat', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
         .font-serif { font-family: 'Playfair Display', serif; }
         .glass { background: rgba(17, 17, 17, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; }
         .text-gold { color: #b38e44; }
         .bg-gold { background: #b38e44; }
         
-        /* HERO SECTION */
-        .hero { 
-            height: 80vh; 
-            background: linear-gradient(to bottom, rgba(5,5,5,0.2), #050505), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            display: flex; align-items: center; justify-content: center; text-align: center;
-        }
-
-        /* CARD STYLE */
-        .service-card { transition: 0.4s; border: 1px solid rgba(255,255,255,0.05); }
-        .service-card:hover { transform: translateY(-10px); border-color: #b38e44; }
+        /* HERO & INTERACTION */
+        .hero { height: 70vh; background: linear-gradient(to bottom, rgba(5,5,5,0.2), #050505), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .service-card { transition: 0.4s; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
+        .service-card:hover { transform: translateY(-10px); border-color: #b38e44; box-shadow: 0 10px 30px rgba(179, 142, 68, 0.1); }
         
+        /* MODAL */
+        .modal { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; padding: 20px; }
+        .modal.active { display: flex; }
+
         /* STAFF TOOLS */
-        .input-staff { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:8px; color:white; width:100%; margin-bottom:10px; font-size:12px; }
+        .input-staff { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; color:white; width:100%; margin-bottom:10px; font-size:13px; }
         .staff-only { display: none; }
-        .viz-container { border: 2px solid #10b981; background: rgba(16, 185, 129, 0.05); color: #10b981; }
+        .listing-card { background: #111; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+        .listing-card:hover { border-color: #b38e44; }
     </style>
 </head>
 <body>
 
-    <nav class="fixed w-full z-50 px-8 py-6 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
+    <nav class="fixed w-full z-50 px-8 py-6 flex justify-between items-center bg-gradient-to-b from-black/90 to-transparent">
         <div class="flex items-center gap-3">
             <img src="https://image2url.com/r2/default/images/1774658704727-764cccce-eee7-41c4-a48c-90c16f0acc69.png" class="h-10">
             <span class="text-xl font-serif tracking-widest uppercase">Arcadia</span>
         </div>
         <div class="flex gap-8 text-[10px] tracking-[3px] uppercase items-center">
-            <a href="#services" class="hover:text-gold transition">Services</a>
-            <a href="#dossiers" class="hover:text-gold transition">Dossiers</a>
             <button onclick="checkStaffCode()" id="staffLoginBtn" class="border border-gold px-4 py-2 rounded-full text-gold hover:bg-gold hover:text-black transition">Staff</button>
             <div id="staffStatus" class="staff-only flex items-center gap-4">
-                <span id="statusIndicator" class="w-2 h-2 rounded-full bg-red-500"></span>
-                <button onclick="logoutStaff()" class="text-red-500 underline">Quitter</button>
+                <span class="text-green-500 font-bold">MODE STAFF</span>
+                <button onclick="logoutStaff()" class="text-red-500 underline">Déconnexion</button>
             </div>
         </div>
     </nav>
 
     <header class="hero">
         <div class="max-w-4xl px-4">
-            <p class="text-gold tracking-[5px] uppercase text-xs mb-4">L'excellence immobilière</p>
-            <h1 class="text-6xl md:text-8xl font-serif mb-6">Redéfinir le <br><span class="italic text-gold">Luxe Privé</span></h1>
-            <p class="text-white/60 max-w-xl mx-auto text-sm leading-relaxed mb-8">
-                Arcadia n'est pas qu'une agence. C'est un cercle fermé dédié aux propriétés les plus prestigieuses et aux services de conciergerie de haute sécurité.
-            </p>
-            <a href="#dossiers" class="bg-gold text-black px-10 py-4 rounded-full font-bold text-xs uppercase tracking-widest hover:scale-105 transition inline-block">Consulter les dossiers</a>
+            <h1 class="text-6xl md:text-8xl font-serif mb-4">Arcadia <span class="italic text-gold">Luxe</span></h1>
+            <p class="text-white/40 tracking-[5px] uppercase text-xs">Propriétés de prestige & Services privés</p>
         </div>
     </header>
 
-    <section id="services" class="py-24 px-8 max-w-7xl mx-auto">
+    <section class="py-24 px-8 max-w-7xl mx-auto">
         <div class="text-center mb-16">
-            <h2 class="text-3xl font-serif mb-2">Nos Domaines d'Expertise</h2>
-            <div class="w-20 h-1 bg-gold mx-auto"></div>
+            <h2 class="text-4xl font-serif mb-4">Nos Domaines d'Expertise</h2>
+            <div class="w-24 h-1 bg-gold mx-auto"></div>
         </div>
-        <div class="grid md:grid-cols-4 gap-6">
-            <div class="service-card glass p-8 text-center">
-                <div class="text-4xl mb-4 text-gold">🏰</div>
-                <h3 class="font-bold mb-2 uppercase text-xs tracking-widest">Manoirs</h3>
-                <p class="text-[11px] opacity-50">Résidences historiques et domaines de vaste envergure.</p>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="service-card glass p-10 text-center" onclick="openModal('immobilier')">
+                <div class="text-5xl mb-6">🏰</div>
+                <h3 class="font-bold mb-3 uppercase tracking-widest text-gold">Manoirs & Villas</h3>
+                <p class="text-sm opacity-50">Découvrez notre catalogue de résidences d'exception.</p>
             </div>
-            <div class="service-card glass p-8 text-center">
-                <div class="text-4xl mb-4 text-gold">🏠</div>
-                <h3 class="font-bold mb-2 uppercase text-xs tracking-widest">Villas</h3>
-                <p class="text-[11px] opacity-50">L'architecture moderne alliée au confort absolu.</p>
+
+            <div class="service-card glass p-10 text-center" onclick="openModal('services')">
+                <div class="text-5xl mb-6">🛡️</div>
+                <h3 class="font-bold mb-3 uppercase tracking-widest text-gold">Services</h3>
+                <p class="text-sm opacity-50">Conciergerie privée et sécurité de haut niveau.</p>
             </div>
-            <div class="service-card glass p-8 text-center">
-                <div class="text-4xl mb-4 text-gold">🛡️</div>
-                <h3 class="font-bold mb-2 uppercase text-xs tracking-widest">Services</h3>
-                <p class="text-[11px] opacity-50">Conciergerie, protection et gestion de patrimoine.</p>
-            </div>
-            <div class="service-card glass p-8 text-center">
-                <div class="text-4xl mb-4 text-gold">📰</div>
-                <h3 class="font-bold mb-2 uppercase text-xs tracking-widest">Presse</h3>
-                <p class="text-[11px] opacity-50">Actualités du marché et annonces exclusives.</p>
+
+            <div class="service-card glass p-10 text-center" onclick="openModal('presse')">
+                <div class="text-5xl mb-6">📰</div>
+                <h3 class="font-bold mb-3 uppercase tracking-widest text-gold">Presse</h3>
+                <p class="text-sm opacity-50">Annonces officielles et actualités du cercle.</p>
             </div>
         </div>
     </section>
 
-    <section id="dossiers" class="py-24 px-8 bg-[#080808]">
+    <section id="management" class="py-20 px-8 bg-[#080808]">
         <div class="max-w-7xl mx-auto">
-            
-            <div class="staff-only mb-12">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div class="glass p-6 border-l-4 border-gold">
-                        <p class="text-[9px] opacity-40 uppercase mb-2">Chiffre d'Affaires</p>
-                        <h4 id="statRevenue" class="text-2xl font-bold text-gold">0 $</h4>
-                    </div>
-                    <div class="glass p-6 border-l-4 border-red-500">
-                        <p class="text-[9px] opacity-40 uppercase mb-2">En Attente</p>
-                        <h4 id="statPending" class="text-2xl font-bold text-red-500">0</h4>
-                    </div>
-                    <div class="glass p-6 border-l-4 border-green-500">
-                        <p class="text-[9px] opacity-40 uppercase mb-2">Missions Validées</p>
-                        <h4 id="statSuccess" class="text-2xl font-bold text-green-500">0</h4>
-                    </div>
-                    <div class="glass p-6 border-l-4 border-white">
-                        <p class="text-[9px] opacity-40 uppercase mb-2">Conversion</p>
-                        <h4 id="statConv" class="text-2xl font-bold">0%</h4>
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-8 mb-12">
-                    <div class="glass p-8">
-                        <h3 class="text-gold text-[10px] uppercase font-bold mb-6">Ajouter une exclusivité</h3>
-                        <input type="text" id="bTitle" placeholder="Titre du bien" class="input-staff">
-                        <input type="text" id="bPrice" placeholder="Prix (ex: 2.000.000)" class="input-staff">
-                        <select id="bCat" class="input-staff">
-                            <option value="Manoir">Manoir</option>
-                            <option value="Villa">Villa</option>
-                            <option value="Service">Service</option>
+            <div class="staff-only mb-16">
+                <h2 class="text-gold text-[10px] uppercase font-bold mb-8 tracking-[4px]">Console de Publication</h2>
+                <div class="grid md:grid-cols-2 gap-10">
+                    <div class="glass p-8 border border-gold/10">
+                        <input type="text" id="postTitle" placeholder="Titre (ex: Villa Miramar)" class="input-staff">
+                        <input type="text" id="postPrice" placeholder="Prix ou Date" class="input-staff">
+                        <select id="postCat" class="input-staff">
+                            <option value="immobilier">Immobilier (Manoirs & Villas)</option>
+                            <option value="services">Services</option>
+                            <option value="presse">Presse</option>
                         </select>
-                        <textarea id="bDesc" placeholder="Description..." class="input-staff h-24"></textarea>
-                        <input type="file" id="bFiles" class="text-[10px] mb-4" multiple>
-                        <button id="btnPublish" class="w-full bg-gold py-3 text-black font-bold uppercase text-[10px] rounded-lg">Publier sur le site</button>
+                        <textarea id="postDesc" placeholder="Description détaillée..." class="input-staff h-32"></textarea>
+                        <input type="file" id="postFiles" class="text-xs mb-4 block" multiple>
+                        <button id="btnPublish" class="w-full bg-gold py-4 text-black font-bold uppercase text-xs rounded-xl hover:brightness-110 transition">Publier l'annonce</button>
                     </div>
-                    <div class="glass p-8 viz-container" id="liveViz" style="display:none">
-                        <h3 class="text-green-400 text-[10px] uppercase font-bold mb-4">Aperçu Réponse Client</h3>
-                        <p class="text-[10px] mb-2">Client : <span id="vizTarget" class="font-bold text-white">-</span></p>
-                        <div id="vizContent" class="text-xs italic text-white p-4 bg-black/40 rounded border border-green-500/20 min-h-[100px]"></div>
+                    <div class="glass p-8 flex items-center justify-center text-center opacity-30 italic">
+                        <p>Les publications apparaissent instantanément dans les catégories correspondantes.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="flex justify-between items-end mb-8">
-                <div>
-                    <h2 class="text-3xl font-serif">Management des Dossiers</h2>
-                    <p class="text-[10px] opacity-40 mt-2 uppercase tracking-widest">Suivi des demandes en temps réel</p>
-                </div>
-            </div>
-            
-            <div id="orderContainer" class="space-y-6">
-                </div>
+            <h2 class="text-3xl font-serif mb-10">Gestion des Demandes</h2>
+            <div id="orderContainer" class="space-y-4"></div>
         </div>
     </section>
 
-    <footer class="py-12 border-t border-white/5 text-center">
-        <img src="https://image2url.com/r2/default/images/1774658704727-764cccce-eee7-41c4-a48c-90c16f0acc69.png" class="h-8 mx-auto mb-4 opacity-50">
-        <p class="text-[9px] opacity-30 uppercase tracking-[5px]">Arcadia Management &copy; 2024</p>
-    </footer>
+    <div id="infoModal" class="modal" onclick="closeModal(event)">
+        <div class="glass max-w-5xl w-full max-h-[85vh] overflow-y-auto p-10" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
+                <h2 id="modalTitle" class="text-3xl font-serif text-gold capitalize"></h2>
+                <button onclick="document.getElementById('infoModal').classList.remove('active')" class="text-2xl">&times;</button>
+            </div>
+            <div id="modalContent" class="grid md:grid-cols-2 gap-6">
+                </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, push, remove, update, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = { databaseURL: "https://arcadiaimmobilier-ee335-default-rtdb.europe-west1.firebasedatabase.app" };
         const app = initializeApp(firebaseConfig);
@@ -161,103 +127,101 @@
 
         // --- AUTH ---
         window.checkStaffCode = () => {
-            if(prompt("Identification Arcadia :") === "Immo30") { sessionStorage.setItem('isStaff', 'true'); location.reload(); }
+            if(prompt("Code Staff Arcadia :") === "Immo30") { sessionStorage.setItem('isStaff', 'true'); location.reload(); }
         };
         window.logoutStaff = () => { sessionStorage.removeItem('isStaff'); location.reload(); };
 
-        const isStaff = sessionStorage.getItem('isStaff') === 'true';
-        if(isStaff) {
+        if(sessionStorage.getItem('isStaff') === 'true') {
             document.querySelectorAll('.staff-only').forEach(el => el.style.display = 'block');
             document.getElementById('staffLoginBtn').style.display = 'none';
+            document.getElementById('staffStatus').style.display = 'flex';
         }
 
-        // --- STATS ---
-        function runStats(data) {
-            let rev = 0, pend = 0, succ = 0, total = 0;
-            Object.values(data).forEach(o => {
-                total++;
-                if(o.status === 'En attente') pend++;
-                if(o.status === 'Validé') { succ++; rev += parseInt(o.prix?.replace(/[^0-9]/g,'') || 0); }
-            });
-            document.getElementById('statRevenue').innerText = rev.toLocaleString() + " $";
-            document.getElementById('statPending').innerText = pend;
-            document.getElementById('statSuccess').innerText = succ;
-            document.getElementById('statConv').innerText = total > 0 ? Math.round((succ/total)*100)+"%" : "0%";
-        }
+        // --- MODAL & AFFICHAGE ---
+        let allListings = {};
+        onValue(ref(db, 'listings'), (snap) => { allListings = snap.val() || {}; });
 
-        // --- REALTIME DATA ---
-        onValue(ref(db, 'orders'), (snap) => {
-            const data = snap.val() || {};
-            if(isStaff) runStats(data);
-            const container = document.getElementById('orderContainer');
-            let html = "";
-            Object.entries(data).reverse().forEach(([id, ord]) => {
-                html += `
-                <div class="glass p-8 border border-white/5 hover:border-gold/20 transition group">
-                    <div class="flex flex-wrap justify-between items-center gap-6">
-                        <div class="flex-1">
-                            <div class="flex items-center gap-4 mb-2">
-                                <h4 class="text-xl font-serif">${ord.prenom} ${ord.nom}</h4>
-                                <span class="text-[9px] py-1 px-3 bg-white/5 rounded-full text-white/40 uppercase tracking-widest">${ord.service}</span>
-                            </div>
-                            <div class="flex gap-6 text-[10px] text-white/30 uppercase tracking-widest mb-6">
-                                <span>📞 ${ord.tel}</span>
-                                <span>📅 ${ord.date}</span>
-                                <span>💰 ${ord.prix || 'N/A'}</span>
-                            </div>
-                            <div class="p-4 bg-black/40 rounded-lg text-xs leading-relaxed border border-white/5">
-                                <span class="text-gold font-bold">STAFF :</span> ${ord.reponseStaff || '<span class="italic opacity-30">Traitement en cours...</span>'}
-                            </div>
-                        </div>
-                        
-                        ${isStaff ? `
-                        <div class="w-full md:w-64 space-y-3">
-                            <select onchange="previewReply('${id}', '${ord.prenom}', this.value)" class="input-staff !mb-0 text-[10px] bg-gold/10 border-gold/20">
-                                <option>Action Staff...</option>
-                                <option value="✅ Demande acceptée. Un agent Arcadia vous contactera.">Valider le dossier</option>
-                                <option value="📅 RDV fixé au Studio Arcadia pour finalisation.">Fixer RDV</option>
-                                <option value="❌ Demande archivée.">Refuser</option>
-                            </select>
-                            <button onclick="confirmStatusUpdate('${id}')" id="confirm-${id}" class="w-full bg-green-600 py-2 rounded text-[9px] font-bold hidden">CONFIRMER</button>
-                            <button onclick="deleteOrder('${id}')" class="w-full text-[9px] opacity-20 hover:text-red-500 transition uppercase tracking-widest">Archiver dossier</button>
-                        </div>` : ''}
-                    </div>
-                </div>`;
-            });
-            container.innerHTML = html || "<p class='text-center opacity-20 py-10 uppercase tracking-[5px]'>Aucun dossier actif</p>";
-        });
+        window.openModal = (category) => {
+            const modal = document.getElementById('infoModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            title.innerText = category === 'immobilier' ? "Manoirs & Villas" : category;
+            content.innerHTML = "";
 
-        // --- STAFF ACTIONS ---
-        let currId, currText;
-        window.previewReply = (id, name, text) => {
-            if(text.includes("Action")) return;
-            document.getElementById('liveViz').style.display = 'block';
-            document.getElementById('vizTarget').innerText = name;
-            document.getElementById('vizContent').innerText = text;
-            currId = id; currText = text;
-            document.querySelectorAll('[id^="confirm-"]').forEach(b => b.classList.add('hidden'));
-            document.getElementById(`confirm-${id}`).classList.remove('hidden');
+            const filtered = Object.entries(allListings).filter(([id, item]) => item.cat === category);
+
+            if(filtered.length === 0) {
+                content.innerHTML = "<p class='col-span-2 opacity-30 text-center py-10'>Aucun élément disponible pour le moment.</p>";
+            } else {
+                filtered.reverse().forEach(([id, item]) => {
+                    content.innerHTML += `
+                        <div class="listing-card">
+                            ${item.images ? `<img src="${item.images[0]}" class="w-full h-48 object-cover">` : ''}
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-lg">${item.title}</h4>
+                                    <span class="text-gold font-bold text-sm">${item.price}</span>
+                                </div>
+                                <p class="text-xs opacity-60 leading-relaxed mb-4">${item.desc}</p>
+                                ${sessionStorage.getItem('isStaff') === 'true' ? 
+                                `<button onclick="deletePost('${id}')" class="text-[10px] text-red-500 underline">Supprimer l'annonce</button>` : ''}
+                            </div>
+                        </div>`;
+                });
+            }
+            modal.classList.add('active');
         };
 
-        window.confirmStatusUpdate = (id) => {
-            const status = currText.includes("✅") ? "Validé" : "Traité";
-            update(ref(db, `orders/${id}`), { status, reponseStaff: currText });
-            document.getElementById('liveViz').style.display = 'none';
-        };
+        window.closeModal = (e) => { document.getElementById('infoModal').classList.remove('active'); };
 
-        window.deleteOrder = (id) => { if(confirm("Archiver ce dossier ?")) remove(ref(db, `orders/${id}`)); };
-
-        // PUBLICATION
+        // --- PUBLICATION (CORRECTION) ---
         let currentImgs = [];
-        document.getElementById('bFiles').onchange = (e) => {
+        document.getElementById('postFiles').onchange = (e) => {
+            currentImgs = [];
             Array.from(e.target.files).forEach(f => {
                 const r = new FileReader(); r.onload = ev => currentImgs.push(ev.target.result); r.readAsDataURL(f);
             });
         };
+
         document.getElementById('btnPublish').onclick = () => {
-            const val = { title: document.getElementById('bTitle').value, price: document.getElementById('bPrice').value, cat: document.getElementById('bCat').value, desc: document.getElementById('bDesc').value, images: currentImgs, date: new Date().toLocaleDateString() };
-            if(val.title) push(ref(db, 'listings'), val).then(() => location.reload());
+            const val = {
+                title: document.getElementById('postTitle').value,
+                price: document.getElementById('postPrice').value,
+                cat: document.getElementById('postCat').value,
+                desc: document.getElementById('postDesc').value,
+                images: currentImgs,
+                date: new Date().toLocaleDateString()
+            };
+            if(!val.title || !val.desc) return alert("Veuillez remplir le titre et la description.");
+            
+            push(ref(db, 'listings'), val).then(() => {
+                alert("Publication réussie !");
+                location.reload();
+            });
         };
+
+        window.deletePost = (id) => { if(confirm("Supprimer cette annonce ?")) remove(ref(db, `listings/${id}`)).then(() => location.reload()); };
+
+        // --- GESTION DOSSIERS ---
+        onValue(ref(db, 'orders'), (snap) => {
+            const data = snap.val() || {};
+            const container = document.getElementById('orderContainer');
+            let html = "";
+            Object.entries(data).reverse().forEach(([id, ord]) => {
+                html += `
+                <div class="glass p-6 flex justify-between items-center border border-white/5">
+                    <div>
+                        <p class="font-bold">${ord.prenom} ${ord.nom} <span class="text-gold ml-2">#${ord.tel}</span></p>
+                        <p class="text-[10px] opacity-40 uppercase tracking-widest">${ord.service}</p>
+                    </div>
+                    ${sessionStorage.getItem('isStaff') === 'true' ? 
+                    `<button onclick="deleteOrder('${id}')" class="text-xs text-red-500 opacity-50 hover:opacity-100 transition">Archiver</button>` : ''}
+                </div>`;
+            });
+            container.innerHTML = html || "<p class='opacity-20 italic'>Aucun dossier en cours.</p>";
+        });
+        window.deleteOrder = (id) => { if(confirm("Archiver ?")) remove(ref(db, `orders/${id}`)); };
     </script>
 </body>
 </html>
