@@ -3,173 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcadia | Immobilier & Sécurité de Prestige</title>
+    <title>Arcadia | Protocole d'Accréditation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;700&family=Playfair+Display:italic,wght@700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
-        :root { --gold: #b38e44; --gold-bright: #d4af37; --black: #050505; }
-        body { background: var(--black); color: white; font-family: 'Montserrat', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
+        :root { --gold: #b38e44; --black: #050505; --dark-grey: #111111; }
+        body { background: var(--black); color: white; font-family: 'Montserrat', sans-serif; scroll-behavior: smooth; }
         .font-serif { font-family: 'Playfair Display', serif; }
         
-        #cursor { width: 10px; height: 10px; background: var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; }
-        #cursor-follower { width: 45px; height: 45px; border: 1px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.1s ease; }
+        /* Bouton Style Or capturé */
+        .btn-gold { background: #b38e44; color: black; font-weight: 800; transition: 0.3s; cursor: pointer; border: none; text-transform: uppercase; }
+        .btn-gold:hover { background: #d4af37; transform: translateY(-2px); }
 
-        .glass-card { background: rgba(15, 15, 15, 0.95); border: 1px solid rgba(179, 142, 68, 0.2); border-radius: 20px; backdrop-filter: blur(15px); transition: 0.4s; }
-        .glass-card:hover { border-color: var(--gold); }
+        /* Style des Inputs comme sur l'image */
+        .input-arcadia { background: white !important; color: #666 !important; font-weight: bold; text-transform: uppercase; font-size: 14px; border: none !important; padding: 10px 15px !important; }
+        .input-arcadia::placeholder { color: #aaa; }
 
-        .btn-gold { background: linear-gradient(90deg, #8a6d3b, #b38e44, #8a6d3b); background-size: 200% auto; color: black; font-weight: 800; transition: 0.5s; text-align: center; cursor: pointer; border: none; }
-        .btn-gold:hover { background-position: right center; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(179,142,68,0.4); }
+        /* Carte d'Identification (image 1) */
+        .id-card { background: #080808; border: 1px solid #1a1a1a; border-radius: 40px; padding: 60px; max-width: 600px; width: 100%; text-align: center; position: relative; }
+        .id-logo { width: 80px; height: 80px; border: 1px solid white; border-radius: 50%; display: flex; items-center; justify-center; margin: 0 auto 30px; }
 
-        .status-badge { position: absolute; top: 15px; left: 15px; padding: 6px 15px; border-radius: 20px; font-size: 10px; font-weight: bold; text-transform: uppercase; z-index: 10; }
-        .status-vendu { background: #ef4444; color: white; }
-        .status-dispo { background: #22c55e; color: white; }
+        /* Terminal Admin (image 2/3) */
+        .terminal-card { background: #0f0f0f; border: 1px solid #333; border-radius: 15px; overflow: hidden; }
+        .unit-card { background: #151515; border-radius: 10px; padding: 20px; border-left: 4px solid var(--gold); }
         
-        input, select, textarea { background: #151515 !important; border: 1px solid #333 !important; color: white !important; padding: 15px; border-radius: 12px; outline: none; width: 100%; }
-        input:focus { border-color: var(--gold) !important; }
-
-        .divider-gold { width: 50px; height: 2px; background: var(--gold); margin: 20px 0; }
+        .status-badge { position: absolute; top: 15px; left: 15px; padding: 5px 15px; border-radius: 20px; font-size: 10px; font-weight: bold; z-index: 10; }
+        .status-vendu { background: #ef4444; }
+        .status-dispo { background: #22c55e; }
     </style>
 </head>
 <body>
 
-<div id="cursor"></div>
-<div id="cursor-follower"></div>
-
-<nav class="fixed w-full z-50 px-6 md:px-12 py-6 flex justify-between items-center bg-black/80 backdrop-blur-lg border-b border-white/5">
-    <div class="text-2xl font-serif italic tracking-tighter">Arcadia<span class="text-gold">.</span></div>
-    <div class="hidden lg:flex gap-10 items-center">
-        <a href="#villas" class="text-[10px] uppercase tracking-[3px] opacity-60 hover:opacity-100 transition">Ventes</a>
-        <a href="#services" class="text-[10px] uppercase tracking-[3px] opacity-60 hover:opacity-100 transition">Services & Sécurité</a>
-        <a href="#contact" class="text-[10px] uppercase tracking-[3px] opacity-60 hover:opacity-100 transition">Contact</a>
+<nav class="fixed w-full z-50 px-10 py-6 flex justify-between items-center bg-black/90 border-b border-white/5">
+    <div class="text-2xl font-serif italic">Arcadia<span class="text-gold">.</span></div>
+    <div class="hidden md:flex gap-8 items-center uppercase text-[10px] tracking-widest">
+        <a href="#villas" class="opacity-60 hover:opacity-100">Ventes</a>
+        <a href="#services" class="opacity-60 hover:opacity-100">Sécurité</a>
+        <button onclick="checkStaffAccess()" class="opacity-20 hover:opacity-100">Admin</button>
     </div>
-    <div class="flex items-center gap-6">
-        <button onclick="checkStaffAccess()" class="opacity-10 hover:opacity-100 transition text-[9px]">TERMINAL</button>
-        <button onclick="openOrderModal()" class="btn-gold px-8 py-3 rounded-full text-[10px] uppercase tracking-widest">Commander</button>
-    </div>
+    <button onclick="openOrderModal()" class="btn-gold px-8 py-3 rounded-full text-[10px]">Commander</button>
 </nav>
 
-<section class="h-screen flex items-center justify-center relative overflow-hidden">
-    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070')] bg-cover bg-center"></div>
-    <div class="absolute inset-0 bg-black/70"></div>
-    <div class="relative z-10 text-center px-4" data-aos="zoom-out">
-        <h2 class="text-gold tracking-[15px] text-[10px] uppercase mb-4 font-bold">Arcadia Immobilier</h2>
-        <h1 class="text-5xl md:text-8xl font-serif italic mb-6">Protégez votre Maison<br>& Améliorez votre Entreprise</h1>
-        <div class="mt-12 flex flex-col md:flex-row justify-center gap-6">
-            <button onclick="document.getElementById('services').scrollIntoView()" class="btn-gold px-10 py-4 rounded-full text-[11px] uppercase">Nos Systèmes de Sécurité</button>
-            <a href="tel:0629070034" class="px-10 py-4 border border-gold/50 rounded-full text-[11px] uppercase hover:bg-gold/10 transition flex items-center justify-center">06 29 07 00 34</a>
+<section class="h-[70vh] flex items-center justify-center relative bg-[url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070')] bg-cover bg-center">
+    <div class="absolute inset-0 bg-black/60"></div>
+    <div class="relative text-center" data-aos="fade-up">
+        <h1 class="text-6xl md:text-8xl font-serif italic mb-4">Arcadia Immobilier</h1>
+        <p class="text-gold tracking-[10px] uppercase text-xs">Protégez votre patrimoine</p>
+    </div>
+</section>
+
+<section id="services" class="py-24 px-6 max-w-6xl mx-auto">
+    <div class="grid md:grid-cols-2 gap-12">
+        <div class="terminal-card p-10" data-aos="fade-right">
+            <h2 class="text-gold font-serif italic text-3xl mb-6">Systèmes de Sécurité</h2>
+            <div class="space-y-4 mb-8 text-sm opacity-80">
+                <p>• <b>Niveau 1 (850k)</b> : Nécessite 2 GN pour effraction.</p>
+                <p>• <b>Niveau 2 (2M)</b> : Alerte propriétaire + Gendarmerie.</p>
+                <p>• <b>Niveau 3 (5M)</b> : Alerte exclusive propriétaire.</p>
+            </div>
+            <button onclick="openOrderModal()" class="btn-gold w-full py-4 rounded-xl">Équiper mon domicile</button>
+        </div>
+        <div class="terminal-card p-10" data-aos="fade-left">
+            <h2 class="text-gold font-serif italic text-3xl mb-6">Stockage Entreprise</h2>
+            <p class="mb-8 opacity-80">+20 000 places de stockage supplémentaires pour votre société.</p>
+            <p class="text-2xl font-bold mb-8">Prix : 10 000 000 €</p>
+            <button onclick="openOrderModal()" class="btn-gold w-full py-4 rounded-xl">Améliorer ma société</button>
         </div>
     </div>
 </section>
 
-<section id="villas" class="py-32 px-6 md:px-12">
+<section id="villas" class="py-24 px-6 bg-[#020202]">
     <div class="max-w-7xl mx-auto">
-        <div class="mb-16">
-            <h2 class="text-gold text-xs uppercase tracking-[10px] mb-2">Portfolio</h2>
-            <p class="text-5xl font-serif italic">Biens Disponibles</p>
-        </div>
-        <div id="listingGrid" class="grid md:grid-cols-3 gap-10">
-            </div>
+        <h2 class="text-4xl font-serif italic mb-12">Catalogue Privé</h2>
+        <div id="listingGrid" class="grid md:grid-cols-3 gap-8"></div>
     </div>
 </section>
 
-<section id="services" class="py-32 px-6 bg-zinc-900/20">
-    <div class="max-w-6xl mx-auto">
-        <div class="text-center mb-20">
-            <h2 class="text-gold text-xs uppercase tracking-[10px] mb-4">Expertise Arcadia</h2>
-            <p class="text-5xl font-serif italic">Sécurité & Performance</p>
+<div id="orderModal" class="fixed inset-0 z-[100] bg-black/95 hidden flex items-center justify-center p-4 backdrop-blur-md">
+    <div class="id-card">
+        <button onclick="closeOrderModal()" class="absolute top-8 right-8 text-white opacity-40 hover:opacity-100 text-2xl">&times;</button>
+        
+        <div class="id-logo">
+            <span class="text-3xl">⚖️</span>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-12">
-            <div class="glass-card p-10" data-aos="fade-right">
-                <h3 class="text-2xl font-serif italic text-gold mb-6 uppercase tracking-wider">Systèmes de Sécurité Domiciliaire</h3>
-                <p class="text-sm opacity-60 mb-8">Assurez la sécurité de votre domicile grâce à nos alarmes haute performance. Choisissez la solution adaptée à vos besoins :</p>
-                
-                <div class="space-y-6">
-                    <div class="border-l-2 border-gold/30 pl-6">
-                        <p class="font-bold text-lg">Alarme Niveau 1 — <span class="text-gold">850 000 €</span></p>
-                        <p class="text-xs opacity-50 italic">➝ Nécessite 2 GN pour toute tentative d’effraction.</p>
-                    </div>
-                    <div class="border-l-2 border-gold/30 pl-6">
-                        <p class="font-bold text-lg">Alarme Niveau 2 — <span class="text-gold">2 000 000 €</span></p>
-                        <p class="text-xs opacity-50 italic">➝ En cas d’intrusion, alerte immédiate du propriétaire et de la gendarmerie.</p>
-                    </div>
-                    <div class="border-l-2 border-gold/30 pl-6">
-                        <p class="font-bold text-lg">Alarme Niveau 3 — <span class="text-gold">5 000 000 €</span></p>
-                        <p class="text-xs opacity-50 italic">➝ En cas d’intrusion, alerte directe et exclusive du propriétaire.</p>
-                    </div>
-                </div>
-                <button onclick="openOrderModal()" class="btn-gold w-full py-4 rounded-xl mt-10 text-[10px] uppercase">Équiper mon domicile</button>
-            </div>
+        <h2 class="text-5xl font-serif italic mb-2 tracking-wide">Identification</h2>
+        <p class="text-[10px] tracking-[3px] opacity-40 uppercase mb-12">Protocole d'accréditation client</p>
 
-            <div class="glass-card p-10" data-aos="fade-left">
-                <h3 class="text-2xl font-serif italic text-gold mb-6 uppercase tracking-wider">Amélioration Stockage Entreprise</h3>
-                <p class="text-sm opacity-60 mb-8">Optimisez les performances de votre société grâce à notre extension de capacité haut de gamme :</p>
-                
-                <div class="bg-white/5 p-8 rounded-2xl border border-white/5 text-center">
-                    <p class="text-gold text-xs uppercase tracking-widest mb-2 font-bold">+20 000 places</p>
-                    <p class="text-4xl font-serif italic mb-4">Stockage Supplémentaire</p>
-                    <div class="divider-gold mx-auto"></div>
-                    <p class="text-3xl font-bold">10 000 000 €</p>
-                    <p class="text-[10px] opacity-40 mt-4 uppercase tracking-tighter">Augmentez votre productivité et votre rentabilité dès aujourd’hui !</p>
-                </div>
-                <button onclick="openOrderModal()" class="btn-gold w-full py-4 rounded-xl mt-10 text-[10px] uppercase">Améliorer ma société</button>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="contact" class="py-20 px-6 text-center border-t border-white/5">
-    <p class="text-xs uppercase tracking-widest opacity-40 mb-4">Contactez Arcadia Immobilier dès maintenant</p>
-    <a href="tel:0629070034" class="text-4xl md:text-6xl font-serif italic hover:text-gold transition">06 29 07 00 34</a>
-</section>
-
-<div id="orderModal" class="fixed inset-0 z-[1000] bg-black/98 hidden flex items-center justify-center p-4 backdrop-blur-2xl">
-    <div class="max-w-xl w-full glass-card p-10 relative">
-        <button onclick="closeOrderModal()" class="absolute top-6 right-6 text-3xl">&times;</button>
-        <h2 class="text-3xl font-serif italic mb-6 text-gold">Commander</h2>
-        <form class="space-y-4" onsubmit="event.preventDefault(); alert('Votre demande a été envoyée à Arcadia Immobilier.'); closeOrderModal();">
+        <form class="space-y-6" onsubmit="event.preventDefault(); alert('Accréditation en cours...'); closeOrderModal();">
             <div class="grid grid-cols-2 gap-4">
-                <input type="text" placeholder="Nom" required>
-                <input type="text" placeholder="Prénom" required>
+                <input type="text" placeholder="NOM" class="input-arcadia" required>
+                <input type="text" placeholder="PRÉNOM" class="input-arcadia" required>
             </div>
-            <input type="tel" placeholder="06 29 07 00 34" required>
-            <select required>
-                <option value="" disabled selected>Choisir un service</option>
-                <option value="immo">Achat d'une Propriété</option>
-                <option value="alarme1">Alarme Niveau 1 (850k)</option>
-                <option value="alarme2">Alarme Niveau 2 (2M)</option>
-                <option value="alarme3">Alarme Niveau 3 (5M)</option>
-                <option value="stockage">Extension Stockage (10M)</option>
+            <input type="tel" placeholder="TÉLÉPHONE (EX: 06 29 07...)" class="input-arcadia" required>
+            
+            <select class="input-arcadia w-full mt-4" style="background: white !important;">
+                <option value="" disabled selected>TYPE DE DEMANDE</option>
+                <option>Achat Immobilier</option>
+                <option>Sécurité Domicile</option>
+                <option>Extension Stockage</option>
             </select>
-            <textarea placeholder="Détails supplémentaires..." rows="3"></textarea>
-            <button type="submit" class="btn-gold w-full py-5 rounded-xl uppercase text-xs tracking-widest font-bold">Confirmer l'amélioration</button>
+
+            <button type="submit" class="w-full py-5 mt-10 text-black font-black text-xl tracking-[4px] opacity-80 hover:opacity-100 transition">
+                VALIDER LA DEMANDE
+            </button>
         </form>
+
+        <button onclick="closeOrderModal()" class="mt-12 text-[9px] uppercase tracking-widest opacity-30 hover:opacity-100 transition">
+            RETOUR AU CATALOGUE
+        </button>
     </div>
 </div>
 
-<div id="staffModal" class="fixed inset-0 z-[2000] bg-black hidden flex items-center justify-center p-6">
-    <div class="w-full max-w-6xl h-[85vh] glass-card flex flex-col overflow-hidden border-gold/30">
-        <div class="p-6 border-b border-white/10 flex justify-between bg-white/5">
-            <span class="font-serif italic text-xl text-gold">ARCADIA TERMINAL</span>
+<div id="staffModal" class="fixed inset-0 z-[200] bg-black/95 hidden flex items-center justify-center p-6">
+    <div class="w-full max-w-6xl terminal-card h-[80vh] flex flex-col">
+        <div class="p-6 border-b border-white/10 flex justify-between items-center">
+            <h3 class="font-serif italic text-xl">● Arcadia Management Terminal</h3>
             <button onclick="toggleModal('staffModal')" class="text-2xl">&times;</button>
         </div>
-        <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
-            <div class="w-full md:w-1/3 p-8 border-r border-white/5 space-y-4 overflow-y-auto">
-                <input type="hidden" id="editId">
-                <input type="text" id="vTitle" placeholder="Nom du bien">
-                <input type="number" id="vPrice" placeholder="Prix (€)">
-                <select id="vStatus">
+        <div class="flex flex-1 overflow-hidden">
+            <div class="w-1/3 p-8 border-r border-white/5 space-y-4 overflow-y-auto">
+                <p class="text-[10px] uppercase tracking-widest opacity-40 mb-4 font-bold">Nouvelle Inscription</p>
+                <input type="text" id="vTitle" placeholder="Nom de l'unité" class="bg-zinc-900 border border-zinc-800 p-3 rounded w-full">
+                <input type="number" id="vPrice" placeholder="Prix (ex: 5000000)" class="bg-zinc-900 border border-zinc-800 p-3 rounded w-full">
+                <select id="vStatus" class="bg-zinc-900 border border-zinc-800 p-3 rounded w-full">
                     <option value="dispo">Disponible</option>
                     <option value="vendu">Vendu</option>
                 </select>
-                <input type="text" id="vImg" placeholder="Lien image (URL)">
-                <button onclick="saveListing()" class="w-full btn-gold py-4 rounded-xl text-[10px] uppercase font-bold">Enregistrer</button>
+                <textarea id="vDesc" placeholder="Description..." class="bg-zinc-900 border border-zinc-800 p-3 rounded w-full h-32"></textarea>
+                <input type="text" id="vImg" placeholder="Lien Image Unsplash" class="bg-zinc-900 border border-zinc-800 p-3 rounded w-full">
+                <button onclick="saveListing()" class="btn-gold w-full py-4 rounded font-bold">PUBLIER AU CATALOGUE</button>
             </div>
-            <div class="w-full md:w-2/3 p-8 overflow-y-auto bg-black/40">
-                <h4 class="text-[10px] uppercase font-bold opacity-30 mb-6">Gestion du Catalogue</h4>
+            <div class="w-2/3 p-8 overflow-y-auto bg-black/40">
+                <p class="text-[10px] uppercase tracking-widest opacity-40 mb-6 font-bold">Unités Actives</p>
                 <div id="adminList" class="space-y-4"></div>
             </div>
         </div>
@@ -177,9 +146,9 @@
 </div>
 
 <script>
-    let listings = JSON.parse(localStorage.getItem('arcadia_db')) || [
-        { id: 1, title: "Villa Horizon", price: 12500000, status: "dispo", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800" },
-        { id: 2, title: "Palais Onyx", price: 28000000, status: "vendu", img: "https://images.unsplash.com/photo-1600607687940-477a284e6923?w=800" }
+    let listings = JSON.parse(localStorage.getItem('arcadia_final')) || [
+        { id: 1, title: "Palais d'Hélios", price: 24500000, status: "dispo", img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600" },
+        { id: 2, title: "Manoir Obsidian", price: 18000000, status: "vendu", img: "https://images.unsplash.com/photo-1600607687940-477a284e6923?w=600" }
     ];
 
     function render() {
@@ -189,76 +158,47 @@
 
         listings.forEach(v => {
             grid.innerHTML += `
-                <div class="glass-card overflow-hidden group">
-                    <div class="relative h-64 overflow-hidden">
-                        <div class="status-badge status-${v.status}">${v.status}</div>
-                        <img src="${v.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700 ${v.status === 'vendu' ? 'grayscale opacity-50' : ''}">
-                    </div>
-                    <div class="p-8">
-                        <h3 class="text-2xl font-serif italic mb-2">${v.title}</h3>
-                        <p class="text-xl font-bold text-gold mb-6">${v.price.toLocaleString()} €</p>
-                        <button onclick="openOrderModal()" class="w-full py-3 border border-white/10 text-[9px] uppercase tracking-widest hover:bg-gold hover:text-black transition duration-300">Commander</button>
+                <div class="terminal-card overflow-hidden relative group">
+                    <div class="status-badge status-${v.status}">${v.status}</div>
+                    <img src="${v.img}" class="w-full h-56 object-cover opacity-80 group-hover:opacity-100 transition">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif italic">${v.title}</h3>
+                        <p class="text-gold font-bold my-4">${v.price.toLocaleString()} €</p>
+                        <button onclick="openOrderModal()" class="w-full py-3 border border-white/10 text-[10px] uppercase hover:bg-white/5 transition">Accéder au dossier</button>
                     </div>
                 </div>`;
 
             adminList.innerHTML += `
-                <div class="flex items-center justify-between bg-white/5 p-4 rounded-xl border border-white/5">
-                    <div class="flex items-center gap-4">
-                        <img src="${v.img}" class="w-16 h-16 object-cover rounded-lg">
-                        <div><p class="font-serif italic text-sm">${v.title}</p><p class="text-gold text-[10px] font-bold">${v.price.toLocaleString()}€</p></div>
+                <div class="unit-card flex justify-between items-center">
+                    <div>
+                        <p class="text-lg font-serif italic">${v.title}</p>
+                        <p class="text-[10px] text-gold font-bold">${v.price.toLocaleString()} €</p>
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="loadEdit(${v.id})" class="text-[9px] font-bold text-blue-400 uppercase">Modifier</button>
-                        <button onclick="deleteListing(${v.id})" class="text-[9px] font-bold text-red-500 uppercase">Radier</button>
-                    </div>
+                    <button onclick="deleteListing(${v.id})" class="text-red-500 text-[10px] font-bold hover:underline uppercase tracking-widest">Radier</button>
                 </div>`;
         });
-        localStorage.setItem('arcadia_db', JSON.stringify(listings));
+        localStorage.setItem('arcadia_final', JSON.stringify(listings));
     }
 
-    window.saveListing = () => {
-        const id = document.getElementById('editId').value;
-        const data = {
-            id: id ? parseInt(id) : Date.now(),
+    function saveListing() {
+        const newItem = {
+            id: Date.now(),
             title: document.getElementById('vTitle').value,
             price: parseInt(document.getElementById('vPrice').value),
             status: document.getElementById('vStatus').value,
-            img: document.getElementById('vImg').value || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800"
+            img: document.getElementById('vImg').value || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600"
         };
-        if(id) {
-            const idx = listings.findIndex(l => l.id == id);
-            listings[idx] = data;
-        } else {
-            listings.push(data);
-        }
+        listings.push(newItem);
         render();
-        document.getElementById('editId').value = "";
-        document.getElementById('vTitle').value = "";
-        document.getElementById('vPrice').value = "";
-        document.getElementById('vImg').value = "";
-    };
+    }
 
-    window.loadEdit = (id) => {
-        const item = listings.find(l => l.id === id);
-        document.getElementById('editId').value = item.id;
-        document.getElementById('vTitle').value = item.title;
-        document.getElementById('vPrice').value = item.price;
-        document.getElementById('vStatus').value = item.status;
-        document.getElementById('vImg').value = item.img;
-    };
+    function deleteListing(id) { listings = listings.filter(l => l.id !== id); render(); }
+    function openOrderModal() { document.getElementById('orderModal').classList.remove('hidden'); }
+    function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
+    function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
+    function checkStaffAccess() { if(prompt("Code d'accès :") === "Immo30") toggleModal('staffModal'); }
 
-    window.deleteListing = (id) => { if(confirm("Supprimer ?")) { listings = listings.filter(l => l.id !== id); render(); } };
-    window.openOrderModal = () => document.getElementById('orderModal').classList.remove('hidden');
-    window.closeOrderModal = () => document.getElementById('orderModal').classList.add('hidden');
-    window.toggleModal = (id) => document.getElementById(id).classList.toggle('hidden');
-    window.checkStaffAccess = () => { if(prompt("Identification Terminal :") === "Immo30") toggleModal('staffModal'); };
-
-    document.addEventListener('mousemove', e => {
-        gsap.to('#cursor', { x: e.clientX, y: e.clientY, duration: 0.1 });
-        gsap.to('#cursor-follower', { x: e.clientX - 22, y: e.clientY - 22, duration: 0.3 });
-    });
-
-    AOS.init({ duration: 1200 });
+    AOS.init();
     render();
 </script>
 </body>
