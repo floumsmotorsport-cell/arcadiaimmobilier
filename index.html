@@ -156,13 +156,11 @@
                     <option value="vendu">Vendu</option>
                 </select>
                 <textarea id="vDesc" placeholder="DESCRIPTION" class="arcadia-input h-20" oninput="updatePreview()"></textarea>
-                
                 <div id="dropZone" class="drop-zone">
                     <p id="dropText" class="text-[10px] uppercase tracking-widest opacity-40">Glisser image ou cliquer</p>
                     <input type="file" id="fileInput" hidden accept="image/*">
                     <input type="hidden" id="vImg">
                 </div>
-
                 <div class="discord-embed">
                     <div class="text-white font-bold text-sm mb-1" id="preTitle">Aperçu</div>
                     <div class="text-[10px] text-gray-400"><span id="preLoc">Localisation</span> • <span id="prePrice">0 €</span></div>
@@ -204,62 +202,39 @@
         const grid = document.getElementById('listingGrid');
         const adminList = document.getElementById('adminList');
         if (!grid || !adminList) return;
-
         grid.innerHTML = ""; adminList.innerHTML = "";
-
         listings.forEach(v => {
             const location = v.loc || "Paros, International";
             const prix = (v.price || 0).toLocaleString();
-
-            grid.innerHTML += `
-                <div onclick="showDetails(${v.id})" class="glass-card group cursor-pointer relative" data-aos="fade-up">
-                    <div class="status-badge bg-${v.status}">${v.status}</div>
-                    <div class="h-64 overflow-hidden">
-                        <img src="${v.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000">
-                    </div>
-                    <div class="p-8">
-                        <p class="text-[9px] text-gold uppercase tracking-widest mb-2">${location}</p>
-                        <h3 class="text-2xl font-serif italic mb-2">${v.title}</h3>
-                        <p class="text-gold font-bold text-lg">${prix} €</p>
-                    </div>
-                </div>`;
-
-            adminList.innerHTML += `
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/5">
-                    <div class="flex items-center gap-3">
-                        <img src="${v.img}" class="w-10 h-10 rounded-lg object-cover">
-                        <div>
-                            <p class="font-bold text-[11px]">${v.title}</p>
-                            <p class="text-[9px] opacity-40">${prix} € - ${v.status}</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-3">
-                        <button onclick="loadEdit(${v.id})" class="text-[9px] text-blue-400 font-bold uppercase">Editer</button>
-                        <button onclick="deleteListing(${v.id})" class="text-[9px] text-red-500 font-bold uppercase">Radier</button>
-                    </div>
-                </div>`;
+            grid.innerHTML += `<div onclick="showDetails(${v.id})" class="glass-card group cursor-pointer relative" data-aos="fade-up"><div class="status-badge bg-${v.status}">${v.status}</div><div class="h-64 overflow-hidden"><img src="${v.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000"></div><div class="p-8"><p class="text-[9px] text-gold uppercase tracking-widest mb-2">${location}</p><h3 class="text-2xl font-serif italic mb-2">${v.title}</h3><p class="text-gold font-bold text-lg">${prix} €</p></div></div>`;
+            adminList.innerHTML += `<div class="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/5"><div class="flex items-center gap-3"><img src="${v.img}" class="w-10 h-10 rounded-lg object-cover"><div><p class="font-bold text-[11px]">${v.title}</p><p class="text-[9px] opacity-40">${prix} € - ${v.status}</p></div></div><div class="flex gap-3"><button onclick="loadEdit(${v.id})" class="text-[9px] text-blue-400 font-bold uppercase">Editer</button><button onclick="deleteListing(${v.id})" class="text-[9px] text-red-500 font-bold uppercase">Radier</button></div></div>`;
         });
         localStorage.setItem('arcadia_v4', JSON.stringify(listings));
     }
 
-    // ENVOI DISCORD WEBHOOK
+    // GESTION DU WEBHOOK DISCORD AMÉLIORÉ
     document.getElementById('orderForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        
         const webhookURL = "https://discord.com/api/webhooks/1429322898367315968/im9bCVJmDKWPmcWMyTtyn4MaqOOC03hBWadHq7eoj7BXIGfhBGE3-fD3LFlr1pVU6WhA";
+        const clientName = document.getElementById('orderName').value;
+        const service = document.getElementById('orderService').value;
+        const message = document.getElementById('orderMsg').value || "Aucun détail supplémentaire";
         
         const data = {
-            username: "Arcadia Bot",
+            username: "Arcadia Management Terminal",
             avatar_url: "https://i.imgur.com/4E6v9RY.png",
             embeds: [{
-                title: "📩 Nouvelle Demande / Offre",
-                color: 11767364, 
+                title: "💎 Nouvelle Commande Client",
+                description: "Une nouvelle demande a été soumise via le terminal web.",
+                color: 11767364,
+                thumbnail: { url: "https://i.imgur.com/G56KzN7.png" },
                 fields: [
-                    { name: "Client", value: document.getElementById('orderName').value, inline: true },
-                    { name: "Service", value: document.getElementById('orderService').value, inline: true },
-                    { name: "Message", value: document.getElementById('orderMsg').value || "Aucun message" }
+                    { name: "👤 Client", value: `\`${clientName}\``, inline: true },
+                    { name: "📞 Contact", value: "`06 29 07 00 34`", inline: true },
+                    { name: "🛠️ Service Demandé", value: `**${service}**`, inline: false },
+                    { name: "📝 Détails du message", value: `>>> ${message}`, inline: false }
                 ],
-                footer: { text: "Arcadia | L'Héritage du Luxe" },
+                footer: { text: "Système de Gestion Arcadia • Paros", icon_url: "https://i.imgur.com/4E6v9RY.png" },
                 timestamp: new Date()
             }]
         };
@@ -269,11 +244,11 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         }).then(() => {
-            alert("Votre offre a été transmise à la direction d'Arcadia.");
+            alert("Demande transmise avec succès à la direction Arcadia.");
             document.getElementById('orderModal').classList.add('hidden');
             this.reset();
         }).catch(err => {
-            alert("Erreur lors de l'envoi.");
+            alert("Erreur lors de la liaison.");
             console.error(err);
         });
     });
@@ -287,12 +262,7 @@
         document.getElementById('detImg').src = v.img;
         document.getElementById('detBadge').innerText = v.status;
         document.getElementById('detBadge').className = `status-badge bg-${v.status}`;
-        
-        // Pré-remplir le message si on clique sur "Faire une offre"
-        document.getElementById('detOfferBtn').onclick = () => {
-            openOrderModal(`Offre pour : ${v.title}`);
-        };
-
+        document.getElementById('detOfferBtn').onclick = () => openOrderModal(`Offre pour : ${v.title}`);
         document.getElementById('detailModal').classList.remove('hidden');
     }
 
@@ -312,37 +282,19 @@
         const status = document.getElementById('vStatus').value;
         const desc = document.getElementById('vDesc').value;
         const img = document.getElementById('vImg').value || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800";
-
-        if(!title) return alert("Veuillez au moins donner un nom au bien.");
-
-        const data = {
-            id: id ? parseInt(id) : Date.now(),
-            title: title, loc: loc, price: price, status: status, desc: desc, img: img
-        };
-
-        if(id) { listings[listings.findIndex(l => l.id == id)] = data; } 
-        else { listings.push(data); }
-
+        if(!title) return alert("Veuillez donner un nom au bien.");
+        const data = { id: id ? parseInt(id) : Date.now(), title, loc, price, status, desc, img };
+        if(id) { listings[listings.findIndex(l => l.id == id)] = data; } else { listings.push(data); }
         render(); closeStaffModal(); resetForm();
     }
 
-    // Gestion Fichiers / Preview Admin
-    const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
-    dropZone.onclick = () => fileInput.click();
-    fileInput.onchange = (e) => handleFile(e.target.files[0]);
-
-    function handleFile(file) {
-        if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                document.getElementById('vImg').value = e.target.result;
-                updatePreview();
-                document.getElementById('dropText').innerText = "IMAGE CHARGÉE ✓";
-            };
-            reader.readAsDataURL(file);
-        }
-    }
+    document.getElementById('dropZone').onclick = () => fileInput.click();
+    fileInput.onchange = (e) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => { document.getElementById('vImg').value = ev.target.result; updatePreview(); document.getElementById('dropText').innerText = "IMAGE CHARGÉE ✓"; };
+        reader.readAsDataURL(e.target.files[0]);
+    };
 
     function updatePreview() {
         document.getElementById('preTitle').innerText = document.getElementById('vTitle').value || "Nom";
@@ -352,29 +304,19 @@
         if(img) { document.getElementById('preImg').src = img; document.getElementById('preImg').classList.remove('hidden'); }
     }
 
-    function deleteListing(id) {
-        if(confirm("Radier ce bien ?")) { listings = listings.filter(l => l.id != id); render(); }
-    }
-
+    function deleteListing(id) { if(confirm("Radier ce bien ?")) { listings = listings.filter(l => l.id != id); render(); } }
     function loadEdit(id) {
         const v = listings.find(l => l.id == id);
-        document.getElementById('editId').value = v.id;
-        document.getElementById('vTitle').value = v.title;
-        document.getElementById('vLoc').value = v.loc;
-        document.getElementById('vPrice').value = v.price;
-        document.getElementById('vStatus').value = v.status;
-        document.getElementById('vDesc').value = v.desc;
-        document.getElementById('vImg').value = v.img;
-        document.getElementById('saveBtn').innerText = "Enregistrer";
-        updatePreview();
+        document.getElementById('editId').value = v.id; document.getElementById('vTitle').value = v.title;
+        document.getElementById('vLoc').value = v.loc; document.getElementById('vPrice').value = v.price;
+        document.getElementById('vStatus').value = v.status; document.getElementById('vDesc').value = v.desc;
+        document.getElementById('vImg').value = v.img; document.getElementById('saveBtn').innerText = "Enregistrer"; updatePreview();
     }
 
     function resetForm() {
         document.querySelectorAll('.arcadia-input').forEach(i => i.value = "");
-        document.getElementById('editId').value = "";
-        document.getElementById('vImg').value = "";
-        document.getElementById('preImg').classList.add('hidden');
-        document.getElementById('dropText').innerText = "Glisser image ou cliquer";
+        document.getElementById('editId').value = ""; document.getElementById('vImg').value = "";
+        document.getElementById('preImg').classList.add('hidden'); document.getElementById('dropText').innerText = "Glisser image ou cliquer";
         document.getElementById('saveBtn').innerText = "Publier l'unité";
     }
 
@@ -387,8 +329,7 @@
         gsap.to('#cursor-follower', { x: e.clientX - 22, y: e.clientY - 22, duration: 0.3 });
     });
 
-    AOS.init({ duration: 1200 });
-    render();
+    AOS.init({ duration: 1200 }); render();
 </script>
 </body>
 </html>
