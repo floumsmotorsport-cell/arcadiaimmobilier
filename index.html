@@ -10,16 +10,11 @@
         .glass { background:#111; border:1px solid rgba(255,255,255,0.05); border-radius:15px; }
         .input-staff { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:8px; color:white; width:100%; margin-bottom:10px; font-size:12px; }
         .btn-gold { background:#b38e44; color:black; font-weight:bold; padding:10px; border-radius:8px; text-transform:uppercase; font-size:10px; width:100%; cursor: pointer; }
-        
-        /* ZONE VERTE : Visualisation */
         .viz-container { border: 2px solid #10b981; background: rgba(16, 185, 129, 0.05); box-shadow: 0 0 20px rgba(16, 185, 129, 0.1); color: #10b981; }
-        
-        /* ZONE BLANCHE : Dossiers standards */
-        .border-standard { border: 1px solid rgba(255,255,255,0.1); }
-        
         .chat-box { height: 120px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 10px; font-size: 11px; margin-top: 10px; border-radius: 8px; }
         .logo-img { height: 50px; }
-        #mainContent { display:none; }
+        /* Masquage par défaut des outils staff */
+        .staff-only { display: none; }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -30,22 +25,24 @@
                 <img src="https://image2url.com/r2/default/images/1774658704727-764cccce-eee7-41c4-a48c-90c16f0acc69.png" class="logo-img">
                 <h1 class="text-2xl font-serif italic text-gold">Staff Console</h1>
             </div>
-            <div class="flex gap-4">
-                <button id="statusToggle" class="px-4 py-2 rounded text-[9px] font-bold border border-white/10">CHARGEMENT...</button>
-                <button onclick="sessionStorage.clear(); location.reload();" class="text-[9px] text-red-500 underline">Quitter</button>
+            <div class="flex gap-4 items-center">
+                <button id="staffLoginBtn" onclick="checkStaffCode()" class="px-4 py-2 rounded text-[9px] font-bold bg-white/5 border border-white/10">ACCÈS STAFF</button>
+                <div id="staffStatus" class="staff-only flex gap-4 items-center">
+                    <button id="statusToggle" class="px-4 py-2 rounded text-[9px] font-bold border border-white/10">CHARGEMENT...</button>
+                    <button onclick="logoutStaff()" class="text-[9px] text-red-500 underline">Déconnexion</button>
+                </div>
             </div>
         </header>
 
         <div class="grid lg:grid-cols-4 gap-8">
             <div class="space-y-6">
-                <div class="glass p-6 viz-container" id="liveViz" style="display: none;">
+                <div class="glass p-6 viz-container staff-only" id="liveViz">
                     <h3 class="text-[10px] uppercase font-bold mb-4 tracking-widest text-green-400">Aperçu Réponse Client</h3>
                     <p class="text-[9px] opacity-60 mb-2">Destinataire : <span id="vizTarget" class="font-bold text-white"></span></p>
                     <div class="text-xs italic bg-black/40 p-4 rounded-lg border border-green-500/30 min-h-[60px] text-white" id="vizContent"></div>
-                    <p class="mt-4 text-[8px] opacity-40 uppercase tracking-widest text-center">Visualisation active</p>
                 </div>
 
-                <div class="glass p-6">
+                <div class="glass p-6 staff-only">
                     <h3 class="text-gold text-[10px] uppercase font-bold mb-4 tracking-widest">Nouveau Post</h3>
                     <input type="text" id="bTitle" placeholder="Titre" class="input-staff">
                     <input type="text" id="bPrice" placeholder="Prix ou Date" class="input-staff">
@@ -59,14 +56,15 @@
                     <input type="file" id="bFiles" class="text-[10px] mb-4" multiple>
                     <button id="btnPublish" class="btn-gold">Publier</button>
                 </div>
+                
+                <div id="publicNotice" class="glass p-6 text-center opacity-50">
+                    <p class="text-[10px]">Mode Consultation Publique</p>
+                </div>
             </div>
 
             <div class="lg:col-span-3">
                 <div class="glass p-8">
-                    <div class="flex justify-between items-center mb-8">
-                        <h3 class="text-gold text-[10px] uppercase font-bold tracking-widest">Dossiers & Chat Direct</h3>
-                        <span class="text-[9px] text-white/30">Interface Standard (Mode Blanc)</span>
-                    </div>
+                    <h3 class="text-gold text-[10px] uppercase font-bold mb-8 tracking-widest">Dossiers Clients</h3>
                     <div id="orderContainer" class="space-y-6"></div>
                 </div>
             </div>
@@ -81,11 +79,30 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // AUTH
-        if(sessionStorage.getItem('arcadia_auth') === 'true') { document.getElementById('mainContent').style.display = 'block'; }
-        else { if(prompt("Code Staff :") === "Immo30") { sessionStorage.setItem('arcadia_auth', 'true'); location.reload(); } }
+        // --- GESTION ACCÈS STAFF ---
+        window.checkStaffCode = () => {
+            const code = prompt("Code Employé :");
+            if(code === "Immo30") {
+                sessionStorage.setItem('isStaff', 'true');
+                applyStaffMode();
+            } else { alert("Code incorrect."); }
+        };
 
-        // ÉTAT STUDIO
+        window.logoutStaff = () => {
+            sessionStorage.removeItem('isStaff');
+            location.reload();
+        };
+
+        function applyStaffMode() {
+            if(sessionStorage.getItem('isStaff') === 'true') {
+                document.querySelectorAll('.staff-only').forEach(el => el.style.display = 'block');
+                document.getElementById('staffLoginBtn').style.display = 'none';
+                document.getElementById('publicNotice').style.display = 'none';
+            }
+        }
+        applyStaffMode();
+
+        // --- FIREBASE LOGIC ---
         const statusBtn = document.getElementById('statusToggle');
         onValue(ref(db, 'studioStatus'), (snap) => {
             const isOpen = snap.val();
@@ -94,33 +111,31 @@
         });
         statusBtn.onclick = () => set(ref(db, 'studioStatus'), statusBtn.innerText !== "OUVERT");
 
-        // GESTION LIVE VIZ
-        const viz = document.getElementById('liveViz');
-        const vizTarget = document.getElementById('vizTarget');
-        const vizContent = document.getElementById('vizContent');
-
-        // ORDERS
         onValue(ref(db, 'orders'), (snap) => {
             const data = snap.val();
             const container = document.getElementById('orderContainer');
             if(!data) { container.innerHTML = "Aucune demande."; return; }
             let html = "";
+            const isStaff = sessionStorage.getItem('isStaff') === 'true';
+
             Object.entries(data).reverse().forEach(([id, ord]) => {
                 html += `
-                <div class="glass p-6 border-standard">
+                <div class="glass p-6 border border-white/5">
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
-                            <p class="font-bold text-sm text-white">${ord.prenom} ${ord.nom} <span class="text-gold">#${ord.tel}</span></p>
-                            <p class="text-[10px] uppercase opacity-50 text-white">${ord.service} — ${ord.prix || 'Sur mesure'}</p>
-                            <div class="chat-box" id="chat-${id}">
-                                <p class="text-white/40">Système: Reçu le ${ord.date}</p>
-                                <p class="text-gold mt-2"><b>Staff:</b> ${ord.reponseStaff || 'Aucun message.'}</p>
+                            <p class="font-bold text-sm">${ord.prenom} ${ord.nom} <span class="text-gold">#${ord.tel}</span></p>
+                            <p class="text-[10px] uppercase opacity-50">${ord.service}</p>
+                            <div class="chat-box">
+                                <p class="text-white/40 text-[9px]">Reçu le ${ord.date}</p>
+                                <p class="text-gold mt-2"><b>Staff:</b> ${ord.reponseStaff || 'En attente de traitement...'}</p>
                             </div>
+                            ${isStaff ? `
                             <div class="flex mt-2 gap-2">
-                                <input type="text" id="input-${id}" placeholder="Réponse libre..." class="input-staff !mb-0">
+                                <input type="text" id="input-${id}" placeholder="Réponse personnalisée..." class="input-staff !mb-0">
                                 <button onclick="sendChat('${id}')" class="bg-gold text-black px-4 rounded font-bold text-[10px]">OK</button>
-                            </div>
+                            </div>` : ''}
                         </div>
+                        ${isStaff ? `
                         <div class="flex flex-col gap-2 w-48 ml-6">
                             <select onchange="previewReply('${id}', '${ord.prenom}', this.value)" class="input-staff text-[10px]">
                                 <option>Action rapide...</option>
@@ -129,36 +144,34 @@
                                 <option value="❌ Demande refusée.">Refuser</option>
                             </select>
                             <button onclick="confirmStatusUpdate('${id}')" id="confirm-${id}" class="bg-green-500 text-black py-2 px-3 rounded text-[9px] font-bold" style="display:none;">CONFIRMER L'ENVOI</button>
-                            <button onclick="deleteOrder('${id}')" class="text-[9px] opacity-30 mt-4 text-red-500 hover:opacity-100">Archiver le dossier</button>
-                        </div>
+                            <button onclick="deleteOrder('${id}')" class="text-[9px] opacity-30 mt-4 text-red-500">Archiver</button>
+                        </div>` : ''}
                     </div>
                 </div>`;
             });
             container.innerHTML = html;
         });
 
+        // --- ACTIONS STAFF ---
         let currentPendingId = null;
         let currentPendingText = null;
 
         window.previewReply = (id, clientName, text) => {
-            if(text.includes("Action")) {
-                viz.style.display = 'none';
-                document.getElementById(`confirm-${id}`).style.display = 'none';
-                return;
-            }
+            const viz = document.getElementById('liveViz');
+            if(text.includes("Action")) { viz.style.display = 'none'; return; }
             viz.style.display = 'block';
-            vizTarget.innerText = clientName;
-            vizContent.innerText = text;
+            document.getElementById('vizTarget').innerText = clientName;
+            document.getElementById('vizContent').innerText = text;
             currentPendingId = id;
             currentPendingText = text;
-            document.querySelectorAll('[id^="confirm-"]').forEach(btn => btn.style.display = 'none');
+            document.querySelectorAll('[id^="confirm-"]').forEach(b => b.style.display = 'none');
             document.getElementById(`confirm-${id}`).style.display = 'block';
         };
 
         window.confirmStatusUpdate = (id) => {
-            const statusType = currentPendingText.includes("✅") ? "Validé" : currentPendingText.includes("📅") ? "RDV" : "Refusé";
+            const statusType = currentPendingText.includes("✅") ? "Validé" : "Traité";
             update(ref(db, `orders/${id}`), { status: statusType, reponseStaff: currentPendingText });
-            viz.style.display = 'none';
+            document.getElementById('liveViz').style.display = 'none';
         };
 
         window.sendChat = (id) => {
