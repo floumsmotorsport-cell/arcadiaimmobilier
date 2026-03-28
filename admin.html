@@ -10,6 +10,8 @@
         .input-staff { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:8px; color:white; width:100%; margin-bottom:10px; font-size:12px; }
         .btn-gold { background:#b38e44; color:black; font-weight:bold; padding:10px; border-radius:5px; text-transform:uppercase; font-size:10px; width:100%; }
         #mainContent { display:none; }
+        /* Style pour les messages de réponse déjà envoyés */
+        .last-reply { font-size: 10px; color: #b38e44; margin-top: 8px; border-top: 1px solid rgba(179, 142, 68, 0.2); padding-top: 4px; }
     </style>
 </head>
 <body class="p-8">
@@ -32,6 +34,7 @@
                     <option value="Villa">Villa</option>
                     <option value="Manoir">Manoir</option>
                     <option value="Service">Service</option>
+                    <option value="Article">Article</option>
                 </select>
                 <textarea id="bDesc" placeholder="Description" class="input-staff h-24"></textarea>
                 <input type="file" id="bFiles" class="text-[10px] mb-4" multiple>
@@ -59,7 +62,10 @@
             document.getElementById('mainContent').style.display = 'block';
         } else {
             let pass = prompt("Mot de passe Staff :");
-            if(pass === "Immo30") { sessionStorage.setItem('arcadia_auth', 'true'); location.reload(); }
+            if(pass === "Immo30") { 
+                sessionStorage.setItem('arcadia_auth', 'true'); 
+                location.reload(); 
+            }
         }
 
         // --- VISUALISATION COMMANDES ---
@@ -70,23 +76,26 @@
 
             let html = "";
             Object.entries(data).reverse().forEach(([id, ord]) => {
+                const hasReply = ord.reponseStaff ? `<div class="last-reply"><b>Dernière réponse :</b> ${ord.reponseStaff}</div>` : "";
+                
                 html += `
                 <div class="bg-white/5 p-5 rounded-xl border border-white/5 flex flex-col md:flex-row justify-between gap-6">
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-2">
                             <span class="text-[9px] bg-gold/20 text-gold px-2 py-0.5 rounded font-bold uppercase">${ord.status}</span>
                             <p class="font-bold text-sm">${ord.prenom} ${ord.nom}</p>
-                            <p class="text-xs opacity-50 font-mono">${ord.tel}</p>
+                            <p class="text-xs opacity-50 font-mono">${ord.tel || "N/A"}</p>
                         </div>
                         <p class="text-xs text-white/80 italic">"Intéressé par : ${ord.service} (${ord.prix})"</p>
-                        <p class="text-[9px] opacity-30 mt-3 uppercase tracking-tighter">Reçu le : ${ord.date}</p>
+                        ${hasReply}
+                        <p class="text-[9px] opacity-30 mt-3 uppercase tracking-tighter">Mise à jour : ${ord.date}</p>
                     </div>
                     <div class="flex flex-col gap-2 min-w-[200px]">
                         <select onchange="replyOrder('${id}', this.value)" class="input-staff text-[10px] mb-0">
                             <option>Choisir une réponse...</option>
                             <option value="Validé : Votre demande est acceptée. Un agent vous contactera en ville.">✅ Accepter la demande</option>
                             <option value="Refusé : Malheureusement, nous ne pouvons pas honorer votre demande.">❌ Refuser</option>
-                            <option value="Rendez-vous : Merci de vous présenter au studio demain à 21h.">📅 Fixer RDV</option>
+                            <option value="Rendez-vous : Merci de vous présenter au studio prochainement.">📅 Fixer RDV</option>
                         </select>
                         <button onclick="deleteOrder('${id}')" class="text-[9px] text-red-500 uppercase tracking-widest hover:bg-red-500/10 py-2 rounded transition-all">Supprimer l'archive</button>
                     </div>
@@ -95,23 +104,34 @@
             container.innerHTML = html;
         });
 
-        // ACTIONS STAFF
+        // --- ACTIONS STAFF (MISE À JOUR) ---
         window.replyOrder = (id, text) => {
             if(text.includes("Choisir")) return;
-            alert("RÉPONSE ENVOYÉE (Simulée) :\n" + text);
-            update(ref(db, `orders/${id}`), { status: 'Répondu' });
+            
+            // On met à jour le statut ET le message de réponse pour que le client le voie
+            update(ref(db, `orders/${id}`), { 
+                status: 'Répondu',
+                reponseStaff: text,
+                date: new Date().toLocaleString('fr-FR') 
+            }).then(() => {
+                alert("Réponse envoyée au client !");
+            }).catch(err => {
+                console.error("Erreur mise à jour:", err);
+                alert("Erreur lors de l'envoi.");
+            });
         };
 
         window.deleteOrder = (id) => {
             if(confirm("Supprimer définitivement ce message ?")) remove(ref(db, `orders/${id}`));
         };
 
-        // --- LOGIQUE PUBLICATION (Comme avant) ---
+        // --- LOGIQUE PUBLICATION ---
         let currentImgs = [];
         document.getElementById('bFiles').onchange = (e) => {
             currentImgs = [];
             Array.from(e.target.files).forEach(f => {
-                const r = new FileReader(); r.onload = ev => currentImgs.push(ev.target.result);
+                const r = new FileReader(); 
+                r.onload = ev => currentImgs.push(ev.target.result);
                 r.readAsDataURL(f);
             });
         };
@@ -122,10 +142,15 @@
                 price: document.getElementById('bPrice').value,
                 cat: document.getElementById('bCat').value,
                 desc: document.getElementById('bDesc').value,
-                images: currentImgs
+                images: currentImgs,
+                date: new Date().toLocaleString('fr-FR')
             };
-            if(!val.title || currentImgs.length === 0) return alert("Données manquantes");
-            push(ref(db, 'listings'), val).then(() => location.reload());
+            if(!val.title || currentImgs.length === 0) return alert("Données manquantes (Titre ou Image)");
+            
+            push(ref(db, 'listings'), val).then(() => {
+                alert("Bien publié avec succès !");
+                location.reload();
+            });
         };
     </script>
 </body>
