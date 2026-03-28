@@ -66,55 +66,10 @@
     </div>
 </section>
 
-<section id="propos" class="py-32 px-10 border-b border-white/5">
-    <div class="max-w-5xl mx-auto text-center">
-        <h2 class="text-gold text-xs uppercase tracking-[10px] mb-8">Notre Héritage</h2>
-        <p class="text-2xl md:text-4xl font-serif italic leading-relaxed">
-            "Arcadia Immobilier ne se contente pas de vendre des murs. Nous bâtissons des sanctuaires où le luxe rencontre la sérénité absolue."
-        </p>
-        <p class="mt-10 text-gray-500 max-w-2xl mx-auto text-sm leading-loose">
-            Depuis notre implantation à Paros, nous accompagnons l'élite dans l'acquisition de propriétés uniques, tout en garantissant une protection inégalée grâce à nos systèmes de sécurité.
-        </p>
-    </div>
-</section>
-
 <section id="villas" class="py-32 px-10 bg-[#030303]">
     <div class="max-w-7xl mx-auto">
         <h3 class="text-5xl font-serif italic mb-16">Collection Privée</h3>
         <div id="listingGrid" class="grid md:grid-cols-3 gap-10"></div>
-    </div>
-</section>
-
-<section id="services" class="py-32 px-10">
-    <div class="max-w-7xl mx-auto">
-        <h2 class="text-gold text-xs uppercase tracking-[10px] mb-16 text-center">Arcadia Immobilier • Services</h2>
-        <div class="grid md:grid-cols-2 gap-20">
-            <div data-aos="fade-right">
-                <h3 class="text-3xl font-serif italic mb-8">Sécurité Domiciliaire</h3>
-                <div class="space-y-4">
-                    <div class="service-card p-6 glass-card">
-                        <h4 class="text-gold font-bold text-xs uppercase">Niveau 1 — 850 000 €</h4>
-                        <p class="text-[11px] text-gray-400 mt-2">Nécessite 2 GN pour toute tentative d’effraction.</p>
-                    </div>
-                    <div class="service-card p-6 glass-card">
-                        <h4 class="text-gold font-bold text-xs uppercase">Niveau 2 — 2 000 000 €</h4>
-                        <p class="text-[11px] text-gray-400 mt-2">Alerte immédiate du propriétaire et de la gendarmerie.</p>
-                    </div>
-                    <div class="service-card p-6 glass-card">
-                        <h4 class="text-gold font-bold text-xs uppercase">Niveau 3 — 5 000 000 €</h4>
-                        <p class="text-[11px] text-gray-400 mt-2">Alerte directe et exclusive du propriétaire.</p>
-                    </div>
-                </div>
-            </div>
-            <div data-aos="fade-left">
-                <h3 class="text-3xl font-serif italic mb-8">Stockage Entreprise</h3>
-                <div class="service-card p-10 glass-card h-full flex flex-col justify-center border-white/10">
-                    <p class="text-4xl font-serif italic mb-4">+20 000 Places</p>
-                    <p class="text-gold font-bold text-xl mb-6">10 000 000 €</p>
-                    <button onclick="openOrderModal()" class="btn-gold py-4 text-[10px] uppercase">Améliorer ma société</button>
-                </div>
-            </div>
-        </div>
     </div>
 </section>
 
@@ -177,39 +132,95 @@
     </div>
 </div>
 
-<div id="orderModal" class="fixed inset-0 z-[3000] bg-black/98 hidden flex items-center justify-center p-4">
-    <div class="max-w-md w-full glass-card p-10 border-gold/20">
-        <button onclick="document.getElementById('orderModal').classList.add('hidden')" class="absolute top-6 right-6 opacity-30">&times;</button>
-        <h2 class="text-3xl font-serif italic mb-8 text-center text-gold">Contact Arcadia</h2>
-        <form class="space-y-4" onsubmit="event.preventDefault(); alert('Demande transmise.'); this.reset(); document.getElementById('orderModal').classList.add('hidden');">
-            <input type="text" placeholder="NOM COMPLET" class="arcadia-input" required>
-            <select class="arcadia-input" required>
-                <option value="" disabled selected>SERVICE</option>
-                <option>Immobilier</option>
-                <option>Sécurité</option>
-                <option>Stockage</option>
-            </select>
-            <textarea placeholder="MESSAGE..." class="arcadia-input h-24"></textarea>
-            <button type="submit" class="btn-gold w-full py-4 text-xs">Envoyer</button>
-        </form>
-    </div>
-</div>
-
 <script>
+    // Initialisation des données
     let listings = JSON.parse(localStorage.getItem('arcadia_v4')) || [
-        { id: 1, title: "Villa Syrta", price: 128000000, status: "vendu", loc: "Côte Ouest", desc: "Un joyau architectural avec vue imprenable.", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800" }
+        { id: 1, title: "Villa Syrta", price: 128000000, status: "vendu", loc: "Côte Ouest", desc: "Un joyau architectural.", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800" }
     ];
 
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
+    // Fonctions de rendu (MISE À JOUR)
+    function render() {
+        const grid = document.getElementById('listingGrid');
+        const adminList = document.getElementById('adminList');
+        
+        if (!grid || !adminList) return;
 
-    // Gestion Drag & Drop
-    dropZone.onclick = () => fileInput.click();
-    dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('dragover'); };
-    dropZone.ondragleave = () => dropZone.classList.remove('dragover');
-    dropZone.ondrop = (e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); };
-    fileInput.onchange = (e) => handleFile(e.target.files[0]);
+        grid.innerHTML = ""; 
+        adminList.innerHTML = "";
 
+        listings.forEach(v => {
+            const location = v.loc || "Paros, International";
+            const prix = (v.price || 0).toLocaleString();
+
+            // Rendu Catalogue Public
+            grid.innerHTML += `
+                <div onclick="showDetails(${v.id})" class="glass-card group cursor-pointer relative" data-aos="fade-up">
+                    <div class="status-badge bg-${v.status}">${v.status}</div>
+                    <div class="h-64 overflow-hidden">
+                        <img src="${v.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000">
+                    </div>
+                    <div class="p-8">
+                        <p class="text-[9px] text-gold uppercase tracking-widest mb-2">${location}</p>
+                        <h3 class="text-2xl font-serif italic mb-2">${v.title}</h3>
+                        <p class="text-gold font-bold text-lg">${prix} €</p>
+                    </div>
+                </div>`;
+
+            // Rendu Liste Admin
+            adminList.innerHTML += `
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/5">
+                    <div class="flex items-center gap-3">
+                        <img src="${v.img}" class="w-10 h-10 rounded-lg object-cover">
+                        <div>
+                            <p class="font-bold text-[11px]">${v.title}</p>
+                            <p class="text-[9px] opacity-40">${prix} € - ${v.status}</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="loadEdit(${v.id})" class="text-[9px] text-blue-400 font-bold uppercase">Editer</button>
+                        <button onclick="deleteListing(${v.id})" class="text-[9px] text-red-500 font-bold uppercase">Radier</button>
+                    </div>
+                </div>`;
+        });
+
+        localStorage.setItem('arcadia_v4', JSON.stringify(listings));
+    }
+
+    // Fonction de sauvegarde (MISE À JOUR)
+    function saveListing() {
+        const id = document.getElementById('editId').value;
+        const title = document.getElementById('vTitle').value;
+        const loc = document.getElementById('vLoc').value;
+        const price = parseInt(document.getElementById('vPrice').value) || 0;
+        const status = document.getElementById('vStatus').value;
+        const desc = document.getElementById('vDesc').value;
+        const img = document.getElementById('vImg').value || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800";
+
+        if(!title) return alert("Veuillez au moins donner un nom au bien.");
+
+        const data = {
+            id: id ? parseInt(id) : Date.now(),
+            title: title,
+            loc: loc,
+            price: price,
+            status: status,
+            desc: desc,
+            img: img
+        };
+
+        if(id) { 
+            const index = listings.findIndex(l => l.id == id);
+            listings[index] = data; 
+        } else { 
+            listings.push(data); 
+        }
+
+        render();
+        closeStaffModal(); 
+        resetForm();
+    }
+
+    // --- Reste des fonctions utilitaires ---
     function handleFile(file) {
         if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
@@ -222,39 +233,10 @@
         }
     }
 
-    function render() {
-        const grid = document.getElementById('listingGrid');
-        const adminList = document.getElementById('adminList');
-        grid.innerHTML = ""; adminList.innerHTML = "";
-
-        listings.forEach(v => {
-            grid.innerHTML += `
-                <div onclick="showDetails(${v.id})" class="glass-card group cursor-pointer relative" data-aos="fade-up">
-                    <div class="status-badge bg-${v.status}">${v.status}</div>
-                    <div class="h-64 overflow-hidden">
-                        <img src="${v.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000">
-                    </div>
-                    <div class="p-8">
-                        <p class="text-[9px] text-gold uppercase tracking-widest mb-2">${v.loc}</p>
-                        <h3 class="text-2xl font-serif italic mb-2">${v.title}</h3>
-                        <p class="text-gold font-bold text-lg">${v.price.toLocaleString()} €</p>
-                    </div>
-                </div>`;
-
-            adminList.innerHTML += `
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/5">
-                    <div class="flex items-center gap-3">
-                        <img src="${v.img}" class="w-10 h-10 rounded-lg object-cover">
-                        <div><p class="font-bold text-[11px]">${v.title}</p><p class="text-[9px] opacity-40">${v.price.toLocaleString()}€</p></div>
-                    </div>
-                    <div class="flex gap-3">
-                        <button onclick="loadEdit(${v.id})" class="text-[9px] text-blue-400 font-bold uppercase">Editer</button>
-                        <button onclick="deleteListing(${v.id})" class="text-[9px] text-red-500 font-bold uppercase">Radier</button>
-                    </div>
-                </div>`;
-        });
-        localStorage.setItem('arcadia_v4', JSON.stringify(listings));
-    }
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    dropZone.onclick = () => fileInput.click();
+    fileInput.onchange = (e) => handleFile(e.target.files[0]);
 
     function updatePreview() {
         document.getElementById('preTitle').innerText = document.getElementById('vTitle').value || "Nom";
@@ -267,29 +249,13 @@
     function showDetails(id) {
         const v = listings.find(l => l.id == id);
         document.getElementById('detTitle').innerText = v.title;
-        document.getElementById('detLoc').innerText = v.loc;
+        document.getElementById('detLoc').innerText = v.loc || "Paros";
         document.getElementById('detPrice').innerText = v.price.toLocaleString() + " €";
-        document.getElementById('detDesc').innerText = v.desc;
+        document.getElementById('detDesc').innerText = v.desc || "Pas de description.";
         document.getElementById('detImg').src = v.img;
         document.getElementById('detBadge').innerText = v.status;
         document.getElementById('detBadge').className = `status-badge bg-${v.status}`;
         document.getElementById('detailModal').classList.remove('hidden');
-    }
-
-    function saveListing() {
-        const id = document.getElementById('editId').value;
-        const data = {
-            id: id ? parseInt(id) : Date.now(),
-            title: document.getElementById('vTitle').value,
-            loc: document.getElementById('vLoc').value,
-            price: parseInt(document.getElementById('vPrice').value) || 0,
-            status: document.getElementById('vStatus').value,
-            desc: document.getElementById('vDesc').value,
-            img: document.getElementById('vImg').value || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800"
-        };
-        if(id) { listings[listings.findIndex(l => l.id == id)] = data; } 
-        else { listings.push(data); }
-        render(); closeStaffModal(); resetForm();
     }
 
     function deleteListing(id) {
@@ -311,9 +277,11 @@
 
     function resetForm() {
         document.querySelectorAll('.arcadia-input').forEach(i => i.value = "");
+        document.getElementById('editId').value = "";
         document.getElementById('vImg').value = "";
         document.getElementById('preImg').classList.add('hidden');
         document.getElementById('dropText').innerText = "Glisser image ou cliquer";
+        document.getElementById('saveBtn').innerText = "Publier l'unité";
     }
 
     window.closeDetailModal = () => document.getElementById('detailModal').classList.add('hidden');
