@@ -2,105 +2,154 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Arcadia Staff | Management Console</title>
+    <title>Arcadia | Immobilier d'Exception</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:italic,wght@700&display=swap" rel="stylesheet">
     <style>
-        body { background:#050505; color:white; font-family:'Montserrat', sans-serif; }
-        .glass { background:#111; border:1px solid rgba(255,255,255,0.05); border-radius:15px; }
-        .input-staff { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:8px; color:white; width:100%; margin-bottom:10px; font-size:12px; }
-        .btn-gold { background:#b38e44; color:black; font-weight:bold; padding:10px; border-radius:8px; text-transform:uppercase; font-size:10px; width:100%; cursor: pointer; transition: 0.3s; }
-        .btn-gold:hover { background: #d4af37; transform: scale(1.02); }
+        body { background:#050505; color:white; font-family:'Montserrat', sans-serif; scroll-behavior: smooth; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .glass { background: rgba(17, 17, 17, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; }
+        .text-gold { color: #b38e44; }
+        .bg-gold { background: #b38e44; }
         
-        .viz-container { border: 2px solid #10b981; background: rgba(16, 185, 129, 0.05); box-shadow: 0 0 20px rgba(16, 185, 129, 0.1); color: #10b981; }
-        .stat-card { background: rgba(255,255,255,0.02); border-left: 3px solid #b38e44; padding: 15px; border-radius: 8px; }
-        
-        .badge-new { animation: pulse 1.5s infinite; background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 8px; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        /* HERO SECTION */
+        .hero { 
+            height: 80vh; 
+            background: linear-gradient(to bottom, rgba(5,5,5,0.2), #050505), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex; align-items: center; justify-content: center; text-align: center;
+        }
 
-        .chat-box { height: 120px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 10px; font-size: 11px; margin-top: 10px; border-radius: 8px; }
-        .logo-img { height: 60px; }
+        /* CARD STYLE */
+        .service-card { transition: 0.4s; border: 1px solid rgba(255,255,255,0.05); }
+        .service-card:hover { transform: translateY(-10px); border-color: #b38e44; }
+        
+        /* STAFF TOOLS */
+        .input-staff { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:8px; color:white; width:100%; margin-bottom:10px; font-size:12px; }
         .staff-only { display: none; }
-        .img-preview { width: 100%; height: 80px; object-fit: cover; border-radius: 8px; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.1); }
+        .viz-container { border: 2px solid #10b981; background: rgba(16, 185, 129, 0.05); color: #10b981; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body>
 
-    <div id="mainContent" class="max-w-7xl mx-auto">
-        <header class="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
-            <div class="flex items-center gap-6">
-                <img src="https://image2url.com/r2/default/images/1774658704727-764cccce-eee7-41c4-a48c-90c16f0acc69.png" class="logo-img">
+    <nav class="fixed w-full z-50 px-8 py-6 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
+        <div class="flex items-center gap-3">
+            <img src="https://image2url.com/r2/default/images/1774658704727-764cccce-eee7-41c4-a48c-90c16f0acc69.png" class="h-10">
+            <span class="text-xl font-serif tracking-widest uppercase">Arcadia</span>
+        </div>
+        <div class="flex gap-8 text-[10px] tracking-[3px] uppercase items-center">
+            <a href="#services" class="hover:text-gold transition">Services</a>
+            <a href="#dossiers" class="hover:text-gold transition">Dossiers</a>
+            <button onclick="checkStaffCode()" id="staffLoginBtn" class="border border-gold px-4 py-2 rounded-full text-gold hover:bg-gold hover:text-black transition">Staff</button>
+            <div id="staffStatus" class="staff-only flex items-center gap-4">
+                <span id="statusIndicator" class="w-2 h-2 rounded-full bg-red-500"></span>
+                <button onclick="logoutStaff()" class="text-red-500 underline">Quitter</button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="max-w-4xl px-4">
+            <p class="text-gold tracking-[5px] uppercase text-xs mb-4">L'excellence immobilière</p>
+            <h1 class="text-6xl md:text-8xl font-serif mb-6">Redéfinir le <br><span class="italic text-gold">Luxe Privé</span></h1>
+            <p class="text-white/60 max-w-xl mx-auto text-sm leading-relaxed mb-8">
+                Arcadia n'est pas qu'une agence. C'est un cercle fermé dédié aux propriétés les plus prestigieuses et aux services de conciergerie de haute sécurité.
+            </p>
+            <a href="#dossiers" class="bg-gold text-black px-10 py-4 rounded-full font-bold text-xs uppercase tracking-widest hover:scale-105 transition inline-block">Consulter les dossiers</a>
+        </div>
+    </header>
+
+    <section id="services" class="py-24 px-8 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-serif mb-2">Nos Domaines d'Expertise</h2>
+            <div class="w-20 h-1 bg-gold mx-auto"></div>
+        </div>
+        <div class="grid md:grid-cols-4 gap-6">
+            <div class="service-card glass p-8 text-center">
+                <div class="text-4xl mb-4 text-gold">🏰</div>
+                <h3 class="font-bold mb-2 uppercase text-xs tracking-widest">Manoirs</h3>
+                <p class="text-[11px] opacity-50">Résidences historiques et domaines de vaste envergure.</p>
+            </div>
+            <div class="service-card glass p-8 text-center">
+                <div class="text-4xl mb-4 text-gold">🏠</div>
+                <h3 class="font-bold mb-2 uppercase text-xs tracking-widest">Villas</h3>
+                <p class="text-[11px] opacity-50">L'architecture moderne alliée au confort absolu.</p>
+            </div>
+            <div class="service-card glass p-8 text-center">
+                <div class="text-4xl mb-4 text-gold">🛡️</div>
+                <h3 class="font-bold mb-2 uppercase text-xs tracking-widest">Services</h3>
+                <p class="text-[11px] opacity-50">Conciergerie, protection et gestion de patrimoine.</p>
+            </div>
+            <div class="service-card glass p-8 text-center">
+                <div class="text-4xl mb-4 text-gold">📰</div>
+                <h3 class="font-bold mb-2 uppercase text-xs tracking-widest">Presse</h3>
+                <p class="text-[11px] opacity-50">Actualités du marché et annonces exclusives.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="dossiers" class="py-24 px-8 bg-[#080808]">
+        <div class="max-w-7xl mx-auto">
+            
+            <div class="staff-only mb-12">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="glass p-6 border-l-4 border-gold">
+                        <p class="text-[9px] opacity-40 uppercase mb-2">Chiffre d'Affaires</p>
+                        <h4 id="statRevenue" class="text-2xl font-bold text-gold">0 $</h4>
+                    </div>
+                    <div class="glass p-6 border-l-4 border-red-500">
+                        <p class="text-[9px] opacity-40 uppercase mb-2">En Attente</p>
+                        <h4 id="statPending" class="text-2xl font-bold text-red-500">0</h4>
+                    </div>
+                    <div class="glass p-6 border-l-4 border-green-500">
+                        <p class="text-[9px] opacity-40 uppercase mb-2">Missions Validées</p>
+                        <h4 id="statSuccess" class="text-2xl font-bold text-green-500">0</h4>
+                    </div>
+                    <div class="glass p-6 border-l-4 border-white">
+                        <p class="text-[9px] opacity-40 uppercase mb-2">Conversion</p>
+                        <h4 id="statConv" class="text-2xl font-bold">0%</h4>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="glass p-8">
+                        <h3 class="text-gold text-[10px] uppercase font-bold mb-6">Ajouter une exclusivité</h3>
+                        <input type="text" id="bTitle" placeholder="Titre du bien" class="input-staff">
+                        <input type="text" id="bPrice" placeholder="Prix (ex: 2.000.000)" class="input-staff">
+                        <select id="bCat" class="input-staff">
+                            <option value="Manoir">Manoir</option>
+                            <option value="Villa">Villa</option>
+                            <option value="Service">Service</option>
+                        </select>
+                        <textarea id="bDesc" placeholder="Description..." class="input-staff h-24"></textarea>
+                        <input type="file" id="bFiles" class="text-[10px] mb-4" multiple>
+                        <button id="btnPublish" class="w-full bg-gold py-3 text-black font-bold uppercase text-[10px] rounded-lg">Publier sur le site</button>
+                    </div>
+                    <div class="glass p-8 viz-container" id="liveViz" style="display:none">
+                        <h3 class="text-green-400 text-[10px] uppercase font-bold mb-4">Aperçu Réponse Client</h3>
+                        <p class="text-[10px] mb-2">Client : <span id="vizTarget" class="font-bold text-white">-</span></p>
+                        <div id="vizContent" class="text-xs italic text-white p-4 bg-black/40 rounded border border-green-500/20 min-h-[100px]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-end mb-8">
                 <div>
-                    <h1 class="text-2xl font-serif italic text-white tracking-tighter">Arcadia <span class="text-[#b38e44]">Management</span></h1>
-                    <p class="text-[9px] opacity-40 uppercase tracking-[3px]">High-End Real Estate Control</p>
+                    <h2 class="text-3xl font-serif">Management des Dossiers</h2>
+                    <p class="text-[10px] opacity-40 mt-2 uppercase tracking-widest">Suivi des demandes en temps réel</p>
                 </div>
             </div>
             
-            <div class="flex gap-4 items-center">
-                <button id="staffLoginBtn" onclick="checkStaffCode()" class="px-6 py-2 rounded-full text-[10px] font-bold bg-white text-black hover:bg-[#b38e44] transition">ACCÈS STAFF</button>
-                <div id="staffStatus" class="staff-only flex gap-4 items-center">
-                    <button id="statusToggle" class="px-4 py-2 rounded text-[9px] font-bold border border-white/10 tracking-widest">---</button>
-                    <button onclick="logoutStaff()" class="text-[9px] text-red-500 underline">Déconnexion</button>
+            <div id="orderContainer" class="space-y-6">
                 </div>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
-            <div class="stat-card">
-                <p class="text-[9px] opacity-50 uppercase mb-1">Chiffre d'Affaires Est. (Missions)</p>
-                <h2 id="statRevenue" class="text-xl font-bold text-[#b38e44]">0 $</h2>
-            </div>
-            <div class="stat-card">
-                <p class="text-[9px] opacity-50 uppercase mb-1">Dossiers en attente</p>
-                <h2 id="statPending" class="text-xl font-bold text-red-500">0</h2>
-            </div>
-            <div class="stat-card">
-                <p class="text-[9px] opacity-50 uppercase mb-1">Missions Validées</p>
-                <h2 id="statSuccess" class="text-xl font-bold text-green-500">0</h2>
-            </div>
-            <div class="stat-card">
-                <p class="text-[9px] opacity-50 uppercase mb-1">Taux de conversion</p>
-                <h2 id="statConv" class="text-xl font-bold text-white">0%</h2>
-            </div>
         </div>
+    </section>
 
-        <div class="grid lg:grid-cols-4 gap-8">
-            <div class="space-y-6">
-                <div class="glass p-6 viz-container staff-only" id="liveViz">
-                    <h3 class="text-[10px] uppercase font-bold mb-4 tracking-widest text-green-400">Preview Réponse Client</h3>
-                    <p class="text-[9px] opacity-60 mb-2">Cible : <span id="vizTarget" class="font-bold text-white"></span></p>
-                    <div class="text-xs italic bg-black/40 p-4 rounded-lg border border-green-500/30 min-h-[60px] text-white" id="vizContent"></div>
-                </div>
-
-                <div class="glass p-6 staff-only">
-                    <h3 class="text-[#b38e44] text-[10px] uppercase font-bold mb-4 tracking-widest">Nouveau Post</h3>
-                    <input type="text" id="bTitle" placeholder="Nom du bien / Titre" class="input-staff">
-                    <input type="text" id="bPrice" placeholder="Prix (ex: 20000)" class="input-staff">
-                    <select id="bCat" class="input-staff">
-                        <option value="Manoir">🏰 Manoir</option>
-                        <option value="Villa">🏠 Villa</option>
-                        <option value="Service">🛡️ Service Exclusive</option>
-                        <option value="Article">📰 Article de Presse</option>
-                    </select>
-                    <textarea id="bDesc" placeholder="Description..." class="input-staff h-24"></textarea>
-                    <input type="file" id="bFiles" class="text-[10px] mb-4 text-white/40" multiple>
-                    <button id="btnPublish" class="btn-gold">Publier</button>
-                </div>
-
-                <div class="glass p-6">
-                    <h3 class="text-white/30 text-[9px] uppercase mb-4 tracking-widest">Inventaire Site</h3>
-                    <div id="inventoryList" class="grid grid-cols-2 gap-2 max-h-80 overflow-auto pr-2"></div>
-                </div>
-            </div>
-
-            <div class="lg:col-span-3">
-                <div class="glass p-8">
-                    <h3 class="text-[#b38e44] text-[10px] uppercase font-bold mb-8 tracking-widest">Dossiers Clients & Management</h3>
-                    <div id="orderContainer" class="space-y-6"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <footer class="py-12 border-t border-white/5 text-center">
+        <img src="https://image2url.com/r2/default/images/1774658704727-764cccce-eee7-41c4-a48c-90c16f0acc69.png" class="h-8 mx-auto mb-4 opacity-50">
+        <p class="text-[9px] opacity-30 uppercase tracking-[5px]">Arcadia Management &copy; 2024</p>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -110,9 +159,9 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // AUTH
+        // --- AUTH ---
         window.checkStaffCode = () => {
-            if(prompt("Code Identification Arcadia :") === "Immo30") { sessionStorage.setItem('isStaff', 'true'); location.reload(); }
+            if(prompt("Identification Arcadia :") === "Immo30") { sessionStorage.setItem('isStaff', 'true'); location.reload(); }
         };
         window.logoutStaff = () => { sessionStorage.removeItem('isStaff'); location.reload(); };
 
@@ -122,126 +171,92 @@
             document.getElementById('staffLoginBtn').style.display = 'none';
         }
 
-        // --- STATISTIQUES LOGIC ---
-        function updateStats(orders) {
-            let revenue = 0; let pending = 0; let success = 0; let total = 0;
-            Object.values(orders).forEach(o => {
+        // --- STATS ---
+        function runStats(data) {
+            let rev = 0, pend = 0, succ = 0, total = 0;
+            Object.values(data).forEach(o => {
                 total++;
-                if(o.status === 'En attente') pending++;
-                if(o.status === 'Validé') {
-                    success++;
-                    revenue += parseInt(o.prix?.replace(/[^0-9]/g, '') || 0);
-                }
+                if(o.status === 'En attente') pend++;
+                if(o.status === 'Validé') { succ++; rev += parseInt(o.prix?.replace(/[^0-9]/g,'') || 0); }
             });
-            document.getElementById('statRevenue').innerText = revenue.toLocaleString() + " $";
-            document.getElementById('statPending').innerText = pending;
-            document.getElementById('statSuccess').innerText = success;
-            document.getElementById('statConv').innerText = total > 0 ? Math.round((success/total)*100) + "%" : "0%";
+            document.getElementById('statRevenue').innerText = rev.toLocaleString() + " $";
+            document.getElementById('statPending').innerText = pend;
+            document.getElementById('statSuccess').innerText = succ;
+            document.getElementById('statConv').innerText = total > 0 ? Math.round((succ/total)*100)+"%" : "0%";
         }
 
-        // --- FIREBASE READ ---
-        const statusBtn = document.getElementById('statusToggle');
-        onValue(ref(db, 'studioStatus'), (snap) => {
-            const isOpen = snap.val();
-            statusBtn.innerText = isOpen ? "STUDIO : OUVERT" : "STUDIO : FERMÉ";
-            statusBtn.style.color = isOpen ? "#10b981" : "#ef4444";
-        });
-        statusBtn.onclick = () => { if(isStaff) set(ref(db, 'studioStatus'), statusBtn.innerText.includes("FERMÉ")); };
-
-        onValue(ref(db, 'listings'), (snap) => {
-            const data = snap.val();
-            const inv = document.getElementById('inventoryList');
-            inv.innerHTML = "";
-            if(data) Object.entries(data).forEach(([id, it]) => {
-                inv.innerHTML += `<div class="relative border border-white/5 p-2 rounded bg-white/5">
-                    <img src="${it.images?.[0] || ''}" class="img-preview">
-                    <p class="text-[7px] truncate">${it.title}</p>
-                    ${isStaff ? `<button onclick="deleteListing('${id}')" class="absolute top-1 right-1 bg-red-500 text-[8px] px-1">X</button>` : ''}
-                </div>`;
-            });
-        });
-
+        // --- REALTIME DATA ---
         onValue(ref(db, 'orders'), (snap) => {
             const data = snap.val() || {};
-            updateStats(data);
+            if(isStaff) runStats(data);
             const container = document.getElementById('orderContainer');
             let html = "";
             Object.entries(data).reverse().forEach(([id, ord]) => {
-                const needsResponse = !ord.reponseStaff;
                 html += `
-                <div class="glass p-6 border border-white/5 hover:border-[#b38e44]/30 transition">
-                    <div class="flex justify-between items-start gap-4">
+                <div class="glass p-8 border border-white/5 hover:border-gold/20 transition group">
+                    <div class="flex flex-wrap justify-between items-center gap-6">
                         <div class="flex-1">
-                            <div class="flex items-center gap-3 mb-2">
-                                ${needsResponse ? '<span class="badge-new">NEW</span>' : ''}
-                                <p class="font-bold text-sm text-white">${ord.prenom} ${ord.nom}</p>
-                                <span class="text-[10px] opacity-40">#${ord.tel}</span>
+                            <div class="flex items-center gap-4 mb-2">
+                                <h4 class="text-xl font-serif">${ord.prenom} ${ord.nom}</h4>
+                                <span class="text-[9px] py-1 px-3 bg-white/5 rounded-full text-white/40 uppercase tracking-widest">${ord.service}</span>
                             </div>
-                            <p class="text-[10px] text-[#b38e44] mb-4">${ord.service} — ${ord.prix || 'Sur mesure'}</p>
-                            <div class="chat-box">
-                                <p class="text-white/20 text-[9px] border-b border-white/5 pb-1">${ord.date}</p>
-                                <p class="text-[#b38e44] text-xs mt-2"><b>Staff:</b> ${ord.reponseStaff || 'En attente...'}</p>
+                            <div class="flex gap-6 text-[10px] text-white/30 uppercase tracking-widest mb-6">
+                                <span>📞 ${ord.tel}</span>
+                                <span>📅 ${ord.date}</span>
+                                <span>💰 ${ord.prix || 'N/A'}</span>
                             </div>
-                            ${isStaff ? `<div class="flex mt-3 gap-2">
-                                <input type="text" id="input-${id}" placeholder="Message manuel..." class="input-staff !mb-0 text-[10px]">
-                                <button onclick="sendChat('${id}')" class="bg-[#b38e44] text-black px-4 rounded font-bold text-[10px]">OK</button>
-                            </div>` : ''}
+                            <div class="p-4 bg-black/40 rounded-lg text-xs leading-relaxed border border-white/5">
+                                <span class="text-gold font-bold">STAFF :</span> ${ord.reponseStaff || '<span class="italic opacity-30">Traitement en cours...</span>'}
+                            </div>
                         </div>
-                        ${isStaff ? `<div class="flex flex-col gap-2 w-56">
-                            <select onchange="previewReply('${id}', '${ord.prenom}', this.value)" class="input-staff text-[10px]">
-                                <option>Choisir une réponse...</option>
-                                <option value="✅ Demande acceptée. Un agent va prendre contact avec vous.">✅ ACCEPTER</option>
-                                <option value="📅 RDV confirmé au Studio Arcadia.">📅 RDV FIXÉ</option>
-                                <option value="❌ Demande refusée. Nos critères de sélection ne sont pas remplis.">❌ REFUSER</option>
+                        
+                        ${isStaff ? `
+                        <div class="w-full md:w-64 space-y-3">
+                            <select onchange="previewReply('${id}', '${ord.prenom}', this.value)" class="input-staff !mb-0 text-[10px] bg-gold/10 border-gold/20">
+                                <option>Action Staff...</option>
+                                <option value="✅ Demande acceptée. Un agent Arcadia vous contactera.">Valider le dossier</option>
+                                <option value="📅 RDV fixé au Studio Arcadia pour finalisation.">Fixer RDV</option>
+                                <option value="❌ Demande archivée.">Refuser</option>
                             </select>
-                            <button onclick="confirmStatusUpdate('${id}')" id="confirm-${id}" class="bg-green-600 text-white py-2 rounded text-[9px] font-bold" style="display:none;">CONFIRMER L'ENVOI</button>
-                            <button onclick="deleteOrder('${id}')" class="text-[8px] opacity-30 mt-4 hover:text-red-500">ARCHIVER</button>
+                            <button onclick="confirmStatusUpdate('${id}')" id="confirm-${id}" class="w-full bg-green-600 py-2 rounded text-[9px] font-bold hidden">CONFIRMER</button>
+                            <button onclick="deleteOrder('${id}')" class="w-full text-[9px] opacity-20 hover:text-red-500 transition uppercase tracking-widest">Archiver dossier</button>
                         </div>` : ''}
                     </div>
                 </div>`;
             });
-            container.innerHTML = html || "<p class='opacity-20'>Aucun dossier.</p>";
+            container.innerHTML = html || "<p class='text-center opacity-20 py-10 uppercase tracking-[5px]'>Aucun dossier actif</p>";
         });
 
-        // --- ACTIONS ---
-        let currentPendingId = null; let currentPendingText = null;
-        window.previewReply = (id, clientName, text) => {
-            const viz = document.getElementById('liveViz');
-            if(text.includes("Choisir")) { viz.style.display = 'none'; return; }
-            viz.style.display = 'block';
-            document.getElementById('vizTarget').innerText = clientName;
+        // --- STAFF ACTIONS ---
+        let currId, currText;
+        window.previewReply = (id, name, text) => {
+            if(text.includes("Action")) return;
+            document.getElementById('liveViz').style.display = 'block';
+            document.getElementById('vizTarget').innerText = name;
             document.getElementById('vizContent').innerText = text;
-            currentPendingId = id; currentPendingText = text;
-            document.querySelectorAll('[id^="confirm-"]').forEach(b => b.style.display = 'none');
-            document.getElementById(`confirm-${id}`).style.display = 'block';
+            currId = id; currText = text;
+            document.querySelectorAll('[id^="confirm-"]').forEach(b => b.classList.add('hidden'));
+            document.getElementById(`confirm-${id}`).classList.remove('hidden');
         };
 
         window.confirmStatusUpdate = (id) => {
-            const statusType = currentPendingText.includes("✅") ? "Validé" : "Traité";
-            update(ref(db, `orders/${id}`), { status: statusType, reponseStaff: currentPendingText });
+            const status = currText.includes("✅") ? "Validé" : "Traité";
+            update(ref(db, `orders/${id}`), { status, reponseStaff: currText });
             document.getElementById('liveViz').style.display = 'none';
         };
 
-        window.sendChat = (id) => {
-            const msg = document.getElementById(`input-${id}`).value;
-            if(!msg) return;
-            update(ref(db, `orders/${id}`), { reponseStaff: msg, status: 'Répondu' });
-        };
-        window.deleteOrder = (id) => { if(confirm("Archiver ?")) remove(ref(db, `orders/${id}`)); };
-        window.deleteListing = (id) => { if(confirm("Supprimer ?")) remove(ref(db, `listings/${id}`)); };
+        window.deleteOrder = (id) => { if(confirm("Archiver ce dossier ?")) remove(ref(db, `orders/${id}`)); };
 
         // PUBLICATION
         let currentImgs = [];
         document.getElementById('bFiles').onchange = (e) => {
-            currentImgs = [];
             Array.from(e.target.files).forEach(f => {
                 const r = new FileReader(); r.onload = ev => currentImgs.push(ev.target.result); r.readAsDataURL(f);
             });
         };
         document.getElementById('btnPublish').onclick = () => {
             const val = { title: document.getElementById('bTitle').value, price: document.getElementById('bPrice').value, cat: document.getElementById('bCat').value, desc: document.getElementById('bDesc').value, images: currentImgs, date: new Date().toLocaleDateString() };
-            if(!val.title) return;
-            push(ref(db, 'listings'), val).then(() => location.reload());
+            if(val.title) push(ref(db, 'listings'), val).then(() => location.reload());
         };
     </script>
 </body>
