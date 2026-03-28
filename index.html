@@ -18,10 +18,8 @@
         .btn-view { border: 1px solid var(--gold); color: var(--gold); padding: 10px 20px; font-size: 10px; text-transform: uppercase; tracking-widest: 3px; cursor: pointer; transition: 0.4s; }
         .btn-view:hover { background: var(--gold); color: black; }
         .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05); }
-        
         #orderModal { display:none; position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.9); align-items:center; justify-content:center; }
         .input-arcadia { width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; color:white; margin-bottom:12px; outline:none; }
-        .input-arcadia:focus { border-color: var(--gold); }
     </style>
 </head>
 <body>
@@ -29,99 +27,42 @@
     <div id="orderModal">
         <div class="glass p-10 rounded-2xl max-w-md w-full relative">
             <button onclick="closeOrder()" class="absolute top-4 right-4 opacity-50 hover:opacity-100">✕</button>
-            <h2 class="font-serif text-3xl italic mb-2 text-center">Finaliser la demande</h2>
+            <h2 class="font-serif text-3xl italic mb-2 text-center">Demande RP</h2>
             <p id="orderSummary" class="text-gold text-center text-[10px] uppercase tracking-widest mb-8"></p>
-            
             <div id="userInfoFields">
                 <input type="text" id="custNom" placeholder="Nom RP" class="input-arcadia">
                 <input type="text" id="custPrenom" placeholder="Prénom RP" class="input-arcadia">
-                <input type="tel" id="custTel" placeholder="Numéro de Téléphone" class="input-arcadia">
+                <input type="tel" id="custTel" placeholder="Téléphone" class="input-arcadia">
             </div>
-
-            <button onclick="confirmOrder()" class="w-full bg-gold text-black font-bold py-4 rounded uppercase text-xs tracking-widest hover:brightness-110 transition-all">
-                Envoyer au Staff
-            </button>
+            <button onclick="confirmOrder()" class="w-full bg-gold text-black font-bold py-4 rounded uppercase text-xs tracking-widest hover:brightness-110">Envoyer</button>
         </div>
     </div>
 
     <nav class="fixed top-0 w-full z-50 flex justify-between items-center p-8 backdrop-blur-md border-b border-white/5">
-        <h1 class="font-serif text-3xl italic tracking-tighter">Arcadia</h1>
+        <h1 class="font-serif text-3xl italic">Arcadia</h1>
         <div id="userGreeting" class="text-[10px] tracking-[3px] uppercase text-gold"></div>
-        <div class="flex items-center gap-6">
-            <a href="https://discord.gg/MtmDydQApw" target="_blank" class="text-[10px] uppercase opacity-60 hover:opacity-100">Discord</a>
-            <a href="admin.html" class="text-[10px] uppercase border border-gold/30 px-4 py-2 hover:bg-gold hover:text-black">Panel Staff</a>
-        </div>
+        <a href="admin.html" class="text-[9px] opacity-40 hover:opacity-100 uppercase">Staff</a>
     </nav>
 
-    <section class="hero flex items-center justify-center">
-        <video autoplay muted loop playsinline>
-            <source src="https://cdn.coverr.co/videos/coverr-luxury-house-1574/1080p.mp4" type="video/mp4">
-        </video>
+    <section class="hero flex items-center justify-center text-center px-4">
+        <video autoplay muted loop playsinline><source src="https://cdn.coverr.co/videos/coverr-luxury-house-1574/1080p.mp4" type="video/mp4"></video>
         <div class="hero-overlay"></div>
-        <div class="relative text-center z-10 px-4">
-            <h1 class="font-serif text-6xl md:text-9xl italic">Arcadia Immobilier</h1>
-            <p class="mt-6 tracking-[8px] text-xs opacity-70">SÉCURITÉ & IMMOBILIER DE PRESTIGE</p>
+        <div class="relative z-10">
+            <h1 class="font-serif text-6xl md:text-9xl italic">Arcadia</h1>
+            <p class="mt-6 tracking-[8px] text-xs opacity-70">IMMOBILIER DE PRESTIGE</p>
         </div>
     </section>
 
     <section id="clientDashboard" class="hidden py-10 px-6 max-w-7xl mx-auto">
         <div class="glass p-8 rounded-3xl border-l-4 border-gold">
             <h3 class="font-serif text-2xl italic mb-6">Suivi de mes demandes RP</h3>
-            <div id="myOrdersList" class="space-y-4 text-sm">
-                <p class="opacity-50 italic">Aucune demande en cours...</p>
-            </div>
+            <div id="myOrdersList" class="space-y-4 text-sm"></div>
         </div>
     </section>
 
     <section class="py-24 px-6 max-w-7xl mx-auto">
-        <div class="grid md:grid-cols-2 gap-12">
-            <div class="glass p-8 rounded-3xl">
-                <h3 class="font-serif text-4xl mb-8 italic">Systèmes de Sécurité</h3>
-                <div class="space-y-6">
-                    <div class="flex justify-between items-center p-4 bg-white/5 rounded-xl hover:border-gold border border-transparent transition-all">
-                        <div>
-                            <p class="font-bold text-gold">Alarme Niveau 1</p>
-                            <p class="text-[10px] opacity-40">850 000 € • Protection GN</p>
-                        </div>
-                        <button onclick="openOrder('Alarme Niveau 1', '850 000 €')" class="btn-view">Choisir</button>
-                    </div>
-                    <div class="flex justify-between items-center p-4 bg-white/5 rounded-xl hover:border-gold border border-transparent transition-all">
-                        <div>
-                            <p class="font-bold text-gold">Alarme Niveau 2</p>
-                            <p class="text-[10px] opacity-40">2 000 000 € • Alerte Gendarmerie</p>
-                        </div>
-                        <button onclick="openOrder('Alarme Niveau 2', '2 000 000 €')" class="btn-view">Choisir</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass p-8 rounded-3xl flex flex-col justify-between">
-                <div>
-                    <h3 class="font-serif text-4xl mb-8 italic">Stockage Entreprise</h3>
-                    <div class="p-8 bg-white/5 rounded-2xl border border-white/10">
-                        <p class="text-4xl font-serif text-gold">+20 000 places</p>
-                        <p class="text-xs opacity-50 mt-4 leading-relaxed uppercase tracking-widest">Extension de capacité immédiate.</p>
-                    </div>
-                </div>
-                <div class="mt-8 flex justify-between items-center">
-                    <span class="text-2xl font-serif">10 000 000 €</span>
-                    <button onclick="openOrder('Extension Stockage', '10 000 000 €')" class="btn-view px-10">Améliorer</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-24 px-6 max-w-7xl mx-auto">
-        <h2 class="font-serif text-5xl italic mb-12">La Collection</h2>
         <div id="catalogContainer" class="grid md:grid-cols-3 gap-8"></div>
     </section>
-
-    <footer class="py-20 bg-white/5 border-t border-white/10 text-center">
-        <p class="font-serif text-2xl italic mb-6">Arcadia Studio</p>
-        <a href="https://discord.gg/MtmDydQApw" target="_blank" class="text-gold text-[10px] tracking-[5px] uppercase border border-gold px-8 py-3 hover:bg-gold hover:text-black transition-all">
-            Rejoindre le Discord
-        </a>
-    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -132,10 +73,8 @@
         const db = getDatabase(app);
 
         let currentOrder = null;
-
-        // --- GESTION DU COMPTE RP ---
         const activeUser = JSON.parse(localStorage.getItem('arcadia_user_rp'));
-        
+
         if(activeUser) {
             document.getElementById('userGreeting').innerText = `Citoyen: ${activeUser.prenom} ${activeUser.nom}`;
             document.getElementById('userInfoFields').style.display = 'none';
@@ -143,86 +82,67 @@
             loadMyOrders(activeUser.nom, activeUser.prenom);
         }
 
-        // --- GESTION COMMANDE ---
         window.openOrder = (service, prix) => {
             currentOrder = { service, prix };
             document.getElementById('orderSummary').innerText = `${service} — ${prix}`;
             document.getElementById('orderModal').style.display = 'flex';
         };
 
-        window.closeOrder = () => {
-            document.getElementById('orderModal').style.display = 'none';
-        };
+        window.closeOrder = () => document.getElementById('orderModal').style.display = 'none';
 
         window.confirmOrder = () => {
-            let userData = activeUser;
-            if(!userData) {
-                userData = {
-                    nom: document.getElementById('custNom').value,
-                    prenom: document.getElementById('custPrenom').value,
-                    tel: document.getElementById('custTel').value || "Non renseigné"
-                };
-                if(!userData.nom || !userData.prenom) return alert("Nom et Prénom RP obligatoires !");
-                localStorage.setItem('arcadia_user_rp', JSON.stringify(userData));
-            }
+            let userData = activeUser || {
+                nom: document.getElementById('custNom').value,
+                prenom: document.getElementById('custPrenom').value,
+                tel: document.getElementById('custTel').value || "N/A"
+            };
+
+            if(!userData.nom || !userData.prenom) return alert("Nom/Prénom RP requis");
+            localStorage.setItem('arcadia_user_rp', JSON.stringify(userData));
 
             push(ref(db, 'orders'), {
-                ...userData,
-                ...currentOrder,
+                ...userData, ...currentOrder,
                 date: new Date().toLocaleString('fr-FR'),
                 status: 'En attente',
                 reponseStaff: 'Votre demande est en cours de traitement...'
-            }).then(() => {
-                alert("Transmis au Staff Arcadia !");
-                location.reload();
-            });
+            }).then(() => location.reload());
         };
 
-        // --- SUIVI DES RÉPONSES ---
         function loadMyOrders(nom, prenom) {
             onValue(ref(db, 'orders'), (snap) => {
                 const data = snap.val();
-                const list = document.getElementById('myOrdersList');
-                if(!data) return;
-                
                 let html = "";
+                if(!data) return;
                 Object.entries(data).reverse().forEach(([id, ord]) => {
                     if(ord.nom === nom && ord.prenom === prenom) {
-                        const statusColor = ord.status === 'Répondu' ? 'text-green-400' : 'text-gold';
-                        html += `
-                        <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                        html += `<div class="bg-white/5 p-4 rounded-xl border border-white/10 mb-4">
                             <div class="flex justify-between mb-2">
-                                <span class="font-bold uppercase text-[10px] tracking-widest">${ord.service}</span>
-                                <span class="${statusColor} font-bold text-[10px] uppercase">${ord.status}</span>
+                                <span class="font-bold text-gold uppercase text-[10px]">${ord.service}</span>
+                                <span class="text-[10px] uppercase font-bold">${ord.status}</span>
                             </div>
-                            <p class="text-white/90 text-xs italic">"${ord.reponseStaff}"</p>
-                            <p class="text-[9px] opacity-30 mt-2 italic">Dernière mise à jour : ${ord.date}</p>
+                            <p class="text-white/80 text-xs italic">"${ord.reponseStaff}"</p>
                         </div>`;
                     }
                 });
-                if(html !== "") list.innerHTML = html;
+                document.getElementById('myOrdersList').innerHTML = html || "<p class='opacity-30'>Aucune demande.</p>";
             });
         }
 
-        // --- CHARGEMENT CATALOGUE ---
         onValue(ref(db, 'listings'), (snap) => {
             const data = snap.val();
-            const container = document.getElementById('catalogContainer');
-            if(!data) return;
             let html = "";
+            if(!data) return;
             Object.entries(data).reverse().forEach(([id, it]) => {
-                html += `
-                <div class="card p-4">
+                html += `<div class="card p-4">
                     <img src="${it.images[0]}" class="h-48 w-full object-cover rounded-xl mb-4">
-                    <span class="text-gold text-[9px] uppercase tracking-widest">${it.cat}</span>
-                    <h4 class="font-serif text-2xl italic mb-4">${it.title}</h4>
+                    <h4 class="font-serif text-2xl mb-4">${it.title}</h4>
                     <div class="flex justify-between items-center">
-                        <span class="font-serif text-lg">${it.price}</span>
+                        <span class="text-gold">${it.price}</span>
                         <button onclick="openOrder('${it.title}', '${it.price}')" class="btn-view">Réserver</button>
                     </div>
                 </div>`;
             });
-            container.innerHTML = html;
+            document.getElementById('catalogContainer').innerHTML = html;
         });
     </script>
 </body>
