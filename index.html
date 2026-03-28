@@ -21,71 +21,95 @@
         .modal { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
 
-        .dropdown-content { display: none; position: absolute; right: 0; top: 100%; background: #111; border: 1px solid rgba(179, 142, 68, 0.2); border-radius: 12px; min-width: 220px; z-index: 50; overflow: hidden; }
-        .dropdown:hover .dropdown-content { display: block; }
-        .dropdown-item { padding: 15px 20px; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; color: rgba(255,255,255,0.6); }
-        .dropdown-item:hover { background: #b38e44; color: black; font-weight: bold; }
-
         .staff-only { display: none; }
         .status-badge { padding: 3px 10px; border-radius: 5px; font-size: 9px; font-weight: bold; text-transform: uppercase; }
         .status-pending { background: rgba(255, 193, 7, 0.15); color: #ffc107; }
         .status-valid { background: rgba(40, 167, 69, 0.15); color: #28a745; }
         
-        /* CHAT */
         .chat-msg { padding: 10px 15px; border-radius: 12px; margin-bottom: 8px; font-size: 11px; max-width: 80%; line-height: 1.4; }
         .msg-staff { background: #b38e44; color: black; align-self: flex-start; border-bottom-left-radius: 2px; }
         .msg-client { background: rgba(255,255,255,0.08); color: white; align-self: flex-end; border-bottom-right-radius: 2px; border: 1px solid rgba(255,255,255,0.1); }
         
-        /* NOTIFICATION DOT */
         .notification-ping { position: relative; }
         .notification-ping::after { content: ''; position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #ff4b4b; border-radius: 50%; border: 2px solid #111; box-shadow: 0 0 10px #ff4b4b; }
+
+        .about-card { transition: 0.5s; filter: grayscale(1); }
+        .about-card:hover { filter: grayscale(0); transform: translateY(-10px); }
     </style>
 </head>
 <body>
 
     <div id="particles-js"></div>
 
-    <nav class="fixed w-full z-50 px-10 py-6 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
+    <nav class="fixed w-full z-50 px-10 py-6 flex justify-between items-center bg-gradient-to-b from-black/90 to-transparent">
         <div class="flex items-center gap-4">
             <img src="https://image2url.com/r2/default/images/1774658704727-764cccce-eee7-41c4-a48c-90c16f0acc69.png" class="h-10">
             <span class="text-xl font-serif tracking-[4px] uppercase italic">Arcadia</span>
         </div>
         
         <div class="flex items-center gap-8">
+            <a href="#about" class="text-[10px] tracking-[2px] uppercase opacity-60 hover:opacity-100 transition">À Propos</a>
             <div id="navAuth" class="flex gap-6 items-center">
                 <button onclick="toggleModal('loginModal')" class="text-[10px] tracking-[3px] uppercase hover:text-gold transition">Connexion</button>
                 <button onclick="toggleModal('registerModal')" class="border border-gold px-6 py-2 rounded-full text-gold text-[10px] tracking-[3px] uppercase hover:bg-gold hover:text-black transition">S'inscrire</button>
             </div>
 
-            <div id="navProfile" class="hidden dropdown relative">
-                <button class="text-[10px] tracking-[3px] uppercase flex items-center gap-3 bg-white/5 px-5 py-2 rounded-full border border-white/10 hover:border-gold/50 transition">
+            <div id="navProfile" class="hidden relative group">
+                <button class="text-[10px] tracking-[3px] uppercase flex items-center gap-3 bg-white/5 px-5 py-2 rounded-full border border-white/10">
                     <span id="userNameDisplay" class="text-gold font-bold"></span> ▾
                 </button>
-                <div class="dropdown-content glass mt-2">
-                    <div class="dropdown-item" onclick="toggleModal('ordersClientModal')">📅 Mes Réservations</div>
-                    <div class="dropdown-item text-red-500 border-none" onclick="logout()">Déconnexion</div>
+                <div class="absolute right-0 top-full hidden group-hover:block pt-2">
+                    <div class="glass w-56 overflow-hidden">
+                        <div class="p-4 text-[10px] uppercase tracking-widest cursor-pointer hover:bg-gold hover:text-black transition" onclick="toggleModal('ordersClientModal')">📅 Mes Réservations</div>
+                        <div class="p-4 text-[10px] uppercase tracking-widest cursor-pointer hover:bg-red-500 transition text-red-500" onclick="logout()">Déconnexion</div>
+                    </div>
                 </div>
             </div>
 
-            <button onclick="toggleModal('staffLoginModal')" id="staffLoginBtn" class="text-[9px] tracking-[2px] opacity-40 hover:opacity-100 transition">PANEL STAFF</button>
+            <button onclick="toggleModal('staffLoginModal')" id="staffLoginBtn" class="text-[9px] tracking-[2px] opacity-20 hover:opacity-100 transition">STAFF</button>
             <div id="staffStatus" class="staff-only">
-                <button onclick="logoutStaff()" class="text-red-500 text-[9px] font-bold border border-red-500/20 px-4 py-1 rounded-full bg-red-500/5 hover:bg-red-500 hover:text-white transition">DÉCONNEXION STAFF</button>
+                <button onclick="logoutStaff()" class="text-red-500 text-[9px] font-bold border border-red-500/20 px-4 py-1 rounded-full bg-red-500/5 hover:bg-red-500 hover:text-white transition ml-4">QUITTER PANEL</button>
             </div>
         </div>
     </nav>
 
-    <header class="h-[50vh] flex flex-col justify-center items-center text-center relative z-10">
-        <h1 class="text-7xl font-serif italic mb-2">Arcadia <span class="text-gold">Privé</span></h1>
-        <p class="text-white/20 tracking-[12px] uppercase text-[10px]">Gestion Immobilière & Services</p>
+    <header class="h-screen flex flex-col justify-center items-center text-center relative z-10">
+        <h1 class="text-9xl font-serif italic mb-4">Arcadia</h1>
+        <p class="text-gold tracking-[15px] uppercase text-xs mb-12">L'immobilier de Haute Couture</p>
+        <button onclick="window.scrollTo(0, 1000)" class="btn-premium px-12 py-5 rounded-full text-[11px]">Découvrir l'univers</button>
     </header>
 
-    <section class="py-10 px-10 max-w-7xl mx-auto relative z-10 grid md:grid-cols-3 gap-8">
-        <div class="glass p-12 text-center border-white/5 hover:border-gold/30 transition cursor-pointer" onclick="openModal('immobilier')">🏰 <h3 class="font-bold text-xs tracking-[4px] uppercase mt-4 text-gold">Immobilier</h3></div>
-        <div class="glass p-12 text-center border-gold/30 transition cursor-pointer" onclick="openModal('services')">🛡️ <h3 class="font-bold text-xs tracking-[4px] uppercase mt-4 text-gold">Services</h3></div>
-        <div class="glass p-12 text-center border-white/5 hover:border-gold/30 transition cursor-pointer" onclick="openModal('presse')">📰 <h3 class="font-bold text-xs tracking-[4px] uppercase mt-4 text-gold">Presse</h3></div>
+    <section id="about" class="py-32 px-10 max-w-7xl mx-auto relative z-10">
+        <div class="grid md:grid-cols-2 gap-20 items-center">
+            <div>
+                <h2 class="text-gold text-[10px] uppercase tracking-[8px] font-bold mb-6">Notre Histoire</h2>
+                <h3 class="text-5xl font-serif italic mb-8">L'Héritage d'une Vision</h3>
+                <p class="text-white/50 leading-[1.8] mb-6">Fondée sur les principes de discrétion et d'excellence, Arcadia n'est pas qu'une simple agence immobilière. C'est le point de rencontre entre l'architecture d'exception et la sécurité absolue.</p>
+                <p class="text-white/50 leading-[1.8]">Sous la direction de Salime et Axel, nous avons bâti un empire à Paros, offrant à nos clients un accès privilégié aux domaines les plus secrets et aux technologies de protection les plus avancées du globe.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <img src="image_1c6b8a.png" class="about-card rounded-2xl w-full h-64 object-cover">
+                <img src="image_1c7367.png" class="about-card rounded-2xl w-full h-64 object-cover mt-12">
+            </div>
+        </div>
     </section>
 
-    <section class="staff-only py-20 px-10 bg-[#050505] border-t border-white/5 mt-20 relative z-10">
+    <section class="py-20 px-10 max-w-7xl mx-auto relative z-10 grid md:grid-cols-3 gap-8">
+        <div class="glass p-12 text-center border-white/5 hover:border-gold/30 transition cursor-pointer" onclick="openModal('immobilier')">
+            <img src="image_126b81.png" class="h-12 mx-auto mb-6 opacity-80">
+            <h3 class="font-bold text-xs tracking-[4px] uppercase text-gold">Immobilier</h3>
+        </div>
+        <div class="glass p-12 text-center border-gold/30 transition cursor-pointer" onclick="openModal('services')">
+            <img src="image_1c6406.png" class="h-12 mx-auto mb-6 opacity-80">
+            <h3 class="font-bold text-xs tracking-[4px] uppercase text-gold">Services</h3>
+        </div>
+        <div class="glass p-12 text-center border-white/5 hover:border-gold/30 transition cursor-pointer" onclick="openModal('presse')">
+            <div class="h-12 text-4xl mb-6">📰</div>
+            <h3 class="font-bold text-xs tracking-[4px] uppercase text-gold">Presse</h3>
+        </div>
+    </section>
+
+    <section class="staff-only py-20 px-10 bg-[#050505] border-t border-white/5 relative z-10">
         <div class="max-w-7xl mx-auto">
             <h2 class="text-gold text-[10px] uppercase font-bold tracking-[6px] mb-10">Console Administration</h2>
             <div class="grid md:grid-cols-2 gap-12">
@@ -98,38 +122,40 @@
                 </div>
                 <div>
                     <h3 class="font-serif italic text-2xl mb-8">Dossiers & Messages</h3>
-                    <div id="orderContainer" class="space-y-4"></div>
+                    <div id="orderContainer" class="space-y-4 max-h-[500px] overflow-y-auto"></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <div id="staffLoginModal" class="modal">
-        <div class="glass p-12 w-full max-w-sm text-center border-gold/20">
-            <h2 class="text-2xl font-serif text-gold mb-8 italic">Authentification Staff</h2>
-            <input type="password" id="staffPassInput" placeholder="Clé de sécurité" class="input-arcadia text-center mb-6 tracking-widest">
-            <div class="flex gap-4">
-                <button onclick="toggleModal('staffLoginModal')" class="flex-1 text-[10px] opacity-40">Annuler</button>
-                <button onclick="handleStaffLogin()" class="flex-2 py-3 px-8 btn-premium rounded-xl text-[10px]">Accéder</button>
+    <footer class="py-20 bg-black border-t border-white/5 relative z-10">
+        <div class="max-w-7xl mx-auto px-10 grid md:grid-cols-3 gap-12 text-center md:text-left">
+            <div>
+                <p class="text-gold font-bold text-[10px] uppercase tracking-widest mb-4">Siège Social</p>
+                <p class="text-sm opacity-40">134 Rue de Paros<br>Ville de Paros</p>
+            </div>
+            <div class="text-center">
+                <img src="https://image2url.com/r2/default/images/1774658704727-764cccce-eee7-41c4-a48c-90c16f0acc69.png" class="h-12 mx-auto mb-4 opacity-50">
+                <p class="text-[9px] tracking-[4px] opacity-20 uppercase">Arcadia Prestige © 2026</p>
+            </div>
+            <div class="md:text-right">
+                <p class="text-gold font-bold text-[10px] uppercase tracking-widest mb-4">Ligne Directe</p>
+                <p class="text-sm opacity-40">06 29 07 00 34</p>
             </div>
         </div>
-    </div>
+    </footer>
 
     <div id="chatModal" class="modal">
         <div class="glass p-8 w-full max-w-lg flex flex-col h-[70vh] relative">
             <button onclick="toggleModal('chatModal')" class="absolute top-6 right-6 opacity-30 text-2xl hover:opacity-100 transition">&times;</button>
             <h2 id="chatHeader" class="text-xl font-serif text-gold mb-6 italic">Discussion</h2>
-            <div id="chatBox" class="flex-1 overflow-y-auto pr-4 mb-6 flex flex-col scroll-smooth"></div>
+            <div id="chatBox" class="flex-1 overflow-y-auto pr-4 mb-6 flex flex-col"></div>
             <div class="flex gap-3">
                 <input type="text" id="chatInput" placeholder="Répondre..." class="input-arcadia">
-                <button id="sendChatBtn" class="bg-gold text-black px-6 rounded-xl font-bold hover:scale-105 transition">↑</button>
+                <button id="sendChatBtn" class="bg-gold text-black px-6 rounded-xl font-bold">↑</button>
             </div>
         </div>
     </div>
-
-    <div id="ordersClientModal" class="modal"><div class="glass p-10 w-full max-w-2xl relative"><button onclick="toggleModal('ordersClientModal')" class="absolute top-6 right-6 opacity-30 text-2xl">&times;</button><h2 class="text-2xl font-serif text-gold mb-8 italic text-center">Mes Dossiers</h2><div id="clientOrdersList" class="space-y-4 max-h-[60vh] overflow-y-auto"></div></div></div>
-    <div id="registerModal" class="modal"><div class="glass p-10 w-full max-w-md relative"><button onclick="toggleModal('registerModal')" class="absolute top-6 right-6 opacity-30 text-2xl">&times;</button><h2 class="text-2xl font-serif text-gold mb-6 italic">Inscription</h2><div class="space-y-4"><input type="text" id="regNom" placeholder="Nom" class="input-arcadia"><input type="text" id="regTel" placeholder="Téléphone" class="input-arcadia"><input type="text" id="regRP" placeholder="Pseudo RP" class="input-arcadia"><input type="password" id="regPass" placeholder="Mot de passe" class="input-arcadia"><button onclick="handleRegister()" class="w-full py-4 btn-premium rounded-xl">Rejoindre</button></div></div></div>
-    <div id="loginModal" class="modal"><div class="glass p-10 w-full max-w-md relative"><button onclick="toggleModal('loginModal')" class="absolute top-6 right-6 opacity-30 text-2xl">&times;</button><h2 class="text-2xl font-serif text-gold mb-6 italic">Connexion</h2><div class="space-y-4"><input type="text" id="logTel" placeholder="Téléphone" class="input-arcadia"><input type="password" id="logPass" placeholder="Mot de passe" class="input-arcadia"><button onclick="handleLogin()" class="w-full py-4 btn-premium rounded-xl">Entrer</button></div></div></div>
 
     <div id="infoModal" class="modal" onclick="closeModal()">
         <div class="glass max-w-6xl w-full p-12 relative overflow-y-auto max-h-[90vh]" onclick="event.stopPropagation()">
@@ -138,6 +164,11 @@
             <div id="modalContent" class="grid md:grid-cols-2 gap-10"></div>
         </div>
     </div>
+
+    <div id="staffLoginModal" class="modal"><div class="glass p-12 w-full max-w-sm text-center"><h2 class="text-xl font-serif text-gold mb-6">Terminal Admin</h2><input type="password" id="staffPassInput" class="input-arcadia text-center mb-6" placeholder="Clé Arcadia"><button onclick="handleStaffLogin()" class="w-full py-3 btn-premium rounded-xl">Entrer</button></div></div>
+    <div id="ordersClientModal" class="modal"><div class="glass p-10 w-full max-w-2xl relative"><button onclick="toggleModal('ordersClientModal')" class="absolute top-6 right-6 opacity-30 text-2xl">&times;</button><h2 class="text-2xl font-serif text-gold mb-8 italic text-center">Mes Dossiers</h2><div id="clientOrdersList" class="space-y-4"></div></div></div>
+    <div id="registerModal" class="modal"><div class="glass p-10 w-full max-w-md relative"><button onclick="toggleModal('registerModal')" class="absolute top-6 right-6 opacity-30 text-2xl">&times;</button><h2 class="text-2xl font-serif text-gold mb-6 italic text-center">Inscription</h2><div class="space-y-4"><input type="text" id="regNom" placeholder="Nom" class="input-arcadia"><input type="text" id="regTel" placeholder="Téléphone" class="input-arcadia"><input type="text" id="regRP" placeholder="Pseudo RP" class="input-arcadia"><input type="password" id="regPass" placeholder="Mot de passe" class="input-arcadia"><button onclick="handleRegister()" class="w-full py-4 btn-premium rounded-xl">Rejoindre</button></div></div></div>
+    <div id="loginModal" class="modal"><div class="glass p-10 w-full max-w-md relative"><button onclick="toggleModal('loginModal')" class="absolute top-6 right-6 opacity-30 text-2xl">&times;</button><h2 class="text-2xl font-serif text-gold mb-6 italic text-center">Connexion</h2><div class="space-y-4"><input type="text" id="logTel" placeholder="Téléphone" class="input-arcadia"><input type="password" id="logPass" placeholder="Mot de passe" class="input-arcadia"><button onclick="handleLogin()" class="w-full py-4 btn-premium rounded-xl">Entrer</button></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script type="module">
@@ -148,7 +179,10 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        particlesJS("particles-js", {"particles":{"number":{"value":40},"color":{"value":"#b38e44"},"opacity":{"value":0.2},"size":{"value":1},"move":{"enable":true,"speed":0.8,"direction":"top"}}});
+        // Son de notification
+        const audioNotif = new Audio('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3');
+
+        particlesJS("particles-js", {"particles":{"number":{"value":25},"color":{"value":"#b38e44"},"opacity":{"value":0.1},"size":{"value":1},"move":{"enable":true,"speed":0.5,"direction":"top"}}});
 
         window.toggleModal = (id) => document.getElementById(id).classList.toggle('active');
         window.closeModal = () => document.getElementById('infoModal').classList.remove('active');
@@ -162,7 +196,9 @@
         // --- AUTH ---
         window.handleRegister = async () => {
             const data = { nom: document.getElementById('regNom').value, tel: document.getElementById('regTel').value, rp: document.getElementById('regRP').value, pass: document.getElementById('regPass').value };
-            await set(ref(db, 'users/' + data.tel), data); location.reload();
+            await set(ref(db, 'users/' + data.tel), data);
+            sessionStorage.setItem('userArcadia', JSON.stringify(data));
+            location.reload();
         };
         window.handleLogin = async () => {
             const snap = await get(child(ref(db), `users/${document.getElementById('logTel').value}`));
@@ -172,28 +208,34 @@
         window.handleStaffLogin = () => { if(document.getElementById('staffPassInput').value === "Immo30") { sessionStorage.setItem('isStaffArcadia', 'true'); location.reload(); } };
         window.logoutStaff = () => { sessionStorage.removeItem('isStaffArcadia'); location.reload(); };
 
-        // --- COMMANDES ---
-        window.passerCommande = (item, prix) => {
-            if(!user) return toggleModal('loginModal');
-            const order = { uid: user.tel, rp: user.rp, service: item, prix: prix, status: 'en-attente', lastMsgRole: 'client', unread: true };
-            push(ref(db, 'orders'), order).then(() => alert("Demande envoyée au staff Arcadia."));
-        };
-
-        // --- MESSAGERIE AVEC NOTIFS ---
+        // --- CHAT SYSTEM ---
         let currentOrderId = null;
         window.openChat = (orderId, title) => {
             currentOrderId = orderId;
             document.getElementById('chatHeader').innerText = title;
-            update(ref(db, `orders/${orderId}`), { unread: false }); // On marque comme lu
+            update(ref(db, `orders/${orderId}`), { unread: false });
             toggleModal('chatModal');
             onValue(ref(db, `orders/${orderId}/chat`), (snap) => {
                 const box = document.getElementById('chatBox');
+                const scrollPos = box.scrollTop;
                 box.innerHTML = "";
                 Object.values(snap.val() || {}).forEach(m => {
                     const side = m.role === 'staff' ? 'msg-staff' : 'msg-client';
                     box.innerHTML += `<div class="chat-msg ${side}">${m.text}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
+            });
+        };
+
+        // --- COMMANDES (CHAT IMMEDIAT) ---
+        window.passerCommande = (item, prix) => {
+            if(!user) return toggleModal('loginModal');
+            const newOrderRef = push(ref(db, 'orders'));
+            const orderData = { uid: user.tel, rp: user.rp, service: item, prix: prix, status: 'en-attente', lastMsgRole: 'client', unread: true, timestamp: Date.now() };
+            
+            set(newOrderRef, orderData).then(() => {
+                closeModal(); // Ferme le catalogue
+                openChat(newOrderRef.key, item); // Ouvre le chat direct
             });
         };
 
@@ -206,27 +248,28 @@
             input.value = "";
         };
 
-        // --- REAL-TIME DATA ---
+        // --- REAL-TIME & SOUND NOTIFS ---
         onValue(ref(db, 'orders'), (snap) => {
             const staffCont = document.getElementById('orderContainer');
             const clientCont = document.getElementById('clientOrdersList');
             staffCont.innerHTML = ""; clientCont.innerHTML = "";
             
             Object.entries(snap.val() || {}).reverse().forEach(([id, o]) => {
+                const isNewMsg = o.unread && ((isStaff && o.lastMsgRole === 'client') || (!isStaff && o.lastMsgRole === 'staff'));
+                if(isNewMsg && document.hidden === false) { audioNotif.play().catch(()=>{}); }
+
                 const badge = o.status === 'validé' ? 'status-valid' : 'status-pending';
-                // Calcul de la notification : unread est vrai ET le dernier message n'est pas nous
-                const showNotif = o.unread && ((isStaff && o.lastMsgRole === 'client') || (!isStaff && o.lastMsgRole === 'staff'));
-                const notifClass = showNotif ? 'notification-ping' : '';
+                const notifClass = isNewMsg ? 'notification-ping' : '';
 
                 if(isStaff) {
                     staffCont.innerHTML += `
                     <div class="glass p-5 border border-white/5">
-                        <div class="flex justify-between mb-2"><p class="text-[10px] font-bold text-gold">${o.rp}</p><span class="${badge} status-badge">${o.status}</span></div>
-                        <p class="text-[11px] opacity-40 mb-4">${o.service}</p>
+                        <div class="flex justify-between mb-2"><p class="text-[10px] font-bold text-gold uppercase">${o.rp}</p><span class="${badge} status-badge">${o.status}</span></div>
+                        <p class="text-[11px] opacity-60 mb-4">${o.service}</p>
                         <div class="flex gap-2">
-                            <button onclick="openChat('${id}', '${o.service}')" class="${notifClass} text-[8px] bg-white/10 px-4 py-2 rounded uppercase font-bold">Messages</button>
+                            <button onclick="openChat('${id}', '${o.service}')" class="${notifClass} text-[8px] bg-white/10 px-4 py-2 rounded uppercase font-bold">Répondre</button>
                             <button onclick="update(ref(db, 'orders/${id}'), {status:'validé'})" class="text-[8px] bg-green-500/20 text-green-500 px-4 py-2 rounded font-bold">VALIDER</button>
-                            <button onclick="remove(ref(db, 'orders/${id}'))" class="text-[8px] opacity-20 ml-auto">ARCHIVER</button>
+                            <button onclick="remove(ref(db, 'orders/${id}'))" class="text-[8px] opacity-10 ml-auto">Supprimer</button>
                         </div>
                     </div>`;
                 }
@@ -235,7 +278,7 @@
                     clientCont.innerHTML += `
                     <div class="glass p-5 border border-white/5 flex justify-between items-center">
                         <div><p class="text-xs font-bold uppercase">${o.service}</p><span class="${badge} status-badge mt-2 inline-block">${o.status}</span></div>
-                        <button onclick="openChat('${id}', '${o.service}')" class="${notifClass} btn-premium px-6 py-3 rounded-xl text-[9px]">Messages</button>
+                        <button onclick="openChat('${id}', '${o.service}')" class="${notifClass} btn-premium px-6 py-2 rounded-xl text-[9px]">Messages</button>
                     </div>`;
                 }
             });
@@ -249,15 +292,15 @@
             if(category === 'services') {
                 [{t:"Alarme N1", p:"850.000 €"}, {t:"Alarme N2", p:"2.000.000 €"}, {t:"Alarme N3", p:"5.000.000 €"}, {t:"Extension", p:"10.000.000 €"}].forEach(i => {
                     content.innerHTML += `<div class="p-8 glass border border-white/5 text-center">
-                        <h4 class="font-bold text-gold uppercase mb-2">${i.t}</h4><p class="mb-6 opacity-50 text-sm font-bold">${i.p}</p>
-                        <button onclick="passerCommande('${i.t}', '${i.p}')" class="w-full py-3 btn-premium rounded-xl text-[9px]">Réserver</button>
+                        <h4 class="font-bold text-gold uppercase mb-2">${i.t}</h4><p class="mb-6 opacity-40 text-sm font-bold italic">${i.p}</p>
+                        <button onclick="passerCommande('${i.t}', '${i.p}')" class="w-full py-3 btn-premium rounded-xl text-[9px]">Commander</button>
                     </div>`;
                 });
             } else {
                 onValue(ref(db, 'listings'), (snap) => {
                     Object.entries(snap.val() || {}).filter(([id, i]) => i.cat === category).forEach(([id, i]) => {
-                        content.innerHTML += `<div class="glass border border-white/5 overflow-hidden p-8 text-center">
-                            <h4 class="font-bold text-gold uppercase mb-2">${i.title}</h4><p class="mb-6 opacity-50 text-sm font-bold">${i.price}</p>
+                        content.innerHTML += `<div class="glass border border-white/5 p-8 text-center">
+                            <h4 class="font-bold text-gold uppercase mb-2">${i.title}</h4><p class="mb-6 opacity-40 text-sm font-bold italic">${i.price}</p>
                             <button onclick="passerCommande('${i.title}', '${i.price}')" class="w-full py-3 btn-premium rounded-xl text-[9px]">Réserver</button>
                         </div>`;
                     });
@@ -268,7 +311,7 @@
 
         document.getElementById('btnPublish').onclick = () => {
             const val = { title: document.getElementById('postTitle').value, price: document.getElementById('postPrice').value, cat: document.getElementById('postCat').value, desc: document.getElementById('postDesc').value };
-            push(ref(db, 'listings'), val).then(() => { alert("Publié !"); location.reload(); });
+            push(ref(db, 'listings'), val).then(() => { alert("Offre publiée !"); location.reload(); });
         };
     </script>
 </body>
