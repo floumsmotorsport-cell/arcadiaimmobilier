@@ -111,7 +111,7 @@
                 <div class="service-card p-10 glass-card h-full flex flex-col justify-center border-white/10">
                     <p class="text-4xl font-serif italic mb-4">+20 000 Places</p>
                     <p class="text-gold font-bold text-xl mb-6">10 000 000 €</p>
-                    <button onclick="openOrderModal()" class="btn-gold py-4 text-[10px] uppercase">Améliorer ma société</button>
+                    <button onclick="openOrderModal('Amélioration Stockage')" class="btn-gold py-4 text-[10px] uppercase">Améliorer ma société</button>
                 </div>
             </div>
         </div>
@@ -134,7 +134,7 @@
                 <p class="text-[10px] uppercase tracking-widest text-gold mt-6">Description</p>
                 <p id="detDesc" class="text-gray-400 text-sm leading-relaxed"></p>
             </div>
-            <button onclick="openOrderModal()" class="btn-gold w-full py-4 text-xs">Faire une offre</button>
+            <button id="detOfferBtn" class="btn-gold w-full py-4 text-xs">Faire une offre</button>
         </div>
     </div>
 </div>
@@ -181,15 +181,15 @@
     <div class="max-w-md w-full glass-card p-10 border-gold/20">
         <button onclick="document.getElementById('orderModal').classList.add('hidden')" class="absolute top-6 right-6 opacity-30">&times;</button>
         <h2 class="text-3xl font-serif italic mb-8 text-center text-gold">Contact Arcadia</h2>
-        <form class="space-y-4" onsubmit="event.preventDefault(); alert('Demande transmise.'); this.reset(); document.getElementById('orderModal').classList.add('hidden');">
-            <input type="text" placeholder="NOM COMPLET" class="arcadia-input" required>
-            <select class="arcadia-input" required>
+        <form class="space-y-4" id="orderForm">
+            <input type="text" id="orderName" placeholder="NOM COMPLET" class="arcadia-input" required>
+            <select id="orderService" class="arcadia-input" required>
                 <option value="" disabled selected>SERVICE</option>
-                <option>Immobilier</option>
-                <option>Sécurité</option>
-                <option>Stockage</option>
+                <option value="Immobilier">Immobilier</option>
+                <option value="Sécurité">Sécurité</option>
+                <option value="Stockage">Stockage</option>
             </select>
-            <textarea placeholder="MESSAGE..." class="arcadia-input h-24"></textarea>
+            <textarea id="orderMsg" placeholder="MESSAGE..." class="arcadia-input h-24"></textarea>
             <button type="submit" class="btn-gold w-full py-4 text-xs">Envoyer</button>
         </form>
     </div>
@@ -242,6 +242,68 @@
         localStorage.setItem('arcadia_v4', JSON.stringify(listings));
     }
 
+    // ENVOI DISCORD WEBHOOK
+    document.getElementById('orderForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const webhookURL = "https://discord.com/api/webhooks/1429322898367315968/im9bCVJmDKWPmcWMyTtyn4MaqOOC03hBWadHq7eoj7BXIGfhBGE3-fD3LFlr1pVU6WhA";
+        
+        const data = {
+            username: "Arcadia Bot",
+            avatar_url: "https://i.imgur.com/4E6v9RY.png",
+            embeds: [{
+                title: "📩 Nouvelle Demande / Offre",
+                color: 11767364, 
+                fields: [
+                    { name: "Client", value: document.getElementById('orderName').value, inline: true },
+                    { name: "Service", value: document.getElementById('orderService').value, inline: true },
+                    { name: "Message", value: document.getElementById('orderMsg').value || "Aucun message" }
+                ],
+                footer: { text: "Arcadia | L'Héritage du Luxe" },
+                timestamp: new Date()
+            }]
+        };
+
+        fetch(webhookURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(() => {
+            alert("Votre offre a été transmise à la direction d'Arcadia.");
+            document.getElementById('orderModal').classList.add('hidden');
+            this.reset();
+        }).catch(err => {
+            alert("Erreur lors de l'envoi.");
+            console.error(err);
+        });
+    });
+
+    function showDetails(id) {
+        const v = listings.find(l => l.id == id);
+        document.getElementById('detTitle').innerText = v.title;
+        document.getElementById('detLoc').innerText = v.loc || "Paros";
+        document.getElementById('detPrice').innerText = v.price.toLocaleString() + " €";
+        document.getElementById('detDesc').innerText = v.desc || "Pas de description.";
+        document.getElementById('detImg').src = v.img;
+        document.getElementById('detBadge').innerText = v.status;
+        document.getElementById('detBadge').className = `status-badge bg-${v.status}`;
+        
+        // Pré-remplir le message si on clique sur "Faire une offre"
+        document.getElementById('detOfferBtn').onclick = () => {
+            openOrderModal(`Offre pour : ${v.title}`);
+        };
+
+        document.getElementById('detailModal').classList.remove('hidden');
+    }
+
+    function openOrderModal(context = "") {
+        if(context) {
+            document.getElementById('orderMsg').value = context + "\n-------------------\n";
+            document.getElementById('orderService').value = "Immobilier";
+        }
+        document.getElementById('orderModal').classList.remove('hidden');
+    }
+
     function saveListing() {
         const id = document.getElementById('editId').value;
         const title = document.getElementById('vTitle').value;
@@ -264,7 +326,7 @@
         render(); closeStaffModal(); resetForm();
     }
 
-    // Gestion Fichiers / Preview
+    // Gestion Fichiers / Preview Admin
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
     dropZone.onclick = () => fileInput.click();
@@ -288,18 +350,6 @@
         document.getElementById('prePrice').innerText = (parseInt(document.getElementById('vPrice').value) || 0).toLocaleString() + " €";
         const img = document.getElementById('vImg').value;
         if(img) { document.getElementById('preImg').src = img; document.getElementById('preImg').classList.remove('hidden'); }
-    }
-
-    function showDetails(id) {
-        const v = listings.find(l => l.id == id);
-        document.getElementById('detTitle').innerText = v.title;
-        document.getElementById('detLoc').innerText = v.loc || "Paros";
-        document.getElementById('detPrice').innerText = v.price.toLocaleString() + " €";
-        document.getElementById('detDesc').innerText = v.desc || "Pas de description.";
-        document.getElementById('detImg').src = v.img;
-        document.getElementById('detBadge').innerText = v.status;
-        document.getElementById('detBadge').className = `status-badge bg-${v.status}`;
-        document.getElementById('detailModal').classList.remove('hidden');
     }
 
     function deleteListing(id) {
@@ -330,7 +380,6 @@
 
     window.closeDetailModal = () => document.getElementById('detailModal').classList.add('hidden');
     window.closeStaffModal = () => document.getElementById('staffModal').classList.add('hidden');
-    window.openOrderModal = () => document.getElementById('orderModal').classList.remove('hidden');
     window.checkStaffAccess = () => { if(prompt("Code Terminal :") === "Immo30") document.getElementById('staffModal').classList.remove('hidden'); };
 
     document.addEventListener('mousemove', e => {
