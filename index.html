@@ -9,62 +9,93 @@
         body { background:#050505; color:white; font-family:'Montserrat', sans-serif; }
         .glass { background:#111; border:1px solid rgba(255,255,255,0.05); border-radius:15px; }
         .input-staff { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:8px; color:white; width:100%; margin-bottom:10px; font-size:12px; }
-        .btn-gold { background:#b38e44; color:black; font-weight:bold; padding:10px; border-radius:8px; text-transform:uppercase; font-size:10px; width:100%; cursor: pointer; }
+        .btn-gold { background:#b38e44; color:black; font-weight:bold; padding:10px; border-radius:8px; text-transform:uppercase; font-size:10px; width:100%; cursor: pointer; transition: 0.3s; }
+        .btn-gold:hover { background: #d4af37; transform: scale(1.02); }
+        
         .viz-container { border: 2px solid #10b981; background: rgba(16, 185, 129, 0.05); box-shadow: 0 0 20px rgba(16, 185, 129, 0.1); color: #10b981; }
+        .stat-card { background: rgba(255,255,255,0.02); border-left: 3px solid #b38e44; padding: 15px; border-radius: 8px; }
+        
+        .badge-new { animation: pulse 1.5s infinite; background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 8px; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
         .chat-box { height: 120px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 10px; font-size: 11px; margin-top: 10px; border-radius: 8px; }
-        .logo-img { height: 50px; }
-        /* Masquage par défaut des outils staff */
+        .logo-img { height: 60px; }
         .staff-only { display: none; }
+        .img-preview { width: 100%; height: 80px; object-fit: cover; border-radius: 8px; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
     <div id="mainContent" class="max-w-7xl mx-auto">
         <header class="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-6">
                 <img src="https://image2url.com/r2/default/images/1774658704727-764cccce-eee7-41c4-a48c-90c16f0acc69.png" class="logo-img">
-                <h1 class="text-2xl font-serif italic text-gold">Staff Console</h1>
+                <div>
+                    <h1 class="text-2xl font-serif italic text-white tracking-tighter">Arcadia <span class="text-[#b38e44]">Management</span></h1>
+                    <p class="text-[9px] opacity-40 uppercase tracking-[3px]">High-End Real Estate Control</p>
+                </div>
             </div>
+            
             <div class="flex gap-4 items-center">
-                <button id="staffLoginBtn" onclick="checkStaffCode()" class="px-4 py-2 rounded text-[9px] font-bold bg-white/5 border border-white/10">ACCÈS STAFF</button>
+                <button id="staffLoginBtn" onclick="checkStaffCode()" class="px-6 py-2 rounded-full text-[10px] font-bold bg-white text-black hover:bg-[#b38e44] transition">ACCÈS STAFF</button>
                 <div id="staffStatus" class="staff-only flex gap-4 items-center">
-                    <button id="statusToggle" class="px-4 py-2 rounded text-[9px] font-bold border border-white/10">CHARGEMENT...</button>
+                    <button id="statusToggle" class="px-4 py-2 rounded text-[9px] font-bold border border-white/10 tracking-widest">---</button>
                     <button onclick="logoutStaff()" class="text-[9px] text-red-500 underline">Déconnexion</button>
                 </div>
             </div>
         </header>
 
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+            <div class="stat-card">
+                <p class="text-[9px] opacity-50 uppercase mb-1">Chiffre d'Affaires Est. (Missions)</p>
+                <h2 id="statRevenue" class="text-xl font-bold text-[#b38e44]">0 $</h2>
+            </div>
+            <div class="stat-card">
+                <p class="text-[9px] opacity-50 uppercase mb-1">Dossiers en attente</p>
+                <h2 id="statPending" class="text-xl font-bold text-red-500">0</h2>
+            </div>
+            <div class="stat-card">
+                <p class="text-[9px] opacity-50 uppercase mb-1">Missions Validées</p>
+                <h2 id="statSuccess" class="text-xl font-bold text-green-500">0</h2>
+            </div>
+            <div class="stat-card">
+                <p class="text-[9px] opacity-50 uppercase mb-1">Taux de conversion</p>
+                <h2 id="statConv" class="text-xl font-bold text-white">0%</h2>
+            </div>
+        </div>
+
         <div class="grid lg:grid-cols-4 gap-8">
             <div class="space-y-6">
                 <div class="glass p-6 viz-container staff-only" id="liveViz">
-                    <h3 class="text-[10px] uppercase font-bold mb-4 tracking-widest text-green-400">Aperçu Réponse Client</h3>
-                    <p class="text-[9px] opacity-60 mb-2">Destinataire : <span id="vizTarget" class="font-bold text-white"></span></p>
+                    <h3 class="text-[10px] uppercase font-bold mb-4 tracking-widest text-green-400">Preview Réponse Client</h3>
+                    <p class="text-[9px] opacity-60 mb-2">Cible : <span id="vizTarget" class="font-bold text-white"></span></p>
                     <div class="text-xs italic bg-black/40 p-4 rounded-lg border border-green-500/30 min-h-[60px] text-white" id="vizContent"></div>
                 </div>
 
                 <div class="glass p-6 staff-only">
-                    <h3 class="text-gold text-[10px] uppercase font-bold mb-4 tracking-widest">Nouveau Post</h3>
-                    <input type="text" id="bTitle" placeholder="Titre" class="input-staff">
-                    <input type="text" id="bPrice" placeholder="Prix ou Date" class="input-staff">
+                    <h3 class="text-[#b38e44] text-[10px] uppercase font-bold mb-4 tracking-widest">Nouveau Post</h3>
+                    <input type="text" id="bTitle" placeholder="Nom du bien / Titre" class="input-staff">
+                    <input type="text" id="bPrice" placeholder="Prix (ex: 20000)" class="input-staff">
                     <select id="bCat" class="input-staff">
-                        <option value="Villa">🏠 Villa</option>
                         <option value="Manoir">🏰 Manoir</option>
-                        <option value="Service">🛡️ Service</option>
+                        <option value="Villa">🏠 Villa</option>
+                        <option value="Service">🛡️ Service Exclusive</option>
                         <option value="Article">📰 Article de Presse</option>
                     </select>
-                    <textarea id="bDesc" placeholder="Description..." class="input-staff h-20"></textarea>
-                    <input type="file" id="bFiles" class="text-[10px] mb-4" multiple>
+                    <textarea id="bDesc" placeholder="Description..." class="input-staff h-24"></textarea>
+                    <input type="file" id="bFiles" class="text-[10px] mb-4 text-white/40" multiple>
                     <button id="btnPublish" class="btn-gold">Publier</button>
                 </div>
-                
-                <div id="publicNotice" class="glass p-6 text-center opacity-50">
-                    <p class="text-[10px]">Mode Consultation Publique</p>
+
+                <div class="glass p-6">
+                    <h3 class="text-white/30 text-[9px] uppercase mb-4 tracking-widest">Inventaire Site</h3>
+                    <div id="inventoryList" class="grid grid-cols-2 gap-2 max-h-80 overflow-auto pr-2"></div>
                 </div>
             </div>
 
             <div class="lg:col-span-3">
                 <div class="glass p-8">
-                    <h3 class="text-gold text-[10px] uppercase font-bold mb-8 tracking-widest">Dossiers Clients</h3>
+                    <h3 class="text-[#b38e44] text-[10px] uppercase font-bold mb-8 tracking-widest">Dossiers Clients & Management</h3>
                     <div id="orderContainer" class="space-y-6"></div>
                 </div>
             </div>
@@ -79,91 +110,108 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- GESTION ACCÈS STAFF ---
+        // AUTH
         window.checkStaffCode = () => {
-            const code = prompt("Code Employé :");
-            if(code === "Immo30") {
-                sessionStorage.setItem('isStaff', 'true');
-                applyStaffMode();
-            } else { alert("Code incorrect."); }
+            if(prompt("Code Identification Arcadia :") === "Immo30") { sessionStorage.setItem('isStaff', 'true'); location.reload(); }
         };
+        window.logoutStaff = () => { sessionStorage.removeItem('isStaff'); location.reload(); };
 
-        window.logoutStaff = () => {
-            sessionStorage.removeItem('isStaff');
-            location.reload();
-        };
-
-        function applyStaffMode() {
-            if(sessionStorage.getItem('isStaff') === 'true') {
-                document.querySelectorAll('.staff-only').forEach(el => el.style.display = 'block');
-                document.getElementById('staffLoginBtn').style.display = 'none';
-                document.getElementById('publicNotice').style.display = 'none';
-            }
+        const isStaff = sessionStorage.getItem('isStaff') === 'true';
+        if(isStaff) {
+            document.querySelectorAll('.staff-only').forEach(el => el.style.display = 'block');
+            document.getElementById('staffLoginBtn').style.display = 'none';
         }
-        applyStaffMode();
 
-        // --- FIREBASE LOGIC ---
+        // --- STATISTIQUES LOGIC ---
+        function updateStats(orders) {
+            let revenue = 0; let pending = 0; let success = 0; let total = 0;
+            Object.values(orders).forEach(o => {
+                total++;
+                if(o.status === 'En attente') pending++;
+                if(o.status === 'Validé') {
+                    success++;
+                    revenue += parseInt(o.prix?.replace(/[^0-9]/g, '') || 0);
+                }
+            });
+            document.getElementById('statRevenue').innerText = revenue.toLocaleString() + " $";
+            document.getElementById('statPending').innerText = pending;
+            document.getElementById('statSuccess').innerText = success;
+            document.getElementById('statConv').innerText = total > 0 ? Math.round((success/total)*100) + "%" : "0%";
+        }
+
+        // --- FIREBASE READ ---
         const statusBtn = document.getElementById('statusToggle');
         onValue(ref(db, 'studioStatus'), (snap) => {
             const isOpen = snap.val();
-            statusBtn.innerText = isOpen ? "OUVERT" : "FERMÉ";
+            statusBtn.innerText = isOpen ? "STUDIO : OUVERT" : "STUDIO : FERMÉ";
             statusBtn.style.color = isOpen ? "#10b981" : "#ef4444";
         });
-        statusBtn.onclick = () => set(ref(db, 'studioStatus'), statusBtn.innerText !== "OUVERT");
+        statusBtn.onclick = () => { if(isStaff) set(ref(db, 'studioStatus'), statusBtn.innerText.includes("FERMÉ")); };
+
+        onValue(ref(db, 'listings'), (snap) => {
+            const data = snap.val();
+            const inv = document.getElementById('inventoryList');
+            inv.innerHTML = "";
+            if(data) Object.entries(data).forEach(([id, it]) => {
+                inv.innerHTML += `<div class="relative border border-white/5 p-2 rounded bg-white/5">
+                    <img src="${it.images?.[0] || ''}" class="img-preview">
+                    <p class="text-[7px] truncate">${it.title}</p>
+                    ${isStaff ? `<button onclick="deleteListing('${id}')" class="absolute top-1 right-1 bg-red-500 text-[8px] px-1">X</button>` : ''}
+                </div>`;
+            });
+        });
 
         onValue(ref(db, 'orders'), (snap) => {
-            const data = snap.val();
+            const data = snap.val() || {};
+            updateStats(data);
             const container = document.getElementById('orderContainer');
-            if(!data) { container.innerHTML = "Aucune demande."; return; }
             let html = "";
-            const isStaff = sessionStorage.getItem('isStaff') === 'true';
-
             Object.entries(data).reverse().forEach(([id, ord]) => {
+                const needsResponse = !ord.reponseStaff;
                 html += `
-                <div class="glass p-6 border border-white/5">
-                    <div class="flex justify-between items-start">
+                <div class="glass p-6 border border-white/5 hover:border-[#b38e44]/30 transition">
+                    <div class="flex justify-between items-start gap-4">
                         <div class="flex-1">
-                            <p class="font-bold text-sm">${ord.prenom} ${ord.nom} <span class="text-gold">#${ord.tel}</span></p>
-                            <p class="text-[10px] uppercase opacity-50">${ord.service}</p>
-                            <div class="chat-box">
-                                <p class="text-white/40 text-[9px]">Reçu le ${ord.date}</p>
-                                <p class="text-gold mt-2"><b>Staff:</b> ${ord.reponseStaff || 'En attente de traitement...'}</p>
+                            <div class="flex items-center gap-3 mb-2">
+                                ${needsResponse ? '<span class="badge-new">NEW</span>' : ''}
+                                <p class="font-bold text-sm text-white">${ord.prenom} ${ord.nom}</p>
+                                <span class="text-[10px] opacity-40">#${ord.tel}</span>
                             </div>
-                            ${isStaff ? `
-                            <div class="flex mt-2 gap-2">
-                                <input type="text" id="input-${id}" placeholder="Réponse personnalisée..." class="input-staff !mb-0">
-                                <button onclick="sendChat('${id}')" class="bg-gold text-black px-4 rounded font-bold text-[10px]">OK</button>
+                            <p class="text-[10px] text-[#b38e44] mb-4">${ord.service} — ${ord.prix || 'Sur mesure'}</p>
+                            <div class="chat-box">
+                                <p class="text-white/20 text-[9px] border-b border-white/5 pb-1">${ord.date}</p>
+                                <p class="text-[#b38e44] text-xs mt-2"><b>Staff:</b> ${ord.reponseStaff || 'En attente...'}</p>
+                            </div>
+                            ${isStaff ? `<div class="flex mt-3 gap-2">
+                                <input type="text" id="input-${id}" placeholder="Message manuel..." class="input-staff !mb-0 text-[10px]">
+                                <button onclick="sendChat('${id}')" class="bg-[#b38e44] text-black px-4 rounded font-bold text-[10px]">OK</button>
                             </div>` : ''}
                         </div>
-                        ${isStaff ? `
-                        <div class="flex flex-col gap-2 w-48 ml-6">
+                        ${isStaff ? `<div class="flex flex-col gap-2 w-56">
                             <select onchange="previewReply('${id}', '${ord.prenom}', this.value)" class="input-staff text-[10px]">
-                                <option>Action rapide...</option>
-                                <option value="✅ Demande acceptée. Un agent vous contactera en ville.">Valider</option>
-                                <option value="📅 RDV fixé. Merci de vous présenter au studio prochainement.">RDV</option>
-                                <option value="❌ Demande refusée.">Refuser</option>
+                                <option>Choisir une réponse...</option>
+                                <option value="✅ Demande acceptée. Un agent va prendre contact avec vous.">✅ ACCEPTER</option>
+                                <option value="📅 RDV confirmé au Studio Arcadia.">📅 RDV FIXÉ</option>
+                                <option value="❌ Demande refusée. Nos critères de sélection ne sont pas remplis.">❌ REFUSER</option>
                             </select>
-                            <button onclick="confirmStatusUpdate('${id}')" id="confirm-${id}" class="bg-green-500 text-black py-2 px-3 rounded text-[9px] font-bold" style="display:none;">CONFIRMER L'ENVOI</button>
-                            <button onclick="deleteOrder('${id}')" class="text-[9px] opacity-30 mt-4 text-red-500">Archiver</button>
+                            <button onclick="confirmStatusUpdate('${id}')" id="confirm-${id}" class="bg-green-600 text-white py-2 rounded text-[9px] font-bold" style="display:none;">CONFIRMER L'ENVOI</button>
+                            <button onclick="deleteOrder('${id}')" class="text-[8px] opacity-30 mt-4 hover:text-red-500">ARCHIVER</button>
                         </div>` : ''}
                     </div>
                 </div>`;
             });
-            container.innerHTML = html;
+            container.innerHTML = html || "<p class='opacity-20'>Aucun dossier.</p>";
         });
 
-        // --- ACTIONS STAFF ---
-        let currentPendingId = null;
-        let currentPendingText = null;
-
+        // --- ACTIONS ---
+        let currentPendingId = null; let currentPendingText = null;
         window.previewReply = (id, clientName, text) => {
             const viz = document.getElementById('liveViz');
-            if(text.includes("Action")) { viz.style.display = 'none'; return; }
+            if(text.includes("Choisir")) { viz.style.display = 'none'; return; }
             viz.style.display = 'block';
             document.getElementById('vizTarget').innerText = clientName;
             document.getElementById('vizContent').innerText = text;
-            currentPendingId = id;
-            currentPendingText = text;
+            currentPendingId = id; currentPendingText = text;
             document.querySelectorAll('[id^="confirm-"]').forEach(b => b.style.display = 'none');
             document.getElementById(`confirm-${id}`).style.display = 'block';
         };
@@ -180,6 +228,7 @@
             update(ref(db, `orders/${id}`), { reponseStaff: msg, status: 'Répondu' });
         };
         window.deleteOrder = (id) => { if(confirm("Archiver ?")) remove(ref(db, `orders/${id}`)); };
+        window.deleteListing = (id) => { if(confirm("Supprimer ?")) remove(ref(db, `listings/${id}`)); };
 
         // PUBLICATION
         let currentImgs = [];
