@@ -3,72 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcadia | Paros • Terminal Management</title>
+    <title>Arcadia | Paros • L'Héritage du Luxe</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;700&family=Playfair+Display:italic,wght@700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
         :root { --gold: #b38e44; --black: #050505; }
-        body { background: var(--black); color: white; font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+        body { background: var(--black); color: white; font-family: 'Montserrat', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
         .font-serif { font-family: 'Playfair Display', serif; }
-
-        .btn-gold { background: #b38e44; color: black; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; border-radius: 50px; }
-        .btn-gold:hover { background: #d4af37; transform: scale(1.02); }
-
-        .arcadia-input { background: #111; border: 1px solid #222; border-radius: 12px; color: white; padding: 15px; width: 100%; outline: none; }
         
-        /* Zone de Drag & Drop */
-        .drop-zone { border: 2px dashed #333; border-radius: 15px; padding: 30px; text-align: center; cursor: pointer; transition: 0.3s; background: #0c0c0c; }
+        /* Cursor Custom */
+        #cursor { width: 10px; height: 10px; background: var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; }
+        #cursor-follower { width: 45px; height: 45px; border: 1px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.1s ease; }
+
+        .btn-gold { background: linear-gradient(90deg, #8a6d3b, #b38e44, #8a6d3b); background-size: 200% auto; color: black; font-weight: 800; transition: 0.5s; text-align: center; cursor: pointer; border-radius: 50px; }
+        .btn-gold:hover { background-position: right center; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(179,142,68,0.4); }
+
+        .glass-card { background: rgba(15, 15, 15, 0.95); border: 1px solid rgba(179, 142, 68, 0.2); border-radius: 30px; backdrop-filter: blur(15px); overflow: hidden; }
+        
+        /* Form Inputs */
+        .arcadia-input { background: #111; border: 1px solid #222; border-radius: 12px; color: white; padding: 15px; width: 100%; outline: none; }
+        .arcadia-input:focus { border-color: var(--gold); }
+
+        /* Drag & Drop */
+        .drop-zone { border: 2px dashed #333; border-radius: 15px; padding: 25px; text-align: center; cursor: pointer; transition: 0.3s; background: #0c0c0c; }
         .drop-zone.dragover { border-color: var(--gold); background: rgba(179, 142, 68, 0.1); }
 
-        /* Discord Embed Style */
-        .discord-embed { background: #121212; border-left: 4px solid var(--gold); border-radius: 4px; padding: 15px; max-width: 450px; }
-        
-        .record-card { border: 1px solid rgba(179,142,68,0.2); background: linear-gradient(145deg, #0a0a0a, #111); border-radius: 30px; overflow: hidden; }
+        /* Discord Embed */
+        .discord-embed { background: #121212; border-left: 4px solid var(--gold); border-radius: 4px; padding: 15px; max-width: 100%; }
+
+        .status-badge { position: absolute; top: 20px; left: 20px; padding: 6px 15px; border-radius: 20px; font-size: 10px; font-weight: bold; text-transform: uppercase; z-index: 10; }
+        .bg-vendu { background: #ef4444; }
+        .bg-dispo { background: #22c55e; }
     </style>
 </head>
 <body>
 
-<nav class="fixed w-full z-50 p-8 flex justify-between items-center bg-black/80 backdrop-blur-md border-b border-white/5">
+<div id="cursor" class="hidden md:block"></div>
+<div id="cursor-follower" class="hidden md:block"></div>
+
+<nav class="fixed w-full z-50 px-12 py-6 flex justify-between items-center bg-black/80 backdrop-blur-lg border-b border-white/5">
     <div class="flex flex-col">
-        <span class="text-2xl font-serif italic">Arcadia<span class="text-gold">.</span></span>
+        <span class="text-2xl font-serif italic leading-none">Arcadia<span class="text-gold">.</span></span>
         <span class="text-[9px] tracking-[4px] uppercase text-gold">Paros • International</span>
     </div>
     <div class="hidden lg:flex gap-10 items-center">
+        <a href="#propos" class="text-[10px] uppercase tracking-[3px] opacity-60 hover:opacity-100 transition">Présentation</a>
+        <a href="#villas" class="text-[10px] uppercase tracking-[3px] opacity-60 hover:opacity-100 transition">Catalogue</a>
+        <a href="#presse" class="text-[10px] uppercase tracking-[3px] opacity-60 hover:opacity-100 transition">Presse</a>
         <a href="tel:0629070034" class="text-gold font-bold tracking-widest text-xs">06 29 07 00 34</a>
     </div>
-    <button onclick="checkStaffAccess()" class="opacity-30 hover:opacity-100 text-[10px] tracking-widest">ACCÈS TERMINAL</button>
+    <div class="flex items-center gap-6">
+        <button onclick="checkStaffAccess()" class="opacity-10 hover:opacity-100 transition text-[9px]">ADMIN</button>
+        <button onclick="openOrderModal()" class="btn-gold px-8 py-3 text-[10px] uppercase tracking-widest">Commander</button>
+    </div>
 </nav>
 
-<section id="villas" class="pt-40 pb-20 px-10 max-w-7xl mx-auto">
-    <h3 class="text-4xl font-serif italic mb-12">Catalogue & Dernières Ventes</h3>
-    <div id="listingGrid" class="grid md:grid-cols-3 gap-10"></div>
+<section class="h-screen flex items-center justify-center relative overflow-hidden">
+    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075')] bg-cover bg-center opacity-60"></div>
+    <div class="relative z-10 text-center px-4" data-aos="zoom-out">
+        <h2 class="text-gold tracking-[15px] text-[10px] uppercase mb-4 font-bold">L'Excellence à Paros</h2>
+        <h1 class="text-6xl md:text-9xl font-serif italic mb-6">Pureté & Prestige</h1>
+        <div class="mt-12 flex flex-col md:flex-row justify-center gap-6">
+            <button onclick="document.getElementById('villas').scrollIntoView()" class="btn-gold px-12 py-4 text-xs">Explorer le Catalogue</button>
+        </div>
+    </div>
 </section>
 
-<div id="staffModal" class="fixed inset-0 z-[200] bg-black/98 hidden flex items-center justify-center p-4">
-    <div class="w-full max-w-6xl bg-[#080808] border border-white/10 rounded-[30px] h-[90vh] flex flex-col overflow-hidden shadow-2xl">
-        <div class="p-8 border-b border-white/5 flex justify-between items-center">
-            <h3 class="font-serif italic text-xl">● Arcadia Management Terminal <span class="text-[10px] uppercase ml-4 opacity-40">Drag & Drop Enabled</span></h3>
-            <button onclick="closeStaffModal()" class="text-2xl opacity-40">&times;</button>
+<section id="presse" class="py-32 px-10 bg-[#020202]">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="text-gold text-xs uppercase tracking-[10px] mb-16 text-center">Dernières Ventes Records</h2>
+        <div class="grid md:grid-cols-2 gap-10">
+            <div class="glass-card p-12 relative" data-aos="fade-up">
+                <span class="text-gold opacity-10 font-serif text-8xl absolute top-4 right-8 italic">01</span>
+                <h4 class="text-gold text-[10px] uppercase font-bold mb-2">Record GOUV</h4>
+                <p class="text-5xl font-serif italic mb-4">110 000 000 €</p>
+                <p class="text-gray-500 text-sm">Vente historique réalisée en toute discrétion.</p>
+            </div>
+            <div class="glass-card p-12 relative" data-aos="fade-up" data-aos-delay="200">
+                <span class="text-gold opacity-10 font-serif text-8xl absolute top-4 right-8 italic">02</span>
+                <h4 class="text-gold text-[10px] uppercase font-bold mb-2">Villa Syrta</h4>
+                <p class="text-5xl font-serif italic mb-4">128 000 000 €</p>
+                <p class="text-gray-500 text-sm">Le joyau de Paros, acquis par un membre privé.</p>
+            </div>
         </div>
-        
-        <div class="flex flex-1 overflow-hidden">
-            <div class="w-1/2 p-10 overflow-y-auto border-r border-white/5 space-y-6">
+    </div>
+</section>
+
+<section id="villas" class="py-32 px-10">
+    <div class="max-w-7xl mx-auto">
+        <h3 class="text-4xl font-serif italic mb-16">Collection Privée</h3>
+        <div id="listingGrid" class="grid md:grid-cols-3 gap-10"></div>
+    </div>
+</section>
+
+<div id="orderModal" class="fixed inset-0 z-[1000] bg-black/98 hidden flex items-center justify-center p-4 backdrop-blur-2xl">
+    <div class="max-w-xl w-full glass-card p-12 relative">
+        <button onclick="closeOrderModal()" class="absolute top-8 right-8 text-3xl opacity-40 hover:opacity-100">&times;</button>
+        <h2 class="text-4xl font-serif italic mb-10 text-gold text-center">Commander</h2>
+        <form class="space-y-4" onsubmit="event.preventDefault(); alert('Demande transmise.'); closeOrderModal();">
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" placeholder="NOM" class="arcadia-input" required>
+                <input type="text" placeholder="PRÉNOM" class="arcadia-input" required>
+            </div>
+            <input type="tel" value="06 29 07 00 34" class="arcadia-input text-gold font-bold" readonly>
+            <select class="arcadia-input" required>
+                <option value="" disabled selected>SERVICE SOUHAITÉ</option>
+                <option>Achat Immobilier</option>
+                <option>Sécurité (Niveau 1, 2, 3)</option>
+                <option>Amélioration Entreprise (+20k)</option>
+            </select>
+            <textarea placeholder="PRÉCISEZ VOTRE DEMANDE..." class="arcadia-input h-32"></textarea>
+            <button type="submit" class="btn-gold w-full py-5 text-xs mt-4">Confirmer l'amélioration</button>
+        </form>
+    </div>
+</div>
+
+<div id="staffModal" class="fixed inset-0 z-[2000] bg-black hidden flex items-center justify-center p-6">
+    <div class="w-full max-w-6xl h-[90vh] glass-card flex flex-col border-gold/30">
+        <div class="p-6 border-b border-white/10 flex justify-between bg-white/5 items-center">
+            <span class="font-serif italic text-xl text-gold">● Arcadia Control Panel</span>
+            <button onclick="closeStaffModal()" class="text-3xl opacity-40">&times;</button>
+        </div>
+        <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+            <div class="w-full md:w-1/2 p-8 border-r border-white/5 space-y-6 overflow-y-auto">
                 <input type="hidden" id="editId">
                 <input type="text" id="vTitle" placeholder="NOM DU BIEN" class="arcadia-input" oninput="updatePreview()">
                 <input type="number" id="vPrice" placeholder="PRIX (€)" class="arcadia-input" oninput="updatePreview()">
                 <select id="vStatus" class="arcadia-input" onchange="updatePreview()">
-                    <option>Disponible</option>
-                    <option>Vendu</option>
+                    <option value="dispo">Disponible</option>
+                    <option value="vendu">Vendu</option>
                 </select>
                 <textarea id="vDesc" placeholder="DESCRIPTION" class="arcadia-input h-20" oninput="updatePreview()"></textarea>
                 
                 <div id="dropZone" class="drop-zone">
                     <p class="text-[10px] uppercase tracking-widest opacity-40">Glissez votre image ici</p>
-                    <p class="text-[9px] mt-2 italic">ou cliquez pour sélectionner</p>
                     <input type="file" id="fileInput" hidden accept="image/*">
-                    <input type="hidden" id="vImg"> </div>
+                    <input type="hidden" id="vImg">
+                </div>
 
                 <div class="discord-embed" id="previewEmbed">
                     <div class="text-white font-bold mb-2" id="preTitle">Aperçu du Dossier</div>
@@ -76,11 +150,9 @@
                     <div class="text-xs text-gray-400 mb-4">Statut: <span class="text-white" id="preStatus">Disponible</span></div>
                     <img src="" id="preImg" class="w-full h-32 object-cover rounded mt-2 border border-white/10 hidden">
                 </div>
-
                 <button onclick="saveListing()" class="btn-gold w-full py-4 text-xs" id="saveBtn">Publier l'unité</button>
             </div>
-
-            <div class="w-1/2 p-10 overflow-y-auto bg-black/40">
+            <div class="w-full md:w-1/2 p-8 overflow-y-auto bg-black/40">
                 <h4 class="text-[10px] uppercase font-bold opacity-30 mb-6 tracking-widest">Unités Actives</h4>
                 <div id="adminList" class="space-y-4"></div>
             </div>
@@ -89,45 +161,38 @@
 </div>
 
 <script>
-    let listings = JSON.parse(localStorage.getItem('arcadia_v6')) || [
-        { id: 1, title: "Villa Syrta", price: 128000000, status: "Vendu", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600" },
-        { id: 2, title: "Domaine GOUV", price: 110000000, status: "Vendu", img: "https://images.unsplash.com/photo-1600607687940-477a284e6923?w=600" }
+    let listings = JSON.parse(localStorage.getItem('arcadia_final')) || [
+        { id: 1, title: "Villa Syrta", price: 128000000, status: "vendu", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600" },
+        { id: 2, title: "Domaine GOUV", price: 110000000, status: "vendu", img: "https://images.unsplash.com/photo-1600607687940-477a284e6923?w=600" }
     ];
 
-    // --- GESTION DU DRAG & DROP ---
+    // --- DRAG & DROP ---
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
 
     dropZone.onclick = () => fileInput.click();
-
-    dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('dragover'); };
-    dropZone.ondragleave = () => dropZone.classList.remove('dragover');
-    
+    dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('bg-gold/10'); };
+    dropZone.ondragleave = () => dropZone.classList.remove('bg-gold/10');
     dropZone.ondrop = (e) => {
         e.preventDefault();
-        dropZone.classList.remove('dragover');
         const file = e.dataTransfer.files[0];
         handleFile(file);
     };
-
-    fileInput.onchange = (e) => {
-        const file = e.target.files[0];
-        handleFile(file);
-    };
+    fileInput.onchange = (e) => handleFile(e.target.files[0]);
 
     function handleFile(file) {
         if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
-            reader.onload = (event) => {
-                document.getElementById('vImg').value = event.target.result;
+            reader.onload = (e) => {
+                document.getElementById('vImg').value = e.target.result;
                 updatePreview();
-                dropZone.innerHTML = `<p class="text-gold text-[10px] font-bold uppercase">Image prête ✓</p>`;
+                dropZone.innerHTML = `<p class="text-gold text-[10px] font-bold">IMAGE CHARGÉE ✓</p>`;
             };
             reader.readAsDataURL(file);
         }
     }
 
-    // --- LOGIQUE ADMIN ---
+    // --- LOGIQUE CORE ---
     function render() {
         const grid = document.getElementById('listingGrid');
         const adminList = document.getElementById('adminList');
@@ -135,40 +200,37 @@
 
         listings.forEach(v => {
             grid.innerHTML += `
-                <div class="record-card group">
-                    <img src="${v.img}" class="w-full h-64 object-cover opacity-80 group-hover:opacity-100 transition duration-700">
-                    <div class="p-8 text-center">
-                        <h3 class="text-2xl font-serif italic">${v.title}</h3>
-                        <p class="text-gold font-bold">${v.price.toLocaleString()} €</p>
-                        <p class="text-[9px] uppercase mt-2 opacity-40">${v.status}</p>
+                <div class="glass-card group relative" data-aos="fade-up">
+                    <div class="status-badge bg-${v.status}">${v.status}</div>
+                    <img src="${v.img}" class="w-full h-72 object-cover group-hover:scale-110 transition duration-1000">
+                    <div class="p-10 text-center">
+                        <h3 class="text-2xl font-serif italic mb-2">${v.title}</h3>
+                        <p class="text-gold font-bold text-xl">${v.price.toLocaleString()} €</p>
+                        <button onclick="openOrderModal()" class="mt-6 w-full py-4 border border-white/10 text-[9px] uppercase tracking-widest hover:bg-gold hover:text-black transition">Détails</button>
                     </div>
                 </div>`;
 
             adminList.innerHTML += `
-                <div class="flex justify-between items-center p-6 bg-zinc-900/40 rounded-2xl border border-white/5">
+                <div class="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
                     <div class="flex items-center gap-4">
                         <img src="${v.img}" class="w-12 h-12 rounded-lg object-cover">
                         <div><p class="font-bold text-sm">${v.title}</p><p class="text-[10px] opacity-40">${v.price.toLocaleString()}€</p></div>
                     </div>
                     <div class="flex gap-4">
-                        <button onclick="loadEdit(${v.id})" class="text-[10px] text-blue-400 font-bold uppercase">Modifier</button>
-                        <button onclick="deleteListing(${v.id})" class="text-[10px] text-red-500 font-bold uppercase">Radier</button>
+                        <button onclick="loadEdit(${v.id})" class="text-[9px] text-blue-400 font-bold uppercase">Modifier</button>
+                        <button onclick="deleteListing(${v.id})" class="text-[9px] text-red-500 font-bold uppercase">Radier</button>
                     </div>
                 </div>`;
         });
-        localStorage.setItem('arcadia_v6', JSON.stringify(listings));
+        localStorage.setItem('arcadia_final', JSON.stringify(listings));
     }
 
     function updatePreview() {
         document.getElementById('preTitle').innerText = document.getElementById('vTitle').value || "Nom de l'unité";
         document.getElementById('prePrice').innerText = (parseInt(document.getElementById('vPrice').value) || 0).toLocaleString() + " €";
-        document.getElementById('preStatus').innerText = document.getElementById('vStatus').value;
-        const imgUrl = document.getElementById('vImg').value;
-        const preImg = document.getElementById('preImg');
-        if(imgUrl) {
-            preImg.src = imgUrl;
-            preImg.classList.remove('hidden');
-        }
+        document.getElementById('preStatus').innerText = document.getElementById('vStatus').value === "dispo" ? "Disponible" : "Vendu";
+        const img = document.getElementById('vImg').value;
+        if(img) { document.getElementById('preImg').src = img; document.getElementById('preImg').classList.remove('hidden'); }
     }
 
     function saveListing() {
@@ -180,15 +242,9 @@
             status: document.getElementById('vStatus').value,
             img: document.getElementById('vImg').value || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400"
         };
-        if(id) {
-            const idx = listings.findIndex(l => l.id == id);
-            listings[idx] = data;
-        } else {
-            listings.push(data);
-        }
-        render();
-        closeStaffModal();
-        resetForm();
+        if(id) { listings[listings.findIndex(l => l.id == id)] = data; } 
+        else { listings.push(data); }
+        render(); resetForm(); closeStaffModal();
     }
 
     function loadEdit(id) {
@@ -199,7 +255,6 @@
         document.getElementById('vStatus').value = v.status;
         document.getElementById('vImg').value = v.img;
         document.getElementById('saveBtn').innerText = "Enregistrer les modifications";
-        document.getElementById('staffModal').classList.remove('hidden');
         updatePreview();
     }
 
@@ -208,14 +263,22 @@
         document.getElementById('vTitle').value = "";
         document.getElementById('vPrice').value = "";
         document.getElementById('vImg').value = "";
+        document.getElementById('saveBtn').innerText = "Publier l'unité";
         dropZone.innerHTML = `<p class="text-[10px] uppercase tracking-widest opacity-40">Glissez votre image ici</p>`;
     }
 
-    function deleteListing(id) { if(confirm("Radier cette unité ?")) { listings = listings.filter(l => l.id !== id); render(); } }
-    function closeStaffModal() { document.getElementById('staffModal').classList.add('hidden'); }
-    function checkStaffAccess() { if(prompt("Code Terminal :") === "Immo30") document.getElementById('staffModal').classList.remove('hidden'); }
+    // --- MODALS & CURSOR ---
+    window.openOrderModal = () => document.getElementById('orderModal').classList.remove('hidden');
+    window.closeOrderModal = () => document.getElementById('orderModal').classList.add('hidden');
+    window.closeStaffModal = () => document.getElementById('staffModal').classList.add('hidden');
+    window.checkStaffAccess = () => { if(prompt("Code Terminal :") === "Immo30") document.getElementById('staffModal').classList.remove('hidden'); };
 
-    AOS.init();
+    document.addEventListener('mousemove', e => {
+        gsap.to('#cursor', { x: e.clientX, y: e.clientY, duration: 0.1 });
+        gsap.to('#cursor-follower', { x: e.clientX - 22, y: e.clientY - 22, duration: 0.3 });
+    });
+
+    AOS.init({ duration: 1200 });
     render();
 </script>
 </body>
