@@ -66,18 +66,6 @@
     </div>
 </section>
 
-<section id="propos" class="py-32 px-10 border-b border-white/5">
-    <div class="max-w-5xl mx-auto text-center">
-        <h2 class="text-gold text-xs uppercase tracking-[10px] mb-8">Notre Héritage</h2>
-        <p class="text-2xl md:text-4xl font-serif italic leading-relaxed">
-            "Arcadia Immobilier ne se contente pas de vendre des murs. Nous bâtissons des sanctuaires où le luxe rencontre la sérénité absolue."
-        </p>
-        <p class="mt-10 text-gray-500 max-w-2xl mx-auto text-sm leading-loose">
-            Depuis notre implantation à Paros, nous accompagnons l'élite dans l'acquisition de propriétés uniques, tout en garantissant une protection inégalée grâce à nos systèmes de sécurité.
-        </p>
-    </div>
-</section>
-
 <section id="villas" class="py-32 px-10 bg-[#030303]">
     <div class="max-w-7xl mx-auto">
         <h3 class="text-5xl font-serif italic mb-16">Collection Privée</h3>
@@ -85,38 +73,24 @@
     </div>
 </section>
 
-<section id="services" class="py-32 px-10">
-    <div class="max-w-7xl mx-auto">
-        <h2 class="text-gold text-xs uppercase tracking-[10px] mb-16 text-center">Arcadia Immobilier • Services</h2>
-        <div class="grid md:grid-cols-2 gap-20">
-            <div data-aos="fade-right">
-                <h3 class="text-3xl font-serif italic mb-8">Sécurité Domiciliaire</h3>
-                <div class="space-y-4">
-                    <div class="service-card p-6 glass-card">
-                        <h4 class="text-gold font-bold text-xs uppercase">Niveau 1 — 850 000 €</h4>
-                        <p class="text-[11px] text-gray-400 mt-2">Nécessite 2 GN pour toute tentative d’effraction.</p>
-                    </div>
-                    <div class="service-card p-6 glass-card">
-                        <h4 class="text-gold font-bold text-xs uppercase">Niveau 2 — 2 000 000 €</h4>
-                        <p class="text-[11px] text-gray-400 mt-2">Alerte immédiate du propriétaire et de la gendarmerie.</p>
-                    </div>
-                    <div class="service-card p-6 glass-card">
-                        <h4 class="text-gold font-bold text-xs uppercase">Niveau 3 — 5 000 000 €</h4>
-                        <p class="text-[11px] text-gray-400 mt-2">Alerte directe et exclusive du propriétaire.</p>
-                    </div>
-                </div>
-            </div>
-            <div data-aos="fade-left">
-                <h3 class="text-3xl font-serif italic mb-8">Stockage Entreprise</h3>
-                <div class="service-card p-10 glass-card h-full flex flex-col justify-center border-white/10">
-                    <p class="text-4xl font-serif italic mb-4">+20 000 Places</p>
-                    <p class="text-gold font-bold text-xl mb-6">10 000 000 €</p>
-                    <button onclick="openOrderModal('Amélioration Stockage')" class="btn-gold py-4 text-[10px] uppercase">Améliorer ma société</button>
-                </div>
-            </div>
-        </div>
+<div id="orderModal" class="fixed inset-0 z-[3000] bg-black/98 hidden flex items-center justify-center p-4">
+    <div class="max-w-md w-full glass-card p-10 border-gold/20">
+        <button onclick="document.getElementById('orderModal').classList.add('hidden')" class="absolute top-6 right-6 opacity-30">&times;</button>
+        <h2 class="text-3xl font-serif italic mb-8 text-center text-gold">Contact Arcadia</h2>
+        <form class="space-y-4" id="orderForm">
+            <input type="text" id="orderName" placeholder="NOM COMPLET" class="arcadia-input" required>
+            <input type="tel" id="orderPhone" placeholder="NUMÉRO DE TÉLÉPHONE" class="arcadia-input" required>
+            <select id="orderService" class="arcadia-input" required>
+                <option value="" disabled selected>SERVICE</option>
+                <option value="Immobilier">Immobilier</option>
+                <option value="Sécurité">Sécurité</option>
+                <option value="Stockage">Stockage</option>
+            </select>
+            <textarea id="orderMsg" placeholder="MESSAGE..." class="arcadia-input h-24"></textarea>
+            <button type="submit" class="btn-gold w-full py-4 text-xs">Envoyer la demande</button>
+        </form>
     </div>
-</section>
+</div>
 
 <div id="detailModal" class="fixed inset-0 z-[1000] bg-black/95 hidden flex items-center justify-center p-4 backdrop-blur-xl">
     <div class="max-w-4xl w-full glass-card overflow-hidden flex flex-col md:flex-row border-gold/30">
@@ -149,8 +123,8 @@
             <div class="w-full md:w-1/2 p-8 border-r border-white/5 space-y-4 overflow-y-auto">
                 <input type="hidden" id="editId">
                 <input type="text" id="vTitle" placeholder="NOM DU BIEN" class="arcadia-input" oninput="updatePreview()">
-                <input type="text" id="vLoc" placeholder="LOCALISATION (ex: Sofia)" class="arcadia-input" oninput="updatePreview()">
-                <input type="number" id="vPrice" placeholder="PRIX (€)" class="arcadia-input" oninput="updatePreview()">
+                <input type="text" id="vLoc" placeholder="LOCALISATION" class="arcadia-input" oninput="updatePreview()">
+                <input type="number" id="vPrice" placeholder="PRIX" class="arcadia-input" oninput="updatePreview()">
                 <select id="vStatus" class="arcadia-input" onchange="updatePreview()">
                     <option value="dispo">Disponible</option>
                     <option value="vendu">Vendu</option>
@@ -175,24 +149,6 @@
     </div>
 </div>
 
-<div id="orderModal" class="fixed inset-0 z-[3000] bg-black/98 hidden flex items-center justify-center p-4">
-    <div class="max-w-md w-full glass-card p-10 border-gold/20">
-        <button onclick="document.getElementById('orderModal').classList.add('hidden')" class="absolute top-6 right-6 opacity-30">&times;</button>
-        <h2 class="text-3xl font-serif italic mb-8 text-center text-gold">Contact Arcadia</h2>
-        <form class="space-y-4" id="orderForm">
-            <input type="text" id="orderName" placeholder="NOM COMPLET" class="arcadia-input" required>
-            <select id="orderService" class="arcadia-input" required>
-                <option value="" disabled selected>SERVICE</option>
-                <option value="Immobilier">Immobilier</option>
-                <option value="Sécurité">Sécurité</option>
-                <option value="Stockage">Stockage</option>
-            </select>
-            <textarea id="orderMsg" placeholder="MESSAGE..." class="arcadia-input h-24"></textarea>
-            <button type="submit" class="btn-gold w-full py-4 text-xs">Envoyer</button>
-        </form>
-    </div>
-</div>
-
 <script>
     let listings = JSON.parse(localStorage.getItem('arcadia_v4')) || [
         { id: 1, title: "Villa Syrta", price: 128000000, status: "vendu", loc: "Côte Ouest", desc: "Un joyau architectural avec vue imprenable.", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800" }
@@ -212,11 +168,13 @@
         localStorage.setItem('arcadia_v4', JSON.stringify(listings));
     }
 
-    // GESTION DU WEBHOOK DISCORD AMÉLIORÉ
+    // GESTION DU WEBHOOK DISCORD AVEC NUMÉRO DE TÉLÉPHONE
     document.getElementById('orderForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const webhookURL = "https://discord.com/api/webhooks/1429322898367315968/im9bCVJmDKWPmcWMyTtyn4MaqOOC03hBWadHq7eoj7BXIGfhBGE3-fD3LFlr1pVU6WhA";
+        
         const clientName = document.getElementById('orderName').value;
+        const clientPhone = document.getElementById('orderPhone').value; // Nouveau champ
         const service = document.getElementById('orderService').value;
         const message = document.getElementById('orderMsg').value || "Aucun détail supplémentaire";
         
@@ -225,14 +183,14 @@
             avatar_url: "https://i.imgur.com/4E6v9RY.png",
             embeds: [{
                 title: "💎 Nouvelle Commande Client",
-                description: "Une nouvelle demande a été soumise via le terminal web.",
+                description: "Une demande prioritaire a été soumise.",
                 color: 11767364,
                 thumbnail: { url: "https://i.imgur.com/G56KzN7.png" },
                 fields: [
                     { name: "👤 Client", value: `\`${clientName}\``, inline: true },
-                    { name: "📞 Contact", value: "`06 29 07 00 34`", inline: true },
+                    { name: "📞 Téléphone", value: `\`${clientPhone}\``, inline: true },
                     { name: "🛠️ Service Demandé", value: `**${service}**`, inline: false },
-                    { name: "📝 Détails du message", value: `>>> ${message}`, inline: false }
+                    { name: "📝 Message", value: `>>> ${message}`, inline: false }
                 ],
                 footer: { text: "Système de Gestion Arcadia • Paros", icon_url: "https://i.imgur.com/4E6v9RY.png" },
                 timestamp: new Date()
@@ -244,15 +202,16 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         }).then(() => {
-            alert("Demande transmise avec succès à la direction Arcadia.");
+            alert("Votre demande a bien été transmise. Un agent Arcadia vous contactera sous peu.");
             document.getElementById('orderModal').classList.add('hidden');
             this.reset();
         }).catch(err => {
-            alert("Erreur lors de la liaison.");
+            alert("Erreur de transmission.");
             console.error(err);
         });
     });
 
+    // SCRIPTS DE GESTION GÉNÉRALE
     function showDetails(id) {
         const v = listings.find(l => l.id == id);
         document.getElementById('detTitle').innerText = v.title;
