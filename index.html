@@ -11,10 +11,13 @@
         body { background: var(--black); color: white; font-family: 'Montserrat', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
         .font-serif { font-family: 'Playfair Display', serif; }
         .glass-card { background: rgba(15, 15, 15, 0.95); border: 1px solid rgba(179, 142, 68, 0.2); border-radius: 30px; backdrop-filter: blur(15px); overflow: hidden; transition: 0.5s; }
-        .btn-gold { background: linear-gradient(90deg, #8a6d3b, #b38e44, #8a6d3b); background-size: 200% auto; color: black; font-weight: 800; border-radius: 50px; cursor: pointer; transition: 0.5s; }
+        .btn-gold { background: linear-gradient(90deg, #8a6d3b, #b38e44, #8a6d3b); background-size: 200% auto; color: black; font-weight: 800; border-radius: 50px; cursor: pointer; transition: 0.5s; text-align: center; }
         .btn-gold:hover { background-position: right center; transform: translateY(-2px); }
         .status-badge { position: absolute; top: 20px; left: 20px; padding: 6px 15px; border-radius: 20px; font-size: 10px; font-weight: bold; text-transform: uppercase; z-index: 10; }
         .bg-vendu { background: #ef4444; } .bg-dispo { background: #22c55e; }
+        .arcadia-input { background: #111; border: 1px solid #222; border-radius: 12px; color: white; padding: 15px; width: 100%; outline: none; }
+        .service-card { border-left: 2px solid var(--gold); transition: 0.4s; cursor: pointer; padding: 1.5rem; }
+        .service-card:hover { background: rgba(179, 142, 68, 0.05); transform: translateX(10px); }
     </style>
 </head>
 <body>
@@ -28,7 +31,8 @@
         </div>
     </div>
     <div class="flex items-center gap-6">
-        <a href="#villas" class="text-[10px] uppercase tracking-widest opacity-60 hover:opacity-100">Catalogue</a>
+        <a href="#services" class="text-[10px] uppercase tracking-widest opacity-60 hover:opacity-100 transition">Services</a>
+        <a href="#villas" class="text-[10px] uppercase tracking-widest opacity-60 hover:opacity-100 transition">Catalogue</a>
         <button onclick="openOrderModal()" class="btn-gold px-8 py-3 text-[10px] uppercase tracking-widest">Commander</button>
     </div>
 </nav>
@@ -41,16 +45,74 @@
     </div>
 </section>
 
-<section id="villas" class="py-32 px-10 bg-[#030303]">
+<section id="services" class="py-32 px-10 bg-[#050505]">
     <div class="max-w-7xl mx-auto">
-        <h3 class="text-5xl font-serif italic mb-16 text-center">Collection Privée</h3>
-        <div id="listingGrid" class="grid md:grid-cols-3 gap-10">
+        <div class="text-center mb-20">
+            <h2 class="text-gold text-xs uppercase tracking-[10px] mb-4">Expertise Arcadia</h2>
+            <h3 class="text-4xl font-serif italic">Sécurité & Performance</h3>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-16">
+            <div>
+                <h4 class="text-2xl font-serif italic mb-6 text-gold">Systèmes de Sécurité</h4>
+                <div class="space-y-6">
+                    <div class="service-card glass-card" onclick="openOrderModal('Alarme Niveau 1')">
+                        <div class="flex justify-between mb-2">
+                            <span class="font-bold text-sm tracking-widest uppercase">Niveau 1</span>
+                            <span class="text-gold font-bold">850 000 €</span>
+                        </div>
+                        <p class="text-[11px] text-gray-500 italic">➝ Nécessite 2 GN pour toute tentative d’effraction.</p>
+                    </div>
+                    <div class="service-card glass-card" onclick="openOrderModal('Alarme Niveau 2')">
+                        <div class="flex justify-between mb-2">
+                            <span class="font-bold text-sm tracking-widest uppercase">Niveau 2</span>
+                            <span class="text-gold font-bold">2 000 000 €</span>
+                        </div>
+                        <p class="text-[11px] text-gray-500 italic">➝ Alerte immédiate propriétaire et gendarmerie.</p>
+                    </div>
+                    <div class="service-card glass-card" onclick="openOrderModal('Alarme Niveau 3')">
+                        <div class="flex justify-between mb-2">
+                            <span class="font-bold text-sm tracking-widest uppercase">Niveau 3</span>
+                            <span class="text-gold font-bold">5 000 000 €</span>
+                        </div>
+                        <p class="text-[11px] text-gray-500 italic">➝ Alerte directe et exclusive du propriétaire.</p>
+                    </div>
+                </div>
             </div>
+
+            <div>
+                <h4 class="text-2xl font-serif italic mb-6 text-gold">Stockage Entreprise</h4>
+                <div class="glass-card p-10 flex flex-col items-center justify-center h-full text-center border-white/5">
+                    <h5 class="text-3xl font-serif italic mb-2">+20 000 Places</h5>
+                    <p class="text-gold font-bold text-2xl mb-8">10 000 000 €</p>
+                    <button onclick="openOrderModal('Extension Stockage 20k')" class="btn-gold w-full py-4 text-[10px] uppercase">Améliorer ma société</button>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
+<section id="villas" class="py-32 px-10 bg-[#030303]">
+    <div class="max-w-7xl mx-auto">
+        <h3 class="text-5xl font-serif italic mb-16 text-center">Collection Privée</h3>
+        <div id="listingGrid" class="grid md:grid-cols-3 gap-10"></div>
+    </div>
+</section>
+
+<div id="orderModal" class="fixed inset-0 z-[3000] bg-black/98 hidden flex items-center justify-center p-4">
+    <div class="max-w-md w-full glass-card p-10 border-gold/20 relative">
+        <button onclick="document.getElementById('orderModal').classList.add('hidden')" class="absolute top-6 right-6 text-2xl opacity-40 hover:opacity-100">&times;</button>
+        <h2 class="text-3xl font-serif italic mb-8 text-center text-gold">Demande Arcadia</h2>
+        <form class="space-y-4" id="orderForm">
+            <input type="text" id="orderName" placeholder="NOM COMPLET" class="arcadia-input" required>
+            <input type="tel" id="orderPhone" placeholder="NUMÉRO DE TÉLÉPHONE" class="arcadia-input" required>
+            <textarea id="orderMsg" placeholder="Détails de votre demande..." class="arcadia-input h-24"></textarea>
+            <button type="submit" class="btn-gold w-full py-4 text-xs uppercase">Transmettre la demande</button>
+        </form>
+    </div>
+</div>
+
 <script type="module">
-    // --- TES VILLAS PAR DÉFAUT ---
     const initialListings = [
         { 
             id: 1, 
@@ -59,7 +121,7 @@
             status: "dispo", 
             loc: "Baie des Anges", 
             desc: "Une propriété majestueuse avec héliport privé et accès direct à une plage secrète.", 
-            img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=2071" // Lien temporaire, change-le par le tien
+            img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=2071"
         },
         { 
             id: 2, 
@@ -81,14 +143,11 @@
         }
     ];
 
-    // On récupère le stockage local ou les villas par défaut
     let listings = JSON.parse(localStorage.getItem('arcadia_v4')) || initialListings;
 
-    // Fonction pour afficher les villas
     function renderVillas() {
         const grid = document.getElementById('listingGrid');
         grid.innerHTML = "";
-        
         listings.forEach(v => {
             grid.innerHTML += `
             <div class="glass-card group relative">
@@ -101,10 +160,21 @@
                     <h3 class="text-2xl font-serif italic mb-2">${v.title}</h3>
                     <p class="text-gold font-bold mb-4">${v.price.toLocaleString()} €</p>
                     <p class="text-xs text-gray-400 mb-6 leading-relaxed line-clamp-2">${v.desc}</p>
-                    <button onclick="alert('Contactez-nous au 06 29 07 00 34 pour ce bien')" class="text-[10px] uppercase font-bold tracking-[3px] border-b border-gold text-gold">Voir le dossier</button>
+                    <button onclick="openOrderModal('Intérêt pour : ${v.title}')" class="text-[10px] uppercase font-bold tracking-[3px] border-b border-gold text-gold">Faire une offre</button>
                 </div>
             </div>`;
         });
+    }
+
+    window.openOrderModal = (context = "") => {
+        if(context) document.getElementById('orderMsg').value = context + "\n---\n";
+        document.getElementById('orderModal').classList.remove('hidden');
+    }
+
+    document.getElementById('orderForm').onsubmit = (e) => {
+        e.preventDefault();
+        alert("Demande envoyée ! Nos agents vous recontacteront au " + document.getElementById('orderPhone').value);
+        document.getElementById('orderModal').classList.add('hidden');
     }
 
     renderVillas();
