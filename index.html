@@ -2,35 +2,113 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Arcadia | Prestige Immobilier</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcadia | Paros • L'Héritage du Luxe</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;700&family=Playfair+Display:italic,wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #b38e44; --black: #050505; }
+        body { background: var(--black); color: white; font-family: 'Montserrat', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .glass-card { background: rgba(15, 15, 15, 0.95); border: 1px solid rgba(179, 142, 68, 0.2); border-radius: 30px; backdrop-filter: blur(15px); overflow: hidden; transition: 0.5s; }
+        .btn-gold { background: linear-gradient(90deg, #8a6d3b, #b38e44, #8a6d3b); background-size: 200% auto; color: black; font-weight: 800; border-radius: 50px; cursor: pointer; transition: 0.5s; }
+        .btn-gold:hover { background-position: right center; transform: translateY(-2px); }
+        .status-badge { position: absolute; top: 20px; left: 20px; padding: 6px 15px; border-radius: 20px; font-size: 10px; font-weight: bold; text-transform: uppercase; z-index: 10; }
+        .bg-vendu { background: #ef4444; } .bg-dispo { background: #22c55e; }
+    </style>
 </head>
 <body>
-    <nav>
-        <div class="text-xl font-serif italic">Arcadia<span class="text-gold">.</span></div>
-        <div class="space-x-8">
-            <a href="index.html">Accueil</a>
-            <a href="catalogue.html">Catalogue</a>
-            <a href="propos.html">À Propos</a>
-            <a href="contact.html">Contact</a>
+
+<nav class="fixed w-full z-50 px-12 py-6 flex justify-between items-center bg-black/80 backdrop-blur-lg border-b border-white/5">
+    <div class="flex items-center gap-4">
+        <img src="logo_arcadia_immo.jpg" alt="Logo" class="h-12 w-12 object-contain rounded-full border border-gold/30">
+        <div class="flex flex-col">
+            <span class="text-2xl font-serif italic leading-none">Arcadia<span class="text-gold">.</span></span>
+            <span class="text-[9px] tracking-[4px] uppercase text-gold">Paros • International</span>
         </div>
-    </nav>
+    </div>
+    <div class="flex items-center gap-6">
+        <a href="#villas" class="text-[10px] uppercase tracking-widest opacity-60 hover:opacity-100">Catalogue</a>
+        <button onclick="openOrderModal()" class="btn-gold px-8 py-3 text-[10px] uppercase tracking-widest">Commander</button>
+    </div>
+</nav>
 
-    <header class="h-screen flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c')] bg-cover bg-center">
-        <div class="absolute inset-0 bg-black/60"></div>
-        <div class="relative text-center">
-            <h1 class="text-7xl font-serif italic mb-6">L'Héritage du Luxe</h1>
-            <p class="text-gold tracking-[10px] uppercase text-sm mb-10">Paros • International</p>
-            <a href="catalogue.html" class="btn-gold">Explorer la collection</a>
-        </div>
-    </header>
+<section class="h-screen flex items-center justify-center relative overflow-hidden text-center">
+    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075')] bg-cover bg-center opacity-40"></div>
+    <div class="relative z-10 px-4">
+        <h1 class="text-6xl md:text-9xl font-serif italic mb-6">Arcadia Immobilier</h1>
+        <p class="tracking-[10px] uppercase text-xs text-gold">L'excellence au service de votre patrimoine</p>
+    </div>
+</section>
 
-    <section class="py-24 px-10 max-w-5xl mx-auto text-center">
-        <h2 class="text-3xl font-serif italic mb-8">Une discrétion absolue</h2>
-        <p class="text-gray-400 leading-loose">Depuis 2015, Arcadia accompagne les plus grandes fortunes de l'île de Paros dans l'acquisition de domaines d'exception. Notre expertise ne se limite pas à l'immobilier : nous bâtissons des sanctuaires.</p>
-    </section>
+<section id="villas" class="py-32 px-10 bg-[#030303]">
+    <div class="max-w-7xl mx-auto">
+        <h3 class="text-5xl font-serif italic mb-16 text-center">Collection Privée</h3>
+        <div id="listingGrid" class="grid md:grid-cols-3 gap-10">
+            </div>
+    </div>
+</section>
 
-    <footer>ARCADIA MANAGEMENT © 2026</footer>
+<script type="module">
+    // --- TES VILLAS PAR DÉFAUT ---
+    const initialListings = [
+        { 
+            id: 1, 
+            title: "Palais d'Émeraude", 
+            price: 450000000, 
+            status: "dispo", 
+            loc: "Baie des Anges", 
+            desc: "Une propriété majestueuse avec héliport privé et accès direct à une plage secrète.", 
+            img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=2071" // Lien temporaire, change-le par le tien
+        },
+        { 
+            id: 2, 
+            title: "Résidence Horizon", 
+            price: 180000000, 
+            status: "dispo", 
+            loc: "Hauts de Paros", 
+            desc: "Architecture moderne minimaliste offrant la plus belle vue panoramique de l'île.", 
+            img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070"
+        },
+        { 
+            id: 3, 
+            title: "Le Refuge Arcadien", 
+            price: 95000000, 
+            status: "vendu", 
+            loc: "Vignobles du Sud", 
+            desc: "Ancien domaine viticole entièrement rénové avec domotique de niveau 3.", 
+            img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070"
+        }
+    ];
+
+    // On récupère le stockage local ou les villas par défaut
+    let listings = JSON.parse(localStorage.getItem('arcadia_v4')) || initialListings;
+
+    // Fonction pour afficher les villas
+    function renderVillas() {
+        const grid = document.getElementById('listingGrid');
+        grid.innerHTML = "";
+        
+        listings.forEach(v => {
+            grid.innerHTML += `
+            <div class="glass-card group relative">
+                <div class="status-badge bg-${v.status}">${v.status}</div>
+                <div class="h-72 overflow-hidden">
+                    <img src="${v.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000">
+                </div>
+                <div class="p-8">
+                    <p class="text-[9px] text-gold uppercase mb-2 tracking-widest">${v.loc}</p>
+                    <h3 class="text-2xl font-serif italic mb-2">${v.title}</h3>
+                    <p class="text-gold font-bold mb-4">${v.price.toLocaleString()} €</p>
+                    <p class="text-xs text-gray-400 mb-6 leading-relaxed line-clamp-2">${v.desc}</p>
+                    <button onclick="alert('Contactez-nous au 06 29 07 00 34 pour ce bien')" class="text-[10px] uppercase font-bold tracking-[3px] border-b border-gold text-gold">Voir le dossier</button>
+                </div>
+            </div>`;
+        });
+    }
+
+    renderVillas();
+</script>
+
 </body>
 </html>

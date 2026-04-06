@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact | Arcadia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav></nav>
+
+    <section class="pt-40 pb-20 px-10">
+        <div class="max-w-2xl mx-auto bg-[#111] p-12 border border-gold/20">
+            <h2 class="text-4xl font-serif italic mb-8 text-gold">Prendre Contact</h2>
+            <form id="contactForm" class="space-y-6">
+                <input type="text" id="name" placeholder="Nom Complet" class="w-full bg-black border border-zinc-800 p-4 outline-none focus:border-gold">
+                <input type="email" id="email" placeholder="Adresse Email" class="w-full bg-black border border-zinc-800 p-4 outline-none focus:border-gold">
+                <textarea id="message" placeholder="Votre message..." class="w-full bg-black border border-zinc-800 p-4 h-40 outline-none focus:border-gold"></textarea>
+                <button type="submit" class="btn-gold w-full">Envoyer le message</button>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById('contactForm').onsubmit = function(e) {
+            e.preventDefault();
+            // Insère ton lien Webhook ici
+            const webhook = "TON_LIEN_WEBHOOK_ICI";
+            const data = {
+                content: `📩 **Nouveau message de ${document.getElementById('name').value}**\nEmail: ${document.getElementById('email').value}\nMessage: ${document.getElementById('message').value}`
+            };
+            fetch(webhook, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) })
+            .then(() => alert("Message envoyé avec succès."));
+        }
+    </script>
+</body>
+</html>
