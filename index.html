@@ -7,72 +7,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@200;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --gold: #c5a059;
-            --dark: #0a0a0a;
-            --soft-white: #f5f5f5;
-        }
-
-        body {
-            background-color: var(--dark);
-            color: var(--soft-white);
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
-
+        :root { --gold: #c5a059; --dark: #0a0a0a; --soft-white: #f5f5f5; }
+        body { background-color: var(--dark); color: var(--soft-white); font-family: 'Inter', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
         .font-luxury { font-family: 'Cinzel', serif; }
-
-        /* Animation d'entrée */
-        @keyframes reveal {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        .grain::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Noise_Texture.png'); opacity: 0.03; pointer-events: none; z-index: 9999; }
+        
+        /* Animations */
         .reveal { animation: reveal 1.5s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
+        @keyframes reveal { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .hero-bg { animation: slowZoom 20s infinite alternate; }
+        @keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.1); } }
 
-        /* Effet de grain pour texture papier luxe */
-        .grain::before {
-            content: "";
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Noise_Texture.png');
-            opacity: 0.03; pointer-events: none; z-index: 9999;
-        }
-
-        /* Navigation Minimaliste */
-        nav {
-            mix-blend-mode: difference;
-            transition: all 0.5s ease;
-        }
-
-        /* Hero Image Zoom lent */
-        .hero-bg {
-            animation: slowZoom 20s infinite alternate;
-        }
-
-        @keyframes slowZoom {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
-        }
-
-        /* Custom Cursor (Optionnel mais premium) */
-        .cursor {
-            width: 20px; height: 20px; border: 1px solid var(--gold);
-            border-radius: 50%; position: fixed; pointer-events: none;
-            z-index: 10000; transition: transform 0.1s;
-        }
-
-        .property-card {
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-
-        .property-card:hover {
-            background-color: rgba(197, 160, 89, 0.03);
-            padding-left: 20px;
-        }
-
-        /* Scrollbar Invisible */
+        /* UI Elements */
+        .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(197, 160, 89, 0.1); backdrop-filter: blur(10px); }
+        .property-card { border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.6s ease; }
+        .property-card:hover { background-color: rgba(197, 160, 89, 0.05); padding-left: 20px; }
+        .cursor { width: 20px; height: 20px; border: 1px solid var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transition: transform 0.1s; }
         ::-webkit-scrollbar { width: 0px; }
     </style>
 </head>
@@ -80,71 +30,68 @@
 
     <div class="cursor hidden md:block"></div>
 
-    <nav class="fixed top-0 w-full z-[100] flex justify-between items-center px-10 py-8">
+    <nav class="fixed top-0 w-full z-[100] flex justify-between items-center px-10 py-8 mix-blend-difference">
         <div class="text-2xl font-luxury tracking-[6px]">ARCADIA</div>
         <div class="flex gap-12 text-[10px] uppercase tracking-[4px]">
             <a href="#collection" class="hover:text-gold transition">Collection</a>
-            <a href="#expertise" class="hover:text-gold transition">Expertise</a>
-            <a href="javascript:openContact()" class="border-b border-gold pb-1">Privé</a>
+            <a href="#simulateur" class="hover:text-gold transition">Finance</a>
+            <a href="javascript:openContact()" class="border-b border-gold pb-1 text-gold">Accès Privé</a>
         </div>
     </nav>
 
     <section class="relative h-screen w-full flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1600607687940-47a04b629571?q=80&w=2070" class="hero-bg w-full h-full object-cover opacity-60">
-            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black"></div>
         </div>
-        
         <div class="relative z-10 text-center reveal">
             <h1 class="text-7xl md:text-[120px] font-luxury leading-none mb-4">L'IMMOBILIER <br> D'ÉLITE</h1>
-            <p class="text-gold tracking-[15px] uppercase text-xs opacity-80">Paros • Altis • International</p>
-        </div>
-
-        <div class="absolute bottom-10 left-10 text-[9px] tracking-[4px] uppercase opacity-40">
-            Défilez pour explorer
+            <p class="text-gold tracking-[15px] uppercase text-xs opacity-80 italic">Paros • Altis • International</p>
         </div>
     </section>
 
-    <section id="expertise" class="py-40 px-10 md:px-40 grid md:grid-cols-2 gap-20">
-        <div class="reveal">
-            <h2 class="text-gold uppercase tracking-[8px] text-xs mb-8 italic">Notre Vision</h2>
-            <p class="text-3xl md:text-5xl font-luxury leading-tight">"La rareté n'est pas un luxe, c'est un standard."</p>
-        </div>
-        <div class="flex flex-col justify-end">
-            <p class="text-gray-400 leading-relaxed text-lg max-w-md opacity-80">
-                Chaque propriété Arcadia est une œuvre d'art brute. Nous ne listons pas des maisons, nous archivons des moments d'exception pour une clientèle qui refuse le commun.
-            </p>
+    <section class="py-10 px-10 bg-black/50 border-y border-white/5 backdrop-blur-md sticky top-0 z-[90]">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 items-center">
+            <input type="text" id="searchInput" placeholder="Rechercher une ville, une villa..." class="w-full bg-transparent border-b border-white/20 py-2 outline-none focus:border-gold transition font-light italic">
+            <select id="filterPrice" class="bg-transparent border-b border-white/20 py-2 outline-none text-gold uppercase text-[10px] tracking-widest cursor-pointer">
+                <option value="all">Tous les budgets</option>
+                <option value="100">Moins de 100M €</option>
+                <option value="500">Plus de 100M €</option>
+            </select>
         </div>
     </section>
 
-    <section id="collection" class="py-20 px-10 md:px-20 border-t border-white/10">
-        <h2 class="text-[10px] uppercase tracking-[10px] mb-20 opacity-50">Collection 2026</h2>
-        
-        <div class="space-y-0">
-            <div class="property-card py-16 flex flex-col md:flex-row justify-between items-center group cursor-pointer" onclick="openContact('Palais de Kavala')">
-                <span class="text-gray-600 font-luxury text-2xl group-hover:text-gold transition">01.</span>
-                <h3 class="text-4xl md:text-6xl font-luxury group-hover:italic transition-all uppercase">Palais de Kavala</h3>
-                <div class="text-right">
-                    <p class="text-gold font-bold text-xl tracking-widest">450.000.000€</p>
-                    <p class="text-[10px] tracking-[3px] opacity-40 uppercase">Baie des Anges</p>
-                </div>
+    <section id="collection" class="py-20 px-10 md:px-20 min-h-screen">
+        <h2 class="text-[10px] uppercase tracking-[10px] mb-20 opacity-50">Collection Courante</h2>
+        <div id="listingGrid" class="space-y-0">
             </div>
+    </section>
 
-            <div class="property-card py-16 flex flex-col md:flex-row justify-between items-center group cursor-pointer" onclick="openContact('Le Sanctuaire Noir')">
-                <span class="text-gray-600 font-luxury text-2xl group-hover:text-gold transition">02.</span>
-                <h3 class="text-4xl md:text-6xl font-luxury group-hover:italic transition-all uppercase">Sanctuaire Noir</h3>
-                <div class="text-right">
-                    <p class="text-gold font-bold text-xl tracking-widest">210.000.000€</p>
-                    <p class="text-[10px] tracking-[3px] opacity-40 uppercase">Sommets d'Athira</p>
-                </div>
+    <section id="simulateur" class="py-40 px-10 bg-[#070707] border-y border-white/5">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="font-luxury text-4xl mb-4">Ingénierie Financière</h2>
+                <p class="text-[10px] uppercase tracking-[8px] text-gold opacity-60">Simulez votre acquisition</p>
             </div>
-
-            <div class="property-card py-16 flex flex-col md:flex-row justify-between items-center group cursor-pointer" onclick="openContact('Villa Arcadia HQ')">
-                <span class="text-gray-600 font-luxury text-2xl group-hover:text-gold transition">03.</span>
-                <h3 class="text-4xl md:text-6xl font-luxury group-hover:italic transition-all uppercase">Villa Arcadia HQ</h3>
-                <div class="text-right">
-                    <p class="text-gold font-bold text-xl tracking-widest">125.000.000€</p>
-                    <p class="text-[10px] tracking-[3px] opacity-40 uppercase">Sud de Paros</p>
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="space-y-6">
+                    <label class="text-[10px] uppercase tracking-widest opacity-40">Prix d'acquisition souhaité (€)</label>
+                    <input type="number" id="priceInput" value="100000000" class="w-full bg-transparent border-b border-gold py-6 text-5xl font-luxury outline-none transition">
+                </div>
+                <div class="p-10 glass-card rounded-sm space-y-6 relative overflow-hidden">
+                    <div class="flex justify-between items-center text-[10px] tracking-[3px] uppercase">
+                        <span>Frais d'enregistrement (7.5%)</span>
+                        <span id="taxResult" class="text-gold">7.500.000 €</span>
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] tracking-[3px] uppercase">
+                        <span>Honoraires Arcadia (3%)</span>
+                        <span id="commResult" class="text-gold">3.000.000 €</span>
+                    </div>
+                    <hr class="border-white/10">
+                    <div class="flex justify-between items-end">
+                        <span class="text-[10px] tracking-[3px] uppercase mb-1">Total à prévoir</span>
+                        <span id="totalResult" class="text-3xl font-luxury text-gold">110.500.000 €</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -152,46 +99,95 @@
 
     <div id="contactModal" class="fixed inset-0 z-[200] bg-[#0a0a0a] translate-y-full transition-transform duration-700 ease-in-out flex flex-col items-center justify-center p-10">
         <button onclick="closeContact()" class="absolute top-10 right-10 text-[10px] tracking-[5px] uppercase border-b border-gold">Fermer</button>
-        
         <div class="max-w-xl w-full text-center">
-            <h2 class="text-5xl font-luxury mb-12 italic text-gold">Dossier Privé</h2>
+            <h2 class="text-5xl font-luxury mb-12 italic text-gold">Dossier Confidentiel</h2>
             <form id="hookForm" class="space-y-12">
-                <input type="text" id="name" placeholder="VOTRE NOM" class="w-full bg-transparent border-b border-white/20 py-4 outline-none focus:border-gold transition text-xl text-center">
-                <input type="tel" id="phone" placeholder="FRÉQUENCE RADIO OU TÉLÉPHONE" class="w-full bg-transparent border-b border-white/20 py-4 outline-none focus:border-gold transition text-xl text-center">
-                <textarea id="msg" placeholder="VOTRE INTENTION..." class="w-full bg-transparent border-b border-white/20 py-4 outline-none focus:border-gold transition text-xl text-center h-20 resize-none"></textarea>
-                <button type="submit" id="subBtn" class="text-black bg-gold px-12 py-5 text-[10px] uppercase tracking-[5px] font-bold hover:scale-105 transition transform">Initier la liaison</button>
+                <input type="text" id="name" placeholder="IDENTITÉ" required class="w-full bg-transparent border-b border-white/20 py-4 outline-none focus:border-gold transition text-xl text-center">
+                <input type="text" id="phone" placeholder="COORDONNÉES SÉCURISÉES" required class="w-full bg-transparent border-b border-white/20 py-4 outline-none focus:border-gold transition text-xl text-center">
+                <textarea id="msg" placeholder="DÉTAILS DU PROJET..." class="w-full bg-transparent border-b border-white/20 py-4 outline-none focus:border-gold transition text-xl text-center h-20 resize-none"></textarea>
+                <button type="submit" id="subBtn" class="text-black bg-gold px-12 py-5 text-[10px] uppercase tracking-[5px] font-bold hover:scale-105 transition">Transmettre</button>
             </form>
         </div>
     </div>
 
     <footer class="py-20 text-center opacity-20 text-[8px] tracking-[6px] uppercase">
-        Arcadia Group • Discrétion Absolue • 2026
+        Arcadia Group • Intelligence Immobilière • 2026
     </footer>
 
     <script>
-        // Cursor Logic
+        // Data des Villas (Ajoute tes 100 infos ici)
+        const villas = [
+            { id: "01", title: "Palais de Kavala", price: 450000000, loc: "Baie des Anges", status: "disponible" },
+            { id: "02", title: "Sanctuaire Noir", price: 210000000, loc: "Sommets d'Athira", status: "disponible" },
+            { id: "03", title: "Villa Arcadia HQ", price: 125000000, loc: "Sud de Paros", status: "vendu" },
+            { id: "04", title: "Domaine des Vignes", price: 85000000, loc: "Pyrgos", status: "disponible" }
+        ];
+
+        // Rendu du catalogue
+        function displayVillas(data) {
+            const grid = document.getElementById('listingGrid');
+            grid.innerHTML = data.map(v => `
+                <div class="property-card py-16 flex flex-col md:flex-row justify-between items-center group cursor-pointer" onclick="openContact('${v.title}')">
+                    <span class="text-gray-600 font-luxury text-2xl group-hover:text-gold transition">${v.id}.</span>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-4xl md:text-6xl font-luxury group-hover:italic transition-all uppercase">${v.title}</h3>
+                        <p class="text-[9px] tracking-[5px] uppercase text-gold opacity-50">${v.status}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-gold font-bold text-xl tracking-widest">${v.price.toLocaleString()}€</p>
+                        <p class="text-[10px] tracking-[3px] opacity-40 uppercase">${v.loc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Recherche & Filtres
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const search = e.target.value.toLowerCase();
+            const filtered = villas.filter(v => v.title.toLowerCase().includes(search) || v.loc.toLowerCase().includes(search));
+            displayVillas(filtered);
+        });
+
+        document.getElementById('filterPrice').addEventListener('change', (e) => {
+            const val = e.target.value;
+            let filtered = villas;
+            if(val === "100") filtered = villas.filter(v => v.price < 100000000);
+            if(val === "500") filtered = villas.filter(v => v.price >= 100000000);
+            displayVillas(filtered);
+        });
+
+        // Simulateur
+        document.getElementById('priceInput').addEventListener('input', function(e) {
+            const val = parseFloat(e.target.value) || 0;
+            const tax = val * 0.075;
+            const comm = val * 0.03;
+            document.getElementById('taxResult').innerText = tax.toLocaleString() + " €";
+            document.getElementById('commResult').innerText = comm.toLocaleString() + " €";
+            document.getElementById('totalResult').innerText = (val + tax + comm).toLocaleString() + " €";
+        });
+
+        // Modal Logic
+        function openContact(item = "") {
+            if(item) document.getElementById('msg').value = "Intention d'acquisition : " + item;
+            document.getElementById('contactModal').style.transform = 'translateY(0)';
+        }
+        function closeContact() { document.getElementById('contactModal').style.transform = 'translateY(100%)'; }
+
+        // Init
+        displayVillas(villas);
+
+        // Cursor
         const cursor = document.querySelector('.cursor');
         document.addEventListener('mousemove', e => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
 
-        // Modal Logic
-        function openContact(item = "") {
-            if(item) document.getElementById('msg').value = "Je souhaite acquérir : " + item;
-            document.getElementById('contactModal').style.transform = 'translateY(0)';
-        }
-
-        function closeContact() {
-            document.getElementById('contactModal').style.transform = 'translateY(100%)';
-        }
-
-        // Webhook Logic
+        // Webhook Discord
         document.getElementById('hookForm').onsubmit = function(e) {
             e.preventDefault();
             const btn = document.getElementById('subBtn');
             btn.innerText = "TRANSMISSION...";
-            
             const webhook = "https://discord.com/api/webhooks/1429322898367315968/im9bCVJmDKWPmcWMyTtyn4MaqOOC03hBWadHq7eoj7BXIGfhBGE3-fD3LFlr1pVU6WhA";
             
             fetch(webhook, {
@@ -199,21 +195,21 @@
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     embeds: [{
-                        title: "💎 NOUVEAU CONTACT VIP",
+                        title: "💎 LIAISON ARCADIA ÉTABLIE",
                         color: 12951641,
                         fields: [
                             { name: "👑 Client", value: document.getElementById('name').value },
                             { name: "📞 Contact", value: document.getElementById('phone').value },
                             { name: "📝 Message", value: document.getElementById('msg').value }
                         ],
-                        footer: { text: "Système de Liaison Arcadia" }
+                        footer: { text: "Protocol Arcadia Digital" }
                     }]
                 })
             }).then(() => {
-                alert("Votre message a été crypté et transmis.");
+                alert("Votre dossier est entre nos mains.");
                 closeContact();
                 this.reset();
-                btn.innerText = "Initier la liaison";
+                btn.innerText = "Transmettre";
             });
         };
     </script>
