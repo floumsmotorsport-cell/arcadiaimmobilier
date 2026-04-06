@@ -2,260 +2,35 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcadia | Paros • L'Héritage du Luxe</title>
+    <title>Arcadia | Prestige Immobilier</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;600;700&family=Playfair+Display:italic,wght@700;900&display=swap" rel="stylesheet">
-    <style>
-        :root { --gold: #b38e44; --black: #050505; --gold-light: #d4af37; }
-        body { background: var(--black); color: white; font-family: 'Montserrat', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
-        .font-serif { font-family: 'Playfair Display', serif; }
-        
-        /* Glassmorphism amélioré */
-        .glass-card { 
-            background: rgba(15, 15, 15, 0.7); 
-            border: 1px solid rgba(179, 142, 68, 0.15); 
-            border-radius: 20px; 
-            backdrop-filter: blur(12px); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
-        .glass-card:hover { 
-            border-color: var(--gold); 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(179, 142, 68, 0.1);
-            transform: translateY(-10px);
-        }
-
-        .btn-gold { 
-            background: linear-gradient(90deg, #8a6d3b, #b38e44, #8a6d3b); 
-            background-size: 200% auto; 
-            color: black; 
-            font-weight: 800; 
-            border-radius: 4px; /* Look plus carré = plus luxe */
-            cursor: pointer; 
-            transition: 0.5s; 
-            text-align: center; 
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        .btn-gold:hover { 
-            background-position: right center; 
-            box-shadow: 0 0 25px rgba(179,142,68,0.4); 
-        }
-
-        /* Status Badge */
-        .status-badge { 
-            position: absolute; top: 20px; right: 20px; /* Changé à droite */
-            padding: 4px 12px; border-radius: 2px; 
-            font-size: 9px; font-weight: 900; letter-spacing: 1px; z-index: 10; 
-        }
-        .bg-vendu { background: #851e1e; color: white; } 
-        .bg-dispo { background: var(--gold); color: black; }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: var(--gold); }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<nav class="fixed w-full z-50 px-6 md:px-12 py-4 flex justify-between items-center bg-black/90 backdrop-blur-md border-b border-gold/10">
-    <div class="flex items-center gap-4">
-        <div class="h-10 w-10 bg-gold rounded-full flex items-center justify-center font-serif text-black font-bold">A</div>
-        <div class="flex flex-col">
-            <span class="text-xl font-serif italic leading-none tracking-tight">Arcadia<span class="text-gold">.</span></span>
-            <span class="text-[8px] tracking-[3px] uppercase text-gold/70">Real Estate • International</span>
+    <nav>
+        <div class="text-xl font-serif italic">Arcadia<span class="text-gold">.</span></div>
+        <div class="space-x-8">
+            <a href="index.html">Accueil</a>
+            <a href="catalogue.html">Catalogue</a>
+            <a href="propos.html">À Propos</a>
+            <a href="contact.html">Contact</a>
         </div>
-    </div>
-    <div class="hidden md:flex items-center gap-10">
-        <a href="#services" class="text-[9px] uppercase tracking-[3px] hover:text-gold transition">Expertise</a>
-        <a href="#villas" class="text-[9px] uppercase tracking-[3px] hover:text-gold transition">Catalogue</a>
-        <button onclick="openOrderModal('Demande de contact générale')" class="btn-gold px-6 py-2.5 text-[9px]">Nous Contacter</button>
-    </div>
-</nav>
+    </nav>
 
-<section class="h-screen flex items-center justify-center relative overflow-hidden">
-    <div class="absolute inset-0 bg-black z-0">
-        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075" class="w-full h-full object-cover opacity-50 scale-105 animate-[pulse_8s_infinite]" alt="Luxury Villa">
-    </div>
-    <div class="relative z-10 text-center px-4">
-        <span class="text-gold tracking-[15px] uppercase text-[10px] mb-4 block animate-pulse">Prestige & Confidentialité</span>
-        <h1 class="text-5xl md:text-8xl font-serif italic mb-8">L'Art de Vivre à <br><span class="text-gold italic">Paros</span></h1>
-        <div class="flex justify-center gap-4">
-            <a href="#villas" class="border border-white/20 px-8 py-3 text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition">Explorer</a>
+    <header class="h-screen flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c')] bg-cover bg-center">
+        <div class="absolute inset-0 bg-black/60"></div>
+        <div class="relative text-center">
+            <h1 class="text-7xl font-serif italic mb-6">L'Héritage du Luxe</h1>
+            <p class="text-gold tracking-[10px] uppercase text-sm mb-10">Paros • International</p>
+            <a href="catalogue.html" class="btn-gold">Explorer la collection</a>
         </div>
-    </div>
-</nav>
+    </header>
 
-<section id="services" class="py-32 px-6 bg-[#080808]">
-    <div class="max-w-6xl mx-auto">
-        <div class="grid lg:grid-cols-2 gap-20 items-center">
-            <div>
-                <h2 class="text-gold text-[10px] uppercase tracking-[8px] mb-4">Ingénierie de sécurité</h2>
-                <h3 class="text-4xl md:text-5xl font-serif italic mb-8">Protégez votre <br>sanctuaire.</h3>
-                <p class="text-gray-400 text-sm leading-loose mb-10 opacity-80">Chez Arcadia, nous ne vendons pas seulement des murs. Nous sécurisons votre héritage avec les technologies les plus avancées de l'île.</p>
-                
-                <div class="space-y-4">
-                    <div class="service-card glass-card p-6 flex justify-between items-center cursor-pointer group" onclick="openOrderModal('Intérêt pour : Alarme Niveau 1')">
-                        <div>
-                            <p class="text-xs font-bold tracking-widest uppercase group-hover:text-gold transition">Alarme Niveau I</p>
-                            <p class="text-[10px] text-gray-500 uppercase mt-1">Dissuasion standard</p>
-                        </div>
-                        <span class="text-gold font-serif italic text-xl">850k</span>
-                    </div>
-                    <div class="service-card glass-card p-6 flex justify-between items-center cursor-pointer group" onclick="openOrderModal('Intérêt pour : Alarme Niveau 2')">
-                        <div>
-                            <p class="text-xs font-bold tracking-widest uppercase group-hover:text-gold transition">Alarme Niveau II</p>
-                            <p class="text-[10px] text-gray-500 uppercase mt-1">Liaison Gendarmerie</p>
-                        </div>
-                        <span class="text-gold font-serif italic text-xl">2.0M</span>
-                    </div>
-                </div>
-            </div>
-            <div class="relative">
-                <div class="aspect-square glass-card flex flex-col items-center justify-center p-12 text-center border-gold/30">
-                    <div class="w-20 h-[1px] bg-gold mb-8"></div>
-                    <h4 class="text-xs tracking-[5px] uppercase mb-4">Extension Stockage</h4>
-                    <p class="text-5xl font-serif mb-6">+20 000 <span class="text-sm">u</span></p>
-                    <p class="text-gray-500 text-xs mb-8 italic">Optimisez les capacités logistiques de votre entreprise avec nos solutions de coffres-forts blindés.</p>
-                    <button onclick="openOrderModal('Demande d\'extension de stockage entreprise')" class="btn-gold w-full py-4 text-[10px]">Investir • 10M €</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    <section class="py-24 px-10 max-w-5xl mx-auto text-center">
+        <h2 class="text-3xl font-serif italic mb-8">Une discrétion absolue</h2>
+        <p class="text-gray-400 leading-loose">Depuis 2015, Arcadia accompagne les plus grandes fortunes de l'île de Paros dans l'acquisition de domaines d'exception. Notre expertise ne se limite pas à l'immobilier : nous bâtissons des sanctuaires.</p>
+    </section>
 
-<section id="villas" class="py-32 px-6">
-    <div class="max-w-7xl mx-auto text-center mb-20">
-        <h2 class="text-gold text-[10px] uppercase tracking-[10px] mb-4">Le Catalogue Privé</h2>
-        <h3 class="text-5xl font-serif italic text-white">Résidences d'Exception</h3>
-    </div>
-    <div id="listingGrid" class="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-        </div>
-</section>
-
-<footer class="py-20 border-t border-white/5 text-center">
-    <p class="text-[9px] tracking-[5px] uppercase opacity-30">Arcadia Immobilier &copy; 2026 • Paros Life RP</p>
-</footer>
-
-<div id="orderModal" class="fixed inset-0 z-[100] bg-black/95 hidden flex items-center justify-center p-6 backdrop-blur-xl">
-    <div class="max-w-lg w-full glass-card p-12 relative border-gold/40">
-        <button onclick="closeOrderModal()" class="absolute top-8 right-8 text-white/40 hover:text-gold transition text-xl">&times;</button>
-        <h2 class="text-3xl font-serif italic mb-2 text-gold">Dossier Client</h2>
-        <p class="text-[10px] uppercase tracking-[3px] mb-10 opacity-50">Transmission cryptée vers nos agents</p>
-        
-        <form class="space-y-6" id="orderForm">
-            <div class="group">
-                <label class="text-[9px] uppercase tracking-widest text-gold mb-2 block">Identité</label>
-                <input type="text" id="orderName" placeholder="Ex: Jean Valjean" class="bg-white/5 border-b border-white/10 w-full py-3 px-2 outline-none focus:border-gold transition text-sm" required>
-            </div>
-            <div class="group">
-                <label class="text-[9px] uppercase tracking-widest text-gold mb-2 block">Coordonnées</label>
-                <input type="tel" id="orderPhone" placeholder="06 XX XX XX XX" class="bg-white/5 border-b border-white/10 w-full py-3 px-2 outline-none focus:border-gold transition text-sm" required>
-            </div>
-            <div class="group">
-                <label class="text-[9px] uppercase tracking-widest text-gold mb-2 block">Objet de la demande</label>
-                <textarea id="orderMsg" class="bg-white/5 border border-white/10 w-full h-32 p-4 outline-none focus:border-gold transition text-sm resize-none" required></textarea>
-            </div>
-            <button type="submit" id="submitBtn" class="btn-gold w-full py-4 text-[10px] mt-4">Transmettre le dossier</button>
-        </form>
-    </div>
-</div>
-
-<script>
-    const listings = [
-        { 
-            title: "Le Rocher du Titan", 
-            price: 550000000, 
-            status: "dispo", 
-            loc: "Nord-Est • Kavala", 
-            desc: "Forteresse de luxe avec vue imprenable sur la baie. Sécurisée Niveau 3.", 
-            img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=1200"
-        },
-        { 
-            title: "L'Oasis d'Athira", 
-            price: 210000000, 
-            status: "dispo", 
-            loc: "Centre • Athira", 
-            desc: "Villa moderne avec garage souterrain pour 12 véhicules.", 
-            img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200"
-        },
-        { 
-            title: "Manoir Pyrgos", 
-            price: 125000000, 
-            status: "vendu", 
-            loc: "Sud • Pyrgos", 
-            desc: "Demeure historique entièrement rénovée. Vendue avec héliport.", 
-            img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200"
-        }
-    ];
-
-    function renderVillas() {
-        const grid = document.getElementById('listingGrid');
-        grid.innerHTML = listings.map(v => `
-            <div class="glass-card group overflow-hidden">
-                <div class="relative h-64 overflow-hidden">
-                    <div class="status-badge bg-${v.status}">${v.status}</div>
-                    <img src="${v.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-[2s]">
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition duration-500"></div>
-                </div>
-                <div class="p-8">
-                    <span class="text-[8px] text-gold uppercase tracking-[4px] mb-3 block">${v.loc}</span>
-                    <h3 class="text-2xl font-serif italic mb-3">${v.title}</h3>
-                    <p class="text-gold font-bold text-lg mb-4 italic">${v.price.toLocaleString()} €</p>
-                    <p class="text-[11px] text-gray-400 leading-relaxed mb-8 opacity-70">${v.desc}</p>
-                    <button onclick="openOrderModal('Offre pour : ${v.title}')" class="text-[9px] uppercase font-bold tracking-[3px] border-b border-gold/30 text-gold hover:border-gold hover:text-white transition pb-1">Soumettre une offre</button>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    window.openOrderModal = (context = "") => {
-        if(context) document.getElementById('orderMsg').value = context + "\n------------------\n";
-        document.getElementById('orderModal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-
-    window.closeOrderModal = () => {
-        document.getElementById('orderModal').classList.add('hidden');
-        document.body.style.overflow = 'auto';
-    }
-
-    document.getElementById('orderForm').onsubmit = function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        btn.innerText = "SÉCURISATION DU CANAL...";
-        
-        const webhookURL = "https://discord.com/api/webhooks/1429322898367315968/im9bCVJmDKWPmcWMyTtyn4MaqOOC03hBWadHq7eoj7BXIGfhBGE3-fD3LFlr1pVU6WhA";
-        
-        const data = {
-            embeds: [{
-                title: "💎 NOUVEAU DOSSIER ACQUISITION",
-                color: 11767364,
-                fields: [
-                    { name: "👑 Client", value: document.getElementById('orderName').value, inline: true },
-                    { name: "📱 Contact", value: document.getElementById('orderPhone').value, inline: true },
-                    { name: "💼 Objet", value: document.getElementById('orderMsg').value }
-                ],
-                footer: { text: "Arcadia Intel System" },
-                timestamp: new Date()
-            }]
-        };
-
-        fetch(webhookURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }).then(() => {
-            alert("Dossier transmis. Nos agents vous contacteront sous peu.");
-            closeOrderModal();
-            this.reset();
-        }).finally(() => {
-            btn.innerText = "TRANSMETTRE LE DOSSIER";
-        });
-    };
-
-    renderVillas();
-</script>
+    <footer>ARCADIA MANAGEMENT © 2026</footer>
 </body>
 </html>
