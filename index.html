@@ -3,220 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcadia | Paros • L'Héritage du Luxe</title>
+    <title>ARCADIA | L'Élite de l'Immobilier</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;700&family=Playfair+Display:italic,wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@200;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #b38e44; --black: #050505; }
-        body { background: var(--black); color: white; font-family: 'Montserrat', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
-        .font-serif { font-family: 'Playfair Display', serif; }
-        
-        /* Glassmorphism effet Luxe */
-        .glass-card { 
-            background: rgba(15, 15, 15, 0.6); 
-            border: 1px solid rgba(179, 142, 68, 0.1); 
-            backdrop-filter: blur(15px); 
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
-        }
-        .glass-card:hover { 
-            transform: translateY(-10px); 
-            border-color: var(--gold);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+        :root {
+            --gold: #c5a059;
+            --dark: #0a0a0a;
+            --soft-white: #f5f5f5;
         }
 
-        .btn-gold { 
-            background: linear-gradient(90deg, #8a6d3b, #b38e44, #8a6d3b); 
-            background-size: 200% auto; 
-            color: black; 
-            font-weight: 800; 
-            transition: 0.5s; 
+        body {
+            background-color: var(--dark);
+            color: var(--soft-white);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
         }
-        .btn-gold:hover { background-position: right center; box-shadow: 0 0 20px rgba(179,142,68,0.4); }
 
-        .status-badge { 
-            position: absolute; top: 20px; left: 20px; padding: 4px 15px; 
-            font-size: 9px; font-weight: bold; text-transform: uppercase; z-index: 10; letter-spacing: 2px;
+        .font-luxury { font-family: 'Cinzel', serif; }
+
+        /* Animation d'entrée */
+        @keyframes reveal {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .bg-vendu { background: #7f1d1d; color: white; } 
-        .bg-dispo { background: var(--gold); color: black; }
 
-        /* Input style */
-        .arcadia-input {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(179, 142, 68, 0.2);
-            padding: 15px;
-            width: 100%;
-            outline: none;
-            transition: 0.3s;
-            color: white;
+        .reveal { animation: reveal 1.5s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
+
+        /* Effet de grain pour texture papier luxe */
+        .grain::before {
+            content: "";
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Noise_Texture.png');
+            opacity: 0.03; pointer-events: none; z-index: 9999;
         }
-        .arcadia-input:focus { border-color: var(--gold); background: rgba(255,255,255,0.1); }
 
-        /* Espacement réaliste */
-        .section-spacing { padding: 120px 0; }
+        /* Navigation Minimaliste */
+        nav {
+            mix-blend-mode: difference;
+            transition: all 0.5s ease;
+        }
+
+        /* Hero Image Zoom lent */
+        .hero-bg {
+            animation: slowZoom 20s infinite alternate;
+        }
+
+        @keyframes slowZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        /* Custom Cursor (Optionnel mais premium) */
+        .cursor {
+            width: 20px; height: 20px; border: 1px solid var(--gold);
+            border-radius: 50%; position: fixed; pointer-events: none;
+            z-index: 10000; transition: transform 0.1s;
+        }
+
+        .property-card {
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .property-card:hover {
+            background-color: rgba(197, 160, 89, 0.03);
+            padding-left: 20px;
+        }
+
+        /* Scrollbar Invisible */
+        ::-webkit-scrollbar { width: 0px; }
     </style>
 </head>
-<body>
+<body class="grain">
 
-<nav class="fixed w-full z-[100] px-6 md:px-12 py-6 flex justify-between items-center bg-black/90 backdrop-blur-lg border-b border-white/5">
-    <div class="flex items-center gap-4">
-        <div class="h-10 w-10 bg-gold flex items-center justify-center rounded-full font-serif text-black font-bold text-xl">A</div>
-        <div class="flex flex-col">
-            <span class="text-2xl font-serif italic leading-none">Arcadia<span class="text-gold">.</span></span>
-            <span class="text-[8px] tracking-[4px] uppercase text-gold/70">Paros • International</span>
+    <div class="cursor hidden md:block"></div>
+
+    <nav class="fixed top-0 w-full z-[100] flex justify-between items-center px-10 py-8">
+        <div class="text-2xl font-luxury tracking-[6px]">ARCADIA</div>
+        <div class="flex gap-12 text-[10px] uppercase tracking-[4px]">
+            <a href="#collection" class="hover:text-gold transition">Collection</a>
+            <a href="#expertise" class="hover:text-gold transition">Expertise</a>
+            <a href="javascript:openContact()" class="border-b border-gold pb-1">Privé</a>
         </div>
-    </div>
-    <div class="hidden md:flex items-center gap-8">
-        <a href="#villas" class="text-[10px] uppercase tracking-[3px] opacity-60 hover:opacity-100 transition">Catalogue</a>
-        <a href="#expert" class="text-[10px] uppercase tracking-[3px] opacity-60 hover:opacity-100 transition">Expertise</a>
-        <button onclick="openModal('Demande de contact générale')" class="btn-gold px-8 py-3 text-[10px] uppercase tracking-widest">Nous contacter</button>
-    </div>
-</nav>
+    </nav>
 
-<section class="h-screen flex items-center justify-center relative overflow-hidden">
-    <div class="absolute inset-0 bg-black">
-        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075" class="w-full h-full object-cover opacity-40 scale-110">
-    </div>
-    <div class="relative z-10 text-center px-6">
-        <h1 class="text-6xl md:text-9xl font-serif italic mb-6 leading-tight">L'Immobilier <br><span class="text-gold">d'Exception</span></h1>
-        <p class="tracking-[12px] uppercase text-[10px] text-gold/80 mb-10">Votre sanctuaire privé sur l'île de Paros</p>
-        <a href="#villas" class="border border-white/20 px-10 py-4 text-[10px] uppercase tracking-[4px] hover:bg-white hover:text-black transition">Découvrir la collection</a>
-    </div>
-</nav>
-
-<section id="villas" class="section-spacing px-6 md:px-20 bg-[#030303]">
-    <div class="max-w-7xl mx-auto">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-6">
-            <div>
-                <h2 class="text-gold text-[10px] uppercase tracking-[10px] mb-4">Collection Privée</h2>
-                <h3 class="text-5xl font-serif italic">Résidences de prestige</h3>
-            </div>
-            <p class="text-gray-500 text-sm max-w-md italic">Chaque propriété est sélectionnée pour son architecture unique et sa discrétion absolue.</p>
+    <section class="relative h-screen w-full flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1600607687940-47a04b629571?q=80&w=2070" class="hero-bg w-full h-full object-cover opacity-60">
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black"></div>
         </div>
         
-        <div id="listingGrid" class="grid md:grid-cols-3 gap-12">
-            </div>
-    </div>
-</section>
-
-<section id="expert" class="section-spacing px-6 md:px-20 border-t border-white/5">
-    <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-20 items-center">
-        <div>
-            <h2 class="text-gold text-[10px] uppercase tracking-[10px] mb-6">Expertise Sécurité</h2>
-            <h3 class="text-4xl font-serif italic mb-6">Un patrimoine protégé par la technologie.</h3>
-            <p class="text-gray-400 text-sm leading-loose mb-8">Nous intégrons des systèmes de sécurité de pointe (Niveau I à III) pour garantir la sérénité de nos résidents. Liaison directe gendarmerie et domotique cryptée.</p>
-            <button onclick="openModal('Demande d\'expertise sécurité')" class="text-gold border-b border-gold/30 pb-2 text-[10px] uppercase tracking-widest hover:border-gold transition">En savoir plus sur nos services</button>
+        <div class="relative z-10 text-center reveal">
+            <h1 class="text-7xl md:text-[120px] font-luxury leading-none mb-4">L'IMMOBILIER <br> D'ÉLITE</h1>
+            <p class="text-gold tracking-[15px] uppercase text-xs opacity-80">Paros • Altis • International</p>
         </div>
-        <div class="grid gap-4">
-            <div class="glass-card p-8 text-center">
-                <span class="block text-gold text-2xl font-serif mb-2">10M €</span>
-                <span class="text-[9px] uppercase tracking-widest">Extension Stockage Entreprise</span>
-            </div>
-            <div class="glass-card p-8 text-center">
-                <span class="block text-gold text-2xl font-serif mb-2">5M €</span>
-                <span class="text-[9px] uppercase tracking-widest">Sécurité Niveau III (Privé)</span>
-            </div>
-        </div>
-    </div>
-</section>
 
-<div id="orderModal" class="fixed inset-0 z-[200] bg-black/95 hidden flex items-center justify-center p-4 backdrop-blur-xl">
-    <div class="max-w-lg w-full glass-card p-10 relative">
-        <button onclick="closeModal()" class="absolute top-6 right-6 text-white/40 hover:text-white text-2xl">&times;</button>
-        <h2 class="text-3xl font-serif italic mb-2 text-gold">Dossier Arcadia</h2>
-        <p class="text-[9px] uppercase tracking-[3px] mb-8 text-gray-500">Transmission sécurisée vers nos agents</p>
+        <div class="absolute bottom-10 left-10 text-[9px] tracking-[4px] uppercase opacity-40">
+            Défilez pour explorer
+        </div>
+    </section>
+
+    <section id="expertise" class="py-40 px-10 md:px-40 grid md:grid-cols-2 gap-20">
+        <div class="reveal">
+            <h2 class="text-gold uppercase tracking-[8px] text-xs mb-8 italic">Notre Vision</h2>
+            <p class="text-3xl md:text-5xl font-luxury leading-tight">"La rareté n'est pas un luxe, c'est un standard."</p>
+        </div>
+        <div class="flex flex-col justify-end">
+            <p class="text-gray-400 leading-relaxed text-lg max-w-md opacity-80">
+                Chaque propriété Arcadia est une œuvre d'art brute. Nous ne listons pas des maisons, nous archivons des moments d'exception pour une clientèle qui refuse le commun.
+            </p>
+        </div>
+    </section>
+
+    <section id="collection" class="py-20 px-10 md:px-20 border-t border-white/10">
+        <h2 class="text-[10px] uppercase tracking-[10px] mb-20 opacity-50">Collection 2026</h2>
         
-        <form id="contactForm" class="space-y-4">
-            <input type="text" id="formName" placeholder="NOM COMPLET" class="arcadia-input" required>
-            <input type="tel" id="formPhone" placeholder="TÉLÉPHONE" class="arcadia-input" required>
-            <textarea id="formMsg" placeholder="VOTRE DEMANDE..." class="arcadia-input h-32 resize-none" required></textarea>
-            <button type="submit" id="submitBtn" class="btn-gold w-full py-4 text-[10px] uppercase tracking-widest">Transmettre le dossier</button>
-        </form>
-    </div>
-</div>
-
-<footer class="py-20 text-center border-t border-white/5 opacity-30 text-[9px] tracking-[5px] uppercase">
-    Arcadia Management Group &copy; 2026 • Paros Life
-</footer>
-
-<script>
-    // --- DONNÉES ---
-    const listings = [
-        { title: "Palais d'Émeraude", price: 450000000, status: "dispo", loc: "Baie des Anges", img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=1200" },
-        { title: "Résidence Horizon", price: 180000000, status: "dispo", loc: "Hauts de Paros", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200" },
-        { title: "Le Refuge Arcadien", price: 95000000, status: "vendu", loc: "Vignobles du Sud", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200" }
-    ];
-
-    // --- LOGIQUE CATALOGUE ---
-    function render() {
-        const grid = document.getElementById('listingGrid');
-        grid.innerHTML = listings.map(v => `
-            <div class="glass-card group overflow-hidden">
-                <div class="relative h-80 overflow-hidden">
-                    <div class="status-badge bg-${v.status}">${v.status}</div>
-                    <img src="${v.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-[2s]">
-                </div>
-                <div class="p-8 text-center">
-                    <p class="text-[8px] text-gold uppercase tracking-[4px] mb-3">${v.loc}</p>
-                    <h3 class="text-2xl font-serif italic mb-4">${v.title}</h3>
-                    <p class="text-white/80 font-bold mb-6">${v.price.toLocaleString()} €</p>
-                    <button onclick="openModal('Offre pour : ${v.title}')" class="text-[9px] uppercase tracking-[3px] border-b border-gold/30 pb-1 text-gold hover:text-white hover:border-gold transition">Faire une offre</button>
+        <div class="space-y-0">
+            <div class="property-card py-16 flex flex-col md:flex-row justify-between items-center group cursor-pointer" onclick="openContact('Palais de Kavala')">
+                <span class="text-gray-600 font-luxury text-2xl group-hover:text-gold transition">01.</span>
+                <h3 class="text-4xl md:text-6xl font-luxury group-hover:italic transition-all uppercase">Palais de Kavala</h3>
+                <div class="text-right">
+                    <p class="text-gold font-bold text-xl tracking-widest">450.000.000€</p>
+                    <p class="text-[10px] tracking-[3px] opacity-40 uppercase">Baie des Anges</p>
                 </div>
             </div>
-        `).join('');
-    }
 
-    // --- LOGIQUE MODAL & WEBHOOK ---
-    function openModal(context = "") {
-        if(context) document.getElementById('formMsg').value = context + "\n---\n";
-        document.getElementById('orderModal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
+            <div class="property-card py-16 flex flex-col md:flex-row justify-between items-center group cursor-pointer" onclick="openContact('Le Sanctuaire Noir')">
+                <span class="text-gray-600 font-luxury text-2xl group-hover:text-gold transition">02.</span>
+                <h3 class="text-4xl md:text-6xl font-luxury group-hover:italic transition-all uppercase">Sanctuaire Noir</h3>
+                <div class="text-right">
+                    <p class="text-gold font-bold text-xl tracking-widest">210.000.000€</p>
+                    <p class="text-[10px] tracking-[3px] opacity-40 uppercase">Sommets d'Athira</p>
+                </div>
+            </div>
 
-    function closeModal() {
-        document.getElementById('orderModal').classList.add('hidden');
-        document.body.style.overflow = 'auto';
-    }
+            <div class="property-card py-16 flex flex-col md:flex-row justify-between items-center group cursor-pointer" onclick="openContact('Villa Arcadia HQ')">
+                <span class="text-gray-600 font-luxury text-2xl group-hover:text-gold transition">03.</span>
+                <h3 class="text-4xl md:text-6xl font-luxury group-hover:italic transition-all uppercase">Villa Arcadia HQ</h3>
+                <div class="text-right">
+                    <p class="text-gold font-bold text-xl tracking-widest">125.000.000€</p>
+                    <p class="text-[10px] tracking-[3px] opacity-40 uppercase">Sud de Paros</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    document.getElementById('contactForm').onsubmit = function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        btn.innerText = "ENVOI EN COURS...";
-        btn.disabled = true;
-
-        const webhookURL = "https://discord.com/api/webhooks/1429322898367315968/im9bCVJmDKWPmcWMyTtyn4MaqOOC03hBWadHq7eoj7BXIGfhBGE3-fD3LFlr1pVU6WhA";
+    <div id="contactModal" class="fixed inset-0 z-[200] bg-[#0a0a0a] translate-y-full transition-transform duration-700 ease-in-out flex flex-col items-center justify-center p-10">
+        <button onclick="closeContact()" class="absolute top-10 right-10 text-[10px] tracking-[5px] uppercase border-b border-gold">Fermer</button>
         
-        const data = {
-            embeds: [{
-                title: "💎 Nouvelle Demande Arcadia",
-                color: 11767364,
-                fields: [
-                    { name: "👤 Client", value: document.getElementById('formName').value, inline: true },
-                    { name: "📞 Téléphone", value: document.getElementById('formPhone').value, inline: true },
-                    { name: "📝 Détails", value: document.getElementById('formMsg').value }
-                ],
-                timestamp: new Date()
-            }]
-        };
+        <div class="max-w-xl w-full text-center">
+            <h2 class="text-5xl font-luxury mb-12 italic text-gold">Dossier Privé</h2>
+            <form id="hookForm" class="space-y-12">
+                <input type="text" id="name" placeholder="VOTRE NOM" class="w-full bg-transparent border-b border-white/20 py-4 outline-none focus:border-gold transition text-xl text-center">
+                <input type="tel" id="phone" placeholder="FRÉQUENCE RADIO OU TÉLÉPHONE" class="w-full bg-transparent border-b border-white/20 py-4 outline-none focus:border-gold transition text-xl text-center">
+                <textarea id="msg" placeholder="VOTRE INTENTION..." class="w-full bg-transparent border-b border-white/20 py-4 outline-none focus:border-gold transition text-xl text-center h-20 resize-none"></textarea>
+                <button type="submit" id="subBtn" class="text-black bg-gold px-12 py-5 text-[10px] uppercase tracking-[5px] font-bold hover:scale-105 transition transform">Initier la liaison</button>
+            </form>
+        </div>
+    </div>
 
-        fetch(webhookURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }).then(() => {
-            alert("Votre demande a été transmise avec succès.");
-            closeModal();
-            this.reset();
-        }).catch(() => {
-            alert("Erreur lors de l'envoi. Vérifiez votre connexion.");
-        }).finally(() => {
-            btn.innerText = "TRANSMETTRE LE DOSSIER";
-            btn.disabled = false;
+    <footer class="py-20 text-center opacity-20 text-[8px] tracking-[6px] uppercase">
+        Arcadia Group • Discrétion Absolue • 2026
+    </footer>
+
+    <script>
+        // Cursor Logic
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', e => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
         });
-    };
 
-    render();
-</script>
+        // Modal Logic
+        function openContact(item = "") {
+            if(item) document.getElementById('msg').value = "Je souhaite acquérir : " + item;
+            document.getElementById('contactModal').style.transform = 'translateY(0)';
+        }
 
+        function closeContact() {
+            document.getElementById('contactModal').style.transform = 'translateY(100%)';
+        }
+
+        // Webhook Logic
+        document.getElementById('hookForm').onsubmit = function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('subBtn');
+            btn.innerText = "TRANSMISSION...";
+            
+            const webhook = "https://discord.com/api/webhooks/1429322898367315968/im9bCVJmDKWPmcWMyTtyn4MaqOOC03hBWadHq7eoj7BXIGfhBGE3-fD3LFlr1pVU6WhA";
+            
+            fetch(webhook, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    embeds: [{
+                        title: "💎 NOUVEAU CONTACT VIP",
+                        color: 12951641,
+                        fields: [
+                            { name: "👑 Client", value: document.getElementById('name').value },
+                            { name: "📞 Contact", value: document.getElementById('phone').value },
+                            { name: "📝 Message", value: document.getElementById('msg').value }
+                        ],
+                        footer: { text: "Système de Liaison Arcadia" }
+                    }]
+                })
+            }).then(() => {
+                alert("Votre message a été crypté et transmis.");
+                closeContact();
+                this.reset();
+                btn.innerText = "Initier la liaison";
+            });
+        };
+    </script>
 </body>
 </html>
