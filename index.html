@@ -39,8 +39,7 @@
         </header>
 
         <section class="py-16 max-w-7xl mx-auto px-6">
-            <div id="property-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                </div>
+            <div id="property-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8"></div>
         </section>
     </div>
 
@@ -53,6 +52,7 @@
 
             <div class="bg-white p-8 rounded-xl shadow-md mb-12">
                 <h3 id="formTitle" class="text-xl font-bold mb-4 italic text-emerald-600">Ajouter un nouveau bien</h3>
+                
                 <form id="propForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="hidden" id="editIndex">
                     <input type="text" id="title" placeholder="Titre (ex: Villa Moderne)" class="p-3 border rounded" required>
@@ -62,8 +62,14 @@
                         <option value="Vente">Vente</option>
                         <option value="Location">Location</option>
                     </select>
-                    <input type="url" id="img" placeholder="URL de l'image" class="p-3 border rounded md:col-span-2" required>
+
+                    <div class="md:col-span-2 bg-emerald-50 p-4 border-2 border-dashed border-emerald-200 rounded-lg">
+                        <label class="block text-emerald-700 font-bold mb-2">Image du bien (depuis votre ordinateur)</label>
+                        <input type="file" id="imgFile" accept="image/*" class="w-full">
+                        <input type="hidden" id="existingImg"> </div>
+
                     <textarea id="desc" placeholder="Description courte" class="p-3 border rounded md:col-span-2" required></textarea>
+                    
                     <button type="submit" id="submitBtn" class="md:col-span-2 bg-emerald-600 text-white py-3 rounded-lg font-bold hover:bg-emerald-700 transition">Enregistrer le bien</button>
                     <button type="button" id="cancelBtn" onclick="resetForm()" class="hidden md:col-span-2 bg-gray-400 text-white py-2 rounded-lg">Annuler la modification</button>
                 </form>
@@ -78,8 +84,7 @@
                             <th class="p-4 text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="admin-list">
-                        </tbody>
+                    <tbody id="admin-list"></tbody>
                 </table>
             </div>
         </div>
@@ -88,6 +93,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        // AJOUT DE L'IMPORT STORAGE
+        import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBg9JIb2XAFacftazyDcAXOnCpfvaQ2PYI",
@@ -102,6 +109,7 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const storage = getStorage(app); // Initialisation du storage
         const dbRef = ref(db, 'properties');
 
         let properties = [];
@@ -109,7 +117,6 @@
         const grid = document.getElementById('property-grid');
         const adminList = document.getElementById('admin-list');
 
-        // CHARGER LES DONNÉES
         onValue(dbRef, (snapshot) => {
             const data = snapshot.val();
             properties = [];
@@ -122,30 +129,58 @@
             renderAdmin();
         });
 
-        // AJOUTER OU MODIFIER
         propForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
             const id = document.getElementById('editIndex').value;
-            const newProp = {
-                title: document.getElementById('title').value,
-                price: document.getElementById('price').value,
-                loc: document.getElementById('loc').value,
-                type: document.getElementById('type').value,
-                img: document.getElementById('img').value,
-                desc: document.getElementById('desc').value,
-                updatedAt: Date.now()
-            };
+            const file = document.getElementById('imgFile').files[0];
+            let imageUrl = document.getElementById('existingImg').value;
 
-            if (id === "") {
-                const newPostRef = push(dbRef);
-                set(newPostRef, newProp);
-            } else {
-                update(ref(db, `properties/${id}`), newProp);
+            submitBtn.innerText = "Chargement en cours...";
+            submitBtn.disabled = true;
+
+            try {
+                // Si un nouveau fichier est sélectionné, on l'upload
+                if (file) {
+                    const storageRef = sRef(storage, 'images/' + Date.now() + "_" + file.name);
+                    const snapshot = await uploadBytes(storageRef, file);
+                    imageUrl = await getDownloadURL(snapshot.ref);
+                }
+
+                if (!imageUrl) {
+                    alert("Veuillez sélectionner une image.");
+                    submitBtn.innerText = "Enregistrer le bien";
+                    submitBtn.disabled = false;
+                    return;
+                }
+
+                const newProp = {
+                    title: document.getElementById('title').value,
+                    price: document.getElementById('price').value,
+                    loc: document.getElementById('loc').value,
+                    type: document.getElementById('type').value,
+                    img: imageUrl,
+                    desc: document.getElementById('desc').value,
+                    updatedAt: Date.now()
+                };
+
+                if (id === "") {
+                    const newPostRef = push(dbRef);
+                    await set(newPostRef, newProp);
+                } else {
+                    await update(ref(db, `properties/${id}`), newProp);
+                }
+                
+                resetForm();
+            } catch (error) {
+                console.error(error);
+                alert("Erreur lors de l'enregistrement");
+            } finally {
+                submitBtn.innerText = "Enregistrer le bien";
+                submitBtn.disabled = false;
             }
-            resetForm();
         });
 
-        // EXPOSITION DES FONCTIONS AU WINDOW (Nécessaire pour le type="module")
         window.deleteProperty = (id) => {
             if(confirm("Supprimer ce bien définitivement ?")) {
                 remove(ref(db, `properties/${id}`));
@@ -159,11 +194,11 @@
             document.getElementById('price').value = p.price;
             document.getElementById('loc').value = p.loc;
             document.getElementById('type').value = p.type;
-            document.getElementById('img').value = p.img;
+            document.getElementById('existingImg').value = p.img; // On garde l'URL actuelle
             document.getElementById('desc').value = p.desc;
             
             document.getElementById('formTitle').innerText = "Modifier : " + p.title;
-            document.getElementById('submitBtn').innerText = "Mettre à jour sur Firebase";
+            document.getElementById('submitBtn').innerText = "Mettre à jour";
             document.getElementById('cancelBtn').classList.remove('hidden');
             window.scrollTo(0,0);
         };
@@ -179,12 +214,12 @@
         window.resetForm = () => {
             propForm.reset();
             document.getElementById('editIndex').value = "";
+            document.getElementById('existingImg').value = "";
             document.getElementById('formTitle').innerText = "Ajouter un nouveau bien";
             document.getElementById('submitBtn').innerText = "Enregistrer le bien";
             document.getElementById('cancelBtn').classList.add('hidden');
         };
 
-        // RENDU
         function renderPublic() {
             if (properties.length === 0) {
                 grid.innerHTML = '<p class="col-span-3 text-center text-gray-400 italic">Aucun bien disponible.</p>';
