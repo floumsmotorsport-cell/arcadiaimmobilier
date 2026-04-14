@@ -3,172 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARCADIA | Haute Immobilier</title>
+    <title>ARCADIA | Haute Immobilier & Sécurité</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Inter:wght@200;400;600&display=swap');
 
         :root {
             --luxury-black: #0a0a0a;
+            --luxury-gold: #c5a059;
             --luxury-white: #ffffff;
-            --luxury-gray: #f4f4f4;
         }
 
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: var(--luxury-white);
-            color: var(--luxury-black);
+            background-color: var(--luxury-black);
+            color: var(--luxury-white);
             scroll-behavior: smooth;
+            overflow-x: hidden;
         }
 
         h1, h2, h3, .serif { font-family: 'Bodoni Moda', serif; }
 
+        /* Navigation Pages */
+        .page { display: none; opacity: 0; transition: opacity 0.6s ease; }
+        .page.active { display: block; opacity: 1; }
+
         /* Animations */
-        .reveal { animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal { animation: reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes reveal {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(40px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .admin-panel { display: none; }
-        .admin-active .admin-panel { display: block; animation: fadeIn 0.5s ease; }
-        .admin-active .public-view { display: none; }
+        /* Gold Gradient Text */
+        .gold-text {
+            background: linear-gradient(to right, #c5a059, #f9f295, #c5a059);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Custom UI */
-        .btn-luxury {
-            background: var(--luxury-black);
-            color: white;
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.4s ease;
-            border: 1px solid var(--luxury-black);
         }
-        .btn-luxury:hover {
-            background: transparent;
-            color: var(--luxury-black);
-        }
+        .glass-card:hover { border-color: var(--luxury-gold); background: rgba(255, 255, 255, 0.05); }
 
-        .card-property {
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            border-bottom: 1px solid #e5e5e5;
+        .btn-gold {
+            background: var(--luxury-gold);
+            color: black;
+            font-weight: bold;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
         }
-        .card-property:hover { transform: translateY(-5px); }
-        
-        input, select, textarea {
-            border: 1px solid #e5e5e5 !important;
-            border-radius: 0 !important;
-        }
+        .btn-gold:hover { transform: scale(1.05); filter: brightness(1.2); }
+
+        /* Admin/Public Toggle */
+        .admin-panel { display: none; }
+        body.admin-mode .admin-panel { display: block; }
+        body.admin-mode .public-view { display: none; }
     </style>
 </head>
-<body class="admin-inactive">
+<body>
 
-    <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
-            <div class="flex flex-col">
-                <span class="text-2xl font-bold tracking-[0.3em] uppercase serif">Arcadia</span>
-                <span class="text-[10px] uppercase tracking-[0.5em] -mt-1 text-gray-400">Estates & Private Office</span>
+    <nav class="fixed w-full z-[100] border-b border-white/10 bg-black/90 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-8 py-6 flex justify-between items-center">
+            <div class="cursor-pointer" onclick="showPage('home')">
+                <h1 class="text-3xl font-light tracking-[0.4em] uppercase serif">Arcadia</h1>
+                <p class="text-[9px] tracking-[0.6em] text-gray-500 uppercase">Immobilier & Solutions</p>
             </div>
             
-            <div class="flex items-center space-x-8">
-                <button onclick="toggleAdmin()" class="text-[11px] uppercase tracking-widest font-semibold border-b border-black pb-1 hover:text-gray-500 hover:border-gray-500 transition">
-                    <i class="fas fa-user-shield mr-2"></i>Dashboard
-                </button>
+            <div class="hidden md:flex items-center space-x-12 text-[10px] font-semibold uppercase tracking-[0.3em]">
+                <a href="javascript:void(0)" onclick="showPage('home')" class="hover:text-gold transition">Accueil</a>
+                <a href="javascript:void(0)" onclick="showPage('catalogue-page')" class="hover:text-gold transition">Propriétés</a>
+                <a href="javascript:void(0)" onclick="showPage('services')" class="hover:text-gold transition">Sécurité & Business</a>
+                <a href="javascript:void(0)" onclick="showPage('about')" class="hover:text-gold transition">À Propos</a>
+                <a href="javascript:void(0)" onclick="showPage('contact')" class="hover:text-gold transition">Contact</a>
+                <button onclick="toggleAdmin()" class="border border-white/20 px-4 py-2 hover:bg-white hover:text-black transition">Admin</button>
             </div>
         </div>
     </nav>
 
     <div class="public-view">
-        <header class="relative h-[80vh] flex items-center justify-center bg-black overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070" class="absolute inset-0 w-full h-full object-cover opacity-60 scale-110" alt="Luxury Hero">
-            <div class="relative z-10 text-center text-white px-4 reveal">
-                <h2 class="text-6xl md:text-8xl font-light mb-6 italic">Excellence Immobilière</h2>
-                <div class="w-24 h-px bg-white mx-auto mb-8"></div>
-                <p class="uppercase tracking-[0.4em] text-sm">Collection Privée 2026</p>
-            </div>
-        </header>
-
-        <section class="max-w-5xl mx-auto -mt-12 relative z-20 px-6">
-            <div class="bg-white p-10 shadow-2xl flex flex-wrap gap-6 items-end">
-                <div class="flex-1 min-w-[250px]">
-                    <p class="text-[10px] uppercase tracking-widest mb-3 font-bold">Localisation</p>
-                    <input type="text" id="searchInput" onkeyup="filterProperties()" placeholder="Paris, Genève, Londres..." class="w-full p-4 outline-none focus:border-black transition">
+        
+        <div id="home" class="page active">
+            <header class="relative h-screen flex items-center justify-center overflow-hidden">
+                <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-40">
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-luxury-home-entrance-with-modern-design-41772-large.mp4" type="video/mp4">
+                </video>
+                <div class="relative z-10 text-center px-4 reveal">
+                    <span class="gold-text uppercase tracking-[0.8em] text-xs mb-4 block">Bienvenue dans l'exception</span>
+                    <h2 class="text-7xl md:text-9xl font-light mb-8 italic">Le Prestige <br> Redéfini</h2>
+                    <button onclick="showPage('catalogue-page')" class="btn-gold px-12 py-5 uppercase text-xs">Explorer la collection</button>
                 </div>
-                <div class="flex-1 min-w-[250px]">
-                    <p class="text-[10px] uppercase tracking-widest mb-3 font-bold">Prix Maximum</p>
-                    <select id="priceFilter" onchange="filterProperties()" class="w-full p-4 outline-none focus:border-black transition cursor-pointer">
-                        <option value="all">Toutes les propriétés</option>
-                        <option value="1000000">Jusqu'à 1M €</option>
-                        <option value="5000000">Jusqu'à 5M €</option>
-                        <option value="10000000">Jusqu'à 10M €</option>
+            </header>
+        </div>
+
+        <div id="catalogue-page" class="page pt-32 min-h-screen">
+            <div class="max-w-7xl mx-auto px-8 py-12">
+                <h2 class="text-5xl serif italic mb-12">Nos Résidences</h2>
+                <div class="flex flex-wrap gap-8 mb-16">
+                    <input type="text" id="searchInput" onkeyup="filterProperties()" placeholder="Rechercher une ville..." class="bg-transparent border-b border-white/20 p-4 w-full md:w-64 outline-none focus:border-gold transition">
+                    <select id="priceFilter" onchange="filterProperties()" class="bg-transparent border-b border-white/20 p-4 outline-none cursor-pointer">
+                        <option value="all" class="bg-black">Tous les budgets</option>
+                        <option value="1000000" class="bg-black">Moins de 1M €</option>
+                        <option value="5000000" class="bg-black">Moins de 5M €</option>
                     </select>
                 </div>
+                <div id="property-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
+                    </div>
             </div>
-        </section>
+        </div>
 
-        <section id="catalogue" class="py-24 px-8 max-w-7xl mx-auto">
-            <div id="property-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
+        <div id="services" class="page pt-32 bg-zinc-950">
+            <div class="max-w-7xl mx-auto px-8 py-20">
+                <div class="text-center mb-24">
+                    <h2 class="text-5xl serif italic gold-text mb-4">Sécurité & Performance</h2>
+                    <p class="text-gray-500 uppercase tracking-widest text-xs">Protégez votre patrimoine, boostez votre entreprise</p>
                 </div>
-        </section>
+
+                <h3 class="text-2xl tracking-[0.3em] uppercase mb-12 border-l-4 border-gold pl-6">Systèmes de Sécurité Domiciliaire</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
+                    <div class="glass-card p-10 reveal">
+                        <div class="text-gold text-4xl mb-6"><i class="fas fa-shield-alt"></i></div>
+                        <h4 class="text-xl font-bold mb-2">Niveau 1</h4>
+                        <p class="text-gray-400 text-sm mb-6">Sécurité essentielle pour votre tranquillité.</p>
+                        <ul class="text-xs space-y-3 mb-8 text-gray-300">
+                            <li><i class="fas fa-check text-gold mr-2"></i>Nécessite 2 GN pour effraction</li>
+                            <li><i class="fas fa-check text-gold mr-2"></i>Capteurs périmétriques</li>
+                        </ul>
+                        <p class="text-2xl font-bold italic mb-6">850 000 €</p>
+                        <button onclick="showPage('contact')" class="w-full py-3 border border-gold text-gold hover:bg-gold hover:text-black transition uppercase text-[10px] tracking-widest font-bold">Commander</button>
+                    </div>
+
+                    <div class="glass-card p-10 reveal" style="animation-delay: 0.2s">
+                        <div class="text-gold text-4xl mb-6"><i class="fas fa-satellite-dish"></i></div>
+                        <h4 class="text-xl font-bold mb-2">Niveau 2</h4>
+                        <p class="text-gray-400 text-sm mb-6">Réponse rapide et coordination officielle.</p>
+                        <ul class="text-xs space-y-3 mb-8 text-gray-300">
+                            <li><i class="fas fa-check text-gold mr-2"></i>Alerte immédiate Propriétaire</li>
+                            <li><i class="fas fa-check text-gold mr-2"></i>Alerte Gendarmerie directe</li>
+                        </ul>
+                        <p class="text-2xl font-bold italic mb-6">2 000 000 €</p>
+                        <button onclick="showPage('contact')" class="w-full py-3 border border-gold text-gold hover:bg-gold hover:text-black transition uppercase text-[10px] tracking-widest font-bold">Commander</button>
+                    </div>
+
+                    <div class="glass-card p-10 reveal" style="animation-delay: 0.4s">
+                        <div class="text-gold text-4xl mb-6"><i class="fas fa-user-secret"></i></div>
+                        <h4 class="text-xl font-bold mb-2">Niveau 3</h4>
+                        <p class="text-gray-400 text-sm mb-6">Le summum de la discrétion et de l'exclusivité.</p>
+                        <ul class="text-xs space-y-3 mb-8 text-gray-300">
+                            <li><i class="fas fa-check text-gold mr-2"></i>Alerte Directe Exclusive</li>
+                            <li><i class="fas fa-check text-gold mr-2"></i>Canal crypté prioritaire</li>
+                        </ul>
+                        <p class="text-2xl font-bold italic mb-6">5 000 000 €</p>
+                        <button onclick="showPage('contact')" class="w-full py-3 border border-gold text-gold hover:bg-gold hover:text-black transition uppercase text-[10px] tracking-widest font-bold">Commander</button>
+                    </div>
+                </div>
+
+                <div class="glass-card p-16 flex flex-col md:flex-row items-center gap-12 border-gold/30">
+                    <div class="flex-1">
+                        <span class="text-gold text-xs uppercase tracking-[0.5em] mb-4 block font-bold">Solutions Entreprise</span>
+                        <h3 class="text-4xl serif italic mb-6">Extension de Capacité Stockage</h3>
+                        <p class="text-gray-400 leading-relaxed mb-8">Optimisez les performances de votre société grâce à notre extension de capacité premium. Augmentez votre rentabilité immédiatement.</p>
+                        <div class="flex items-center gap-8 mb-8">
+                            <div class="text-center">
+                                <span class="block text-3xl font-bold">+20 000</span>
+                                <span class="text-[10px] uppercase text-gray-500">Places suppl.</span>
+                            </div>
+                            <div class="h-12 w-px bg-white/10"></div>
+                            <div class="text-center">
+                                <span class="block text-3xl font-bold">10M €</span>
+                                <span class="text-[10px] uppercase text-gray-500">Prix Fixe</span>
+                            </div>
+                        </div>
+                        <button onclick="showPage('contact')" class="btn-gold px-10 py-4 uppercase text-[10px]">Effectuer l'amélioration</button>
+                    </div>
+                    <div class="flex-1 w-full h-80 bg-[url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070')] bg-cover bg-center rounded-sm grayscale hover:grayscale-0 transition duration-700"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="about" class="page pt-32">
+            <div class="max-w-5xl mx-auto px-8 py-20 text-center">
+                <h2 class="text-6xl serif italic mb-12">Notre Héritage</h2>
+                <p class="text-xl text-gray-400 leading-loose mb-16 font-light italic">
+                    "Arcadia n'est pas qu'une agence immobilière. C'est un bureau de gestion de patrimoine privé né de la volonté d'offrir une sécurité absolue et un cadre de vie sans égal aux personnalités les plus exigeantes."
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    <div>
+                        <span class="block text-gold text-4xl font-bold mb-2 italic">130+</span>
+                        <span class="uppercase tracking-widest text-[10px] font-bold">Nouveautés Annuelles</span>
+                    </div>
+                    <div>
+                        <span class="block text-gold text-4xl font-bold mb-2 italic">0</span>
+                        <span class="uppercase tracking-widest text-[10px] font-bold">Compromis Sécurité</span>
+                    </div>
+                    <div>
+                        <span class="block text-gold text-4xl font-bold mb-2 italic">24/7</span>
+                        <span class="uppercase tracking-widest text-[10px] font-bold">Assistance Conciergerie</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="contact" class="page pt-32">
+            <div class="max-w-7xl mx-auto px-8 py-20 grid grid-cols-1 md:grid-cols-2 gap-20">
+                <div>
+                    <h2 class="text-5xl serif italic mb-8">Entrer en <br> Contact</h2>
+                    <p class="text-gray-500 mb-12 uppercase tracking-widest text-xs font-bold leading-relaxed">Disponible via messagerie sécurisée ou rendez-vous privé au siège Arcadia.</p>
+                    <div class="space-y-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 flex items-center justify-center border border-white/10 text-gold"><i class="fas fa-phone"></i></div>
+                            <span class="text-sm tracking-widest">PRIVATE-LINE: 555-ARCADIA</span>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 flex items-center justify-center border border-white/10 text-gold"><i class="fas fa-envelope"></i></div>
+                            <span class="text-sm tracking-widest">CONTACT@ARCADIA-ESTATES.COM</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white/5 p-12 rounded-sm border border-white/10">
+                    <form class="space-y-8">
+                        <input type="text" placeholder="VOTRE NOM" class="w-full bg-transparent border-b border-white/20 py-4 outline-none focus:border-gold transition text-xs uppercase tracking-widest">
+                        <select class="w-full bg-transparent border-b border-white/20 py-4 outline-none focus:border-gold transition text-xs uppercase tracking-widest">
+                            <option class="bg-black">OBJET DE LA DEMANDE</option>
+                            <option class="bg-black">ACHAT IMMOBILIER</option>
+                            <option class="bg-black">SYSTÈME DE SÉCURITÉ</option>
+                            <option class="bg-black">STOCKAGE ENTREPRISE</option>
+                        </select>
+                        <textarea placeholder="VOTRE MESSAGE" rows="4" class="w-full bg-transparent border-b border-white/20 py-4 outline-none focus:border-gold transition text-xs uppercase tracking-widest"></textarea>
+                        <button type="submit" class="btn-gold w-full py-5 text-xs uppercase">Envoyer la demande</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <div class="admin-panel pt-32 pb-20 bg-gray-50 min-h-screen">
-        <div class="max-w-4xl mx-auto px-6">
-            <div class="bg-white p-12 shadow-sm border border-gray-100">
-                <div class="flex justify-between items-center mb-12">
-                    <h2 id="formTitle" class="text-4xl serif italic">Gestion des Propriétés</h2>
-                    <button onclick="toggleAdmin()" class="text-gray-400 hover:text-black transition uppercase text-xs tracking-widest">Fermer ×</button>
-                </div>
-
-                <form id="propForm" class="space-y-8">
+    <div class="admin-panel pt-32 pb-20 bg-zinc-900 min-h-screen">
+        <div class="max-w-4xl mx-auto px-8">
+            <div class="flex justify-between items-center mb-12">
+                <h2 class="text-4xl serif italic">Dashboard</h2>
+                <button onclick="toggleAdmin()" class="text-red-500 uppercase text-xs font-bold tracking-widest">Quitter</button>
+            </div>
+            
+            <div class="bg-black p-10 border border-white/10 mb-12">
+                <h3 class="text-xs uppercase tracking-[0.5em] mb-8 font-bold text-gold">Nouvelle Fiche</h3>
+                <form id="propForm" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <input type="hidden" id="editIndex">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="space-y-2">
-                            <label class="text-[10px] uppercase font-bold tracking-widest">Nom du bien</label>
-                            <input type="text" id="title" class="w-full p-4" required>
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] uppercase font-bold tracking-widest">Prix (€)</label>
-                            <input type="number" id="price" class="w-full p-4" required>
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] uppercase font-bold tracking-widest">Ville / Quartier</label>
-                            <input type="text" id="loc" class="w-full p-4" required>
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] uppercase font-bold tracking-widest">Type de contrat</label>
-                            <select id="type" class="w-full p-4">
-                                <option value="Vente">Vente Exclusive</option>
-                                <option value="Location">Location Prestige</option>
-                            </select>
-                        </div>
+                    <input type="text" id="title" placeholder="NOM DU BIEN" class="bg-transparent border-b border-white/20 py-3 outline-none focus:border-gold" required>
+                    <input type="number" id="price" placeholder="PRIX (€)" class="bg-transparent border-b border-white/20 py-3 outline-none focus:border-gold" required>
+                    <input type="text" id="loc" placeholder="LOCALISATION" class="bg-transparent border-b border-white/20 py-3 outline-none focus:border-gold" required>
+                    <select id="type" class="bg-transparent border-b border-white/20 py-3 outline-none focus:border-gold">
+                        <option value="Vente" class="bg-black">Vente</option>
+                        <option value="Location" class="bg-black">Location</option>
+                    </select>
+                    <div class="md:col-span-2 py-4">
+                        <p class="text-[10px] text-gray-500 mb-2 uppercase">Image de couverture</p>
+                        <input type="file" id="imgFile" accept="image/*" class="text-xs">
+                        <input type="hidden" id="existingImg">
                     </div>
-
-                    <div class="space-y-2">
-                        <label class="text-[10px] uppercase font-bold tracking-widest">Image de couverture</label>
-                        <div class="border border-dashed p-8 text-center bg-gray-50">
-                            <input type="file" id="imgFile" accept="image/*" class="text-sm">
-                            <input type="hidden" id="existingImg">
-                        </div>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="text-[10px] uppercase font-bold tracking-widest">Description</label>
-                        <textarea id="desc" rows="4" class="w-full p-4" required></textarea>
-                    </div>
-
-                    <div class="flex gap-4 pt-4">
-                        <button type="submit" id="submitBtn" class="btn-luxury flex-1 py-5 uppercase text-xs font-bold tracking-[0.3em]">Enregistrer la fiche</button>
-                        <button type="button" id="cancelBtn" onclick="resetForm()" class="hidden px-10 bg-gray-200 uppercase text-xs font-bold">Annuler</button>
-                    </div>
+                    <textarea id="desc" placeholder="DESCRIPTION" class="md:col-span-2 bg-transparent border-b border-white/20 py-3 outline-none focus:border-gold" required></textarea>
+                    <button type="submit" id="submitBtn" class="md:col-span-2 btn-gold py-4 text-xs uppercase">Publier</button>
                 </form>
             </div>
 
-            <div class="mt-12 bg-white p-8 border border-gray-100">
-                <h3 class="uppercase text-xs tracking-widest font-bold mb-6">Liste des biens en ligne</h3>
-                <div id="admin-list" class="divide-y divide-gray-100">
-                    </div>
-            </div>
+            <div id="admin-list" class="space-y-4"></div>
         </div>
     </div>
 
@@ -177,6 +281,7 @@
         import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
+        // CONFIGURATION FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyBg9JIb2XAFacftazyDcAXOnCpfvaQ2PYI",
             authDomain: "arcadiaimmobilier-ee335.firebaseapp.com",
@@ -194,6 +299,7 @@
 
         let properties = [];
 
+        // SYNC FIREBASE
         onValue(dbRef, (snapshot) => {
             const data = snapshot.val();
             properties = data ? Object.keys(data).map(key => ({ id: key, ...data[key] })) : [];
@@ -201,15 +307,108 @@
             window.renderAdmin();
         });
 
-        window.toggleAdmin = () => document.body.classList.toggle('admin-active');
-
-        window.resetForm = () => {
-            document.getElementById('propForm').reset();
-            document.getElementById('editIndex').value = "";
-            document.getElementById('existingImg').value = "";
-            document.getElementById('cancelBtn').classList.add('hidden');
-            document.getElementById('submitBtn').innerText = "Enregistrer la fiche";
+        // NAVIGATION LOGIC
+        window.showPage = (pageId) => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
         };
+
+        window.toggleAdmin = () => {
+            document.body.classList.toggle('admin-mode');
+            window.scrollTo(0, 0);
+        };
+
+        window.renderPublic = (data) => {
+            const grid = document.getElementById('property-grid');
+            grid.innerHTML = data.map(p => `
+                <div class="group cursor-pointer reveal">
+                    <div class="relative aspect-[3/4] overflow-hidden mb-6 bg-zinc-900">
+                        <img src="${p.img}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-[1.5s]">
+                        <div class="absolute top-4 left-4 bg-white text-black px-4 py-1 text-[9px] uppercase font-bold tracking-widest">${p.type}</div>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-xl serif italic group-hover:text-gold transition">${p.title}</h3>
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">${p.loc}</p>
+                        </div>
+                        <span class="text-sm font-light">${parseInt(p.price).toLocaleString()} €</span>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        window.renderAdmin = () => {
+            const list = document.getElementById('admin-list');
+            list.innerHTML = properties.map(p => `
+                <div class="flex items-center justify-between p-4 border border-white/5 bg-white/5">
+                    <div class="flex items-center gap-4">
+                        <img src="${p.img}" class="w-12 h-12 object-cover">
+                        <p class="text-xs uppercase font-bold">${p.title}</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <button onclick="editProperty('${p.id}')" class="text-gold text-[10px] font-bold uppercase">Editer</button>
+                        <button onclick="deleteProperty('${p.id}')" class="text-red-500 text-[10px] font-bold uppercase">Supprimer</button>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        window.deleteProperty = (id) => { if(confirm("Supprimer cette annonce ?")) remove(ref(db, `properties/${id}`)); };
+
+        window.editProperty = (id) => {
+            const p = properties.find(item => item.id === id);
+            document.getElementById('editIndex').value = p.id;
+            document.getElementById('title').value = p.title;
+            document.getElementById('price').value = p.price;
+            document.getElementById('loc').value = p.loc;
+            document.getElementById('type').value = p.type;
+            document.getElementById('existingImg').value = p.img;
+            document.getElementById('desc').value = p.desc;
+            document.getElementById('submitBtn').innerText = "Mettre à jour";
+        };
+
+        // FORMULAIRE SUBMIT
+        document.getElementById('propForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const id = document.getElementById('editIndex').value;
+            const file = document.getElementById('imgFile').files[0];
+            let imageUrl = document.getElementById('existingImg').value;
+
+            btn.disabled = true;
+            btn.innerHTML = "Synchronisation en cours...";
+
+            try {
+                if (file) {
+                    const storageRef = sRef(storage, `properties/${Date.now()}_${file.name}`);
+                    const snap = await uploadBytes(storageRef, file);
+                    imageUrl = await getDownloadURL(snap.ref);
+                }
+
+                const data = {
+                    title: document.getElementById('title').value,
+                    price: document.getElementById('price').value,
+                    loc: document.getElementById('loc').value,
+                    type: document.getElementById('type').value,
+                    img: imageUrl || "https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=1000",
+                    desc: document.getElementById('desc').value,
+                    ts: Date.now()
+                };
+
+                if (id) await update(ref(db, `properties/${id}`), data);
+                else await push(dbRef, data);
+
+                document.getElementById('propForm').reset();
+                document.getElementById('editIndex').value = "";
+                btn.innerText = "Publier";
+                alert("Base de données mise à jour.");
+            } catch (err) {
+                alert("Erreur critique.");
+            } finally {
+                btn.disabled = false;
+            }
+        });
 
         window.filterProperties = () => {
             const search = document.getElementById('searchInput').value.toLowerCase();
@@ -221,108 +420,6 @@
             });
             window.renderPublic(filtered);
         };
-
-        window.renderPublic = (data) => {
-            const grid = document.getElementById('property-grid');
-            grid.innerHTML = data.map(p => `
-                <div class="card-property group cursor-pointer reveal">
-                    <div class="relative overflow-hidden aspect-[4/5] bg-gray-100">
-                        <img src="${p.img}" class="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 group-hover:scale-105 transition duration-700">
-                        <div class="absolute top-4 left-4 bg-white px-3 py-1 text-[9px] uppercase tracking-widest font-bold">${p.type}</div>
-                    </div>
-                    <div class="py-6">
-                        <div class="flex justify-between items-start">
-                            <h3 class="text-xl serif italic">${p.title}</h3>
-                            <span class="text-sm font-semibold tracking-tighter">${parseInt(p.price).toLocaleString()} €</span>
-                        </div>
-                        <p class="text-[11px] uppercase tracking-widest text-gray-400 mt-2">${p.loc}</p>
-                        <p class="text-gray-500 text-xs mt-4 line-clamp-2 leading-relaxed">${p.desc}</p>
-                    </div>
-                </div>
-            `).join('');
-        };
-
-        window.renderAdmin = () => {
-            const list = document.getElementById('admin-list');
-            list.innerHTML = properties.map(p => `
-                <div class="flex items-center justify-between py-4">
-                    <div class="flex items-center space-x-4">
-                        <img src="${p.img}" class="w-12 h-12 object-cover">
-                        <div>
-                            <p class="text-sm font-bold">${p.title}</p>
-                            <p class="text-xs text-gray-400">${p.loc}</p>
-                        </div>
-                    </div>
-                    <div class="flex space-x-4 uppercase text-[10px] font-bold">
-                        <button onclick="editProperty('${p.id}')" class="text-black border-b border-black">Editer</button>
-                        <button onclick="deleteProperty('${p.id}')" class="text-red-500">Supprimer</button>
-                    </div>
-                </div>
-            `).join('');
-        };
-
-        window.editProperty = (id) => {
-            const p = properties.find(item => item.id === id);
-            document.getElementById('editIndex').value = p.id;
-            document.getElementById('title').value = p.title;
-            document.getElementById('price').value = p.price;
-            document.getElementById('loc').value = p.loc;
-            document.getElementById('type').value = p.type;
-            document.getElementById('existingImg').value = p.img;
-            document.getElementById('desc').value = p.desc;
-            document.getElementById('cancelBtn').classList.remove('hidden');
-            window.scrollTo(0, 0);
-        };
-
-        window.deleteProperty = (id) => {
-            if(confirm("Confirmer la suppression ?")) remove(ref(db, `properties/${id}`));
-        };
-
-        document.getElementById('propForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const id = document.getElementById('editIndex').value;
-            const file = document.getElementById('imgFile').files[0];
-            let imageUrl = document.getElementById('existingImg').value;
-
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Synchronisation...';
-
-            try {
-                // Gestion de l'image (si un nouveau fichier est choisi)
-                if (file) {
-                    const storageRef = sRef(storage, `properties/${Date.now()}_${file.name}`);
-                    const snap = await uploadBytes(storageRef, file);
-                    imageUrl = await getDownloadURL(snap.ref);
-                } 
-                // Si pas d'image du tout et pas de fichier
-                else if (!imageUrl) {
-                    imageUrl = "https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=1000";
-                }
-
-                const data = {
-                    title: document.getElementById('title').value,
-                    price: document.getElementById('price').value,
-                    loc: document.getElementById('loc').value,
-                    type: document.getElementById('type').value,
-                    img: imageUrl,
-                    desc: document.getElementById('desc').value,
-                    ts: Date.now()
-                };
-
-                if (id) await update(ref(db, `properties/${id}`), data);
-                else await push(dbRef, data);
-
-                window.resetForm();
-                alert("Propriété mise à jour avec succès.");
-            } catch (err) {
-                console.error(err);
-                alert("Une erreur est survenue lors de l'envoi.");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Enregistrer la fiche";
-            }
-        });
     </script>
 </body>
 </html>
