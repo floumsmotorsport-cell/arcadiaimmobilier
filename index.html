@@ -3,105 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcadia Immobilier | Prestige & Excellence</title>
+    <title>ARCADIA | Haute Immobilier</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
-        :root { --primary: #065f46; --accent: #10b981; }
-        body { font-family: 'Montserrat', sans-serif; scroll-behavior: smooth; }
-        h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap');
+
+        :root {
+            --luxury-black: #0a0a0a;
+            --luxury-white: #ffffff;
+            --luxury-gray: #f4f4f4;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--luxury-white);
+            color: var(--luxury-black);
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3, .serif { font-family: 'Bodoni Moda', serif; }
+
+        /* Animations */
+        .reveal { animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes reveal {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .admin-panel { display: none; }
-        .admin-active .admin-panel { display: block; }
+        .admin-active .admin-panel { display: block; animation: fadeIn 0.5s ease; }
         .admin-active .public-view { display: none; }
-        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .card-hover:hover { transform: translateY(-10px); transition: all 0.3s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Custom UI */
+        .btn-luxury {
+            background: var(--luxury-black);
+            color: white;
+            transition: all 0.4s ease;
+            border: 1px solid var(--luxury-black);
+        }
+        .btn-luxury:hover {
+            background: transparent;
+            color: var(--luxury-black);
+        }
+
+        .card-property {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .card-property:hover { transform: translateY(-5px); }
+        
+        input, select, textarea {
+            border: 1px solid #e5e5e5 !important;
+            border-radius: 0 !important;
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="admin-inactive">
 
-    <nav class="fixed w-full z-50 glass border-b border-emerald-100">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <div class="w-10 h-10 bg-emerald-800 rounded-lg flex items-center justify-center text-white font-bold text-xl">A</div>
-                <h1 class="text-2xl font-bold text-emerald-900 tracking-tighter">ARCADIA</h1>
+    <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
+            <div class="flex flex-col">
+                <span class="text-2xl font-bold tracking-[0.3em] uppercase serif">Arcadia</span>
+                <span class="text-[10px] uppercase tracking-[0.5em] -mt-1 text-gray-400">Estates & Private Office</span>
             </div>
-            <div class="hidden md:flex items-center space-x-10 text-sm font-semibold uppercase tracking-widest">
-                <a href="#catalogue" class="hover:text-emerald-600 transition">Propriétés</a>
-                <button onclick="toggleAdmin()" id="adminBtn" class="bg-emerald-900 text-white px-5 py-2 rounded-full hover:bg-emerald-700 transition shadow-lg">
-                    <i class="fas fa-lock-open mr-2"></i>Espace Admin
+            
+            <div class="flex items-center space-x-8">
+                <button onclick="toggleAdmin()" class="text-[11px] uppercase tracking-widest font-semibold border-b border-black pb-1 hover:text-gray-500 hover:border-gray-500 transition">
+                    <i class="fas fa-user-shield mr-2"></i>Dashboard
                 </button>
             </div>
         </div>
     </nav>
 
     <div class="public-view">
-        <header class="relative h-[60vh] flex items-center justify-center overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1600607687940-4e524cb3529a?auto=format&fit=crop&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Luxury Home">
-            <div class="absolute inset-0 bg-black/40"></div>
-            <div class="relative z-10 text-center text-white px-4">
-                <h2 class="text-5xl md:text-7xl font-bold mb-4">Votre Havre de Paix</h2>
+        <header class="relative h-[80vh] flex items-center justify-center bg-black overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070" class="absolute inset-0 w-full h-full object-cover opacity-60 scale-110" alt="Luxury Hero">
+            <div class="relative z-10 text-center text-white px-4 reveal">
+                <h2 class="text-6xl md:text-8xl font-light mb-6 italic">Excellence Immobilière</h2>
+                <div class="w-24 h-px bg-white mx-auto mb-8"></div>
+                <p class="uppercase tracking-[0.4em] text-sm">Collection Privée 2026</p>
             </div>
         </header>
 
-        <section class="max-w-6xl mx-auto -mt-16 relative z-20 px-4">
-            <div class="bg-white p-8 rounded-2xl shadow-2xl flex flex-wrap gap-4 items-end border border-emerald-50">
-                <div class="flex-1 min-w-[200px]">
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Recherche</label>
-                    <input type="text" id="searchInput" onkeyup="filterProperties()" placeholder="Ville, Nom..." class="w-full p-3 bg-gray-50 border rounded-xl focus:ring-2 ring-emerald-500 outline-none">
+        <section class="max-w-5xl mx-auto -mt-12 relative z-20 px-6">
+            <div class="bg-white p-10 shadow-2xl flex flex-wrap gap-6 items-end">
+                <div class="flex-1 min-w-[250px]">
+                    <p class="text-[10px] uppercase tracking-widest mb-3 font-bold">Localisation</p>
+                    <input type="text" id="searchInput" onkeyup="filterProperties()" placeholder="Paris, Genève, Londres..." class="w-full p-4 outline-none focus:border-black transition">
                 </div>
-                <div class="flex-1 min-w-[200px]">
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Budget Max</label>
-                    <select id="priceFilter" onchange="filterProperties()" class="w-full p-3 bg-gray-50 border rounded-xl focus:ring-2 ring-emerald-500 outline-none">
-                        <option value="all">Tous les prix</option>
-                        <option value="500000">Sous 500 000 €</option>
-                        <option value="1000000">Sous 1 000 000 €</option>
-                        <option value="2000000">Sous 2 000 000 €</option>
+                <div class="flex-1 min-w-[250px]">
+                    <p class="text-[10px] uppercase tracking-widest mb-3 font-bold">Prix Maximum</p>
+                    <select id="priceFilter" onchange="filterProperties()" class="w-full p-4 outline-none focus:border-black transition cursor-pointer">
+                        <option value="all">Toutes les propriétés</option>
+                        <option value="1000000">Jusqu'à 1M €</option>
+                        <option value="5000000">Jusqu'à 5M €</option>
+                        <option value="10000000">Jusqu'à 10M €</option>
                     </select>
                 </div>
             </div>
         </section>
 
-        <section id="catalogue" class="py-20 px-6 max-w-7xl mx-auto">
-            <div id="property-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <section id="catalogue" class="py-24 px-8 max-w-7xl mx-auto">
+            <div id="property-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
                 </div>
         </section>
     </div>
 
-    <div class="admin-panel pt-32 pb-20 bg-slate-100 min-h-screen">
-        <div class="max-w-5xl mx-auto px-6">
-            <div class="bg-white rounded-3xl p-10 shadow-xl border">
-                <div class="flex justify-between items-center mb-10">
-                    <h2 id="formTitle" class="text-3xl font-bold text-emerald-900">Gestion de l'annonce</h2>
-                    <button onclick="toggleAdmin()" class="text-red-500 font-bold">Quitter l'admin</button>
+    <div class="admin-panel pt-32 pb-20 bg-gray-50 min-h-screen">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="bg-white p-12 shadow-sm border border-gray-100">
+                <div class="flex justify-between items-center mb-12">
+                    <h2 id="formTitle" class="text-4xl serif italic">Gestion des Propriétés</h2>
+                    <button onclick="toggleAdmin()" class="text-gray-400 hover:text-black transition uppercase text-xs tracking-widest">Fermer ×</button>
                 </div>
-                <form id="propForm" class="space-y-6">
+
+                <form id="propForm" class="space-y-8">
                     <input type="hidden" id="editIndex">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <input type="text" id="title" placeholder="Nom" class="p-4 bg-slate-50 rounded-xl border" required>
-                        <input type="number" id="price" placeholder="Prix (Nombre seul, ex: 1200000)" class="p-4 bg-slate-50 rounded-xl border" required>
-                        <input type="text" id="loc" placeholder="Localisation" class="p-4 bg-slate-50 rounded-xl border" required>
-                        <select id="type" class="p-4 bg-slate-50 rounded-xl border">
-                            <option value="Vente">Vente</option>
-                            <option value="Location">Location</option>
-                        </select>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-2">
+                            <label class="text-[10px] uppercase font-bold tracking-widest">Nom du bien</label>
+                            <input type="text" id="title" class="w-full p-4" required>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] uppercase font-bold tracking-widest">Prix (€)</label>
+                            <input type="number" id="price" class="w-full p-4" required>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] uppercase font-bold tracking-widest">Ville / Quartier</label>
+                            <input type="text" id="loc" class="w-full p-4" required>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] uppercase font-bold tracking-widest">Type de contrat</label>
+                            <select id="type" class="w-full p-4">
+                                <option value="Vente">Vente Exclusive</option>
+                                <option value="Location">Location Prestige</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="border-2 border-dashed p-4 rounded-xl text-center">
-                        <input type="file" id="imgFile" accept="image/*">
-                        <input type="hidden" id="existingImg">
+
+                    <div class="space-y-2">
+                        <label class="text-[10px] uppercase font-bold tracking-widest">Image de couverture</label>
+                        <div class="border border-dashed p-8 text-center bg-gray-50">
+                            <input type="file" id="imgFile" accept="image/*" class="text-sm">
+                            <input type="hidden" id="existingImg">
+                        </div>
                     </div>
-                    <textarea id="desc" rows="3" placeholder="Description" class="w-full p-4 bg-slate-50 rounded-xl border" required></textarea>
-                    <div class="flex gap-4">
-                        <button type="submit" id="submitBtn" class="flex-1 bg-emerald-800 text-white py-4 rounded-xl font-bold">Enregistrer</button>
-                        <button type="button" id="cancelBtn" onclick="resetForm()" class="hidden px-8 bg-gray-200 py-4 rounded-xl">Annuler</button>
+
+                    <div class="space-y-2">
+                        <label class="text-[10px] uppercase font-bold tracking-widest">Description</label>
+                        <textarea id="desc" rows="4" class="w-full p-4" required></textarea>
+                    </div>
+
+                    <div class="flex gap-4 pt-4">
+                        <button type="submit" id="submitBtn" class="btn-luxury flex-1 py-5 uppercase text-xs font-bold tracking-[0.3em]">Enregistrer la fiche</button>
+                        <button type="button" id="cancelBtn" onclick="resetForm()" class="hidden px-10 bg-gray-200 uppercase text-xs font-bold">Annuler</button>
                     </div>
                 </form>
             </div>
-            <div class="mt-8 bg-white rounded-xl shadow-lg overflow-hidden">
-                <table class="w-full text-left">
-                    <thead class="bg-emerald-900 text-white"><tr><th class="p-4">Bien</th><th class="p-4">Prix</th><th class="p-4">Actions</th></tr></thead>
-                    <tbody id="admin-list" class="divide-y"></tbody>
-                </table>
+
+            <div class="mt-12 bg-white p-8 border border-gray-100">
+                <h3 class="uppercase text-xs tracking-widest font-bold mb-6">Liste des biens en ligne</h3>
+                <div id="admin-list" class="divide-y divide-gray-100">
+                    </div>
             </div>
         </div>
     </div>
@@ -135,23 +201,19 @@
             window.renderAdmin();
         });
 
-        // --- FONCTIONS EXPOSÉES AU WINDOW POUR LES ONCLICK ---
-        
-        window.toggleAdmin = () => {
-            document.body.classList.toggle('admin-active');
-        };
+        window.toggleAdmin = () => document.body.classList.toggle('admin-active');
 
         window.resetForm = () => {
             document.getElementById('propForm').reset();
             document.getElementById('editIndex').value = "";
             document.getElementById('existingImg').value = "";
             document.getElementById('cancelBtn').classList.add('hidden');
+            document.getElementById('submitBtn').innerText = "Enregistrer la fiche";
         };
 
         window.filterProperties = () => {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const maxPrice = document.getElementById('priceFilter').value;
-            
             const filtered = properties.filter(p => {
                 const matchText = p.title.toLowerCase().includes(search) || p.loc.toLowerCase().includes(search);
                 const matchPrice = maxPrice === "all" || parseInt(p.price) <= parseInt(maxPrice);
@@ -162,17 +224,19 @@
 
         window.renderPublic = (data) => {
             const grid = document.getElementById('property-grid');
-            if(data.length === 0) { grid.innerHTML = "<p>Aucun bien trouvé.</p>"; return; }
             grid.innerHTML = data.map(p => `
-                <div class="bg-white rounded-3xl overflow-hidden shadow-lg card-hover border border-gray-100">
-                    <img src="${p.img}" class="h-64 w-full object-cover">
-                    <div class="p-6">
-                        <div class="flex justify-between items-center mb-2">
-                            <h3 class="text-xl font-bold">${p.title}</h3>
-                            <span class="text-emerald-600 font-bold">${parseInt(p.price).toLocaleString()} €</span>
+                <div class="card-property group cursor-pointer reveal">
+                    <div class="relative overflow-hidden aspect-[4/5] bg-gray-100">
+                        <img src="${p.img}" class="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 group-hover:scale-105 transition duration-700">
+                        <div class="absolute top-4 left-4 bg-white px-3 py-1 text-[9px] uppercase tracking-widest font-bold">${p.type}</div>
+                    </div>
+                    <div class="py-6">
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-xl serif italic">${p.title}</h3>
+                            <span class="text-sm font-semibold tracking-tighter">${parseInt(p.price).toLocaleString()} €</span>
                         </div>
-                        <p class="text-gray-500 text-sm mb-4">${p.desc}</p>
-                        <div class="text-xs text-gray-400 font-bold"><i class="fas fa-map-marker-alt mr-1"></i>${p.loc}</div>
+                        <p class="text-[11px] uppercase tracking-widest text-gray-400 mt-2">${p.loc}</p>
+                        <p class="text-gray-500 text-xs mt-4 line-clamp-2 leading-relaxed">${p.desc}</p>
                     </div>
                 </div>
             `).join('');
@@ -181,14 +245,19 @@
         window.renderAdmin = () => {
             const list = document.getElementById('admin-list');
             list.innerHTML = properties.map(p => `
-                <tr>
-                    <td class="p-4 font-bold">${p.title}</td>
-                    <td class="p-4">${p.price} €</td>
-                    <td class="p-4 space-x-2">
-                        <button onclick="editProperty('${p.id}')" class="text-blue-600">Editer</button>
-                        <button onclick="deleteProperty('${p.id}')" class="text-red-600">Supprimer</button>
-                    </td>
-                </tr>
+                <div class="flex items-center justify-between py-4">
+                    <div class="flex items-center space-x-4">
+                        <img src="${p.img}" class="w-12 h-12 object-cover">
+                        <div>
+                            <p class="text-sm font-bold">${p.title}</p>
+                            <p class="text-xs text-gray-400">${p.loc}</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-4 uppercase text-[10px] font-bold">
+                        <button onclick="editProperty('${p.id}')" class="text-black border-b border-black">Editer</button>
+                        <button onclick="deleteProperty('${p.id}')" class="text-red-500">Supprimer</button>
+                    </div>
+                </div>
             `).join('');
         };
 
@@ -202,13 +271,13 @@
             document.getElementById('existingImg').value = p.img;
             document.getElementById('desc').value = p.desc;
             document.getElementById('cancelBtn').classList.remove('hidden');
+            window.scrollTo(0, 0);
         };
 
         window.deleteProperty = (id) => {
-            if(confirm("Supprimer ?")) remove(ref(db, `properties/${id}`));
+            if(confirm("Confirmer la suppression ?")) remove(ref(db, `properties/${id}`));
         };
 
-        // --- GESTION DU FORMULAIRE ---
         document.getElementById('propForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
@@ -217,13 +286,18 @@
             let imageUrl = document.getElementById('existingImg').value;
 
             btn.disabled = true;
-            btn.innerText = "Chargement...";
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Synchronisation...';
 
             try {
+                // Gestion de l'image (si un nouveau fichier est choisi)
                 if (file) {
                     const storageRef = sRef(storage, `properties/${Date.now()}_${file.name}`);
                     const snap = await uploadBytes(storageRef, file);
                     imageUrl = await getDownloadURL(snap.ref);
+                } 
+                // Si pas d'image du tout et pas de fichier
+                else if (!imageUrl) {
+                    imageUrl = "https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=1000";
                 }
 
                 const data = {
@@ -231,20 +305,22 @@
                     price: document.getElementById('price').value,
                     loc: document.getElementById('loc').value,
                     type: document.getElementById('type').value,
-                    img: imageUrl || "https://via.placeholder.com/400",
-                    desc: document.getElementById('desc').value
+                    img: imageUrl,
+                    desc: document.getElementById('desc').value,
+                    ts: Date.now()
                 };
 
                 if (id) await update(ref(db, `properties/${id}`), data);
                 else await push(dbRef, data);
 
                 window.resetForm();
-                alert("Terminé !");
+                alert("Propriété mise à jour avec succès.");
             } catch (err) {
-                alert("Erreur: " + err.message);
+                console.error(err);
+                alert("Une erreur est survenue lors de l'envoi.");
             } finally {
                 btn.disabled = false;
-                btn.innerText = "Enregistrer";
+                btn.innerText = "Enregistrer la fiche";
             }
         });
     </script>
