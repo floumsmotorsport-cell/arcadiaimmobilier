@@ -10,38 +10,43 @@
         @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Inter:wght@200;400;600&display=swap');
 
         :root { --luxury-black: #0a0a0a; --luxury-gold: #c5a059; }
-        body { font-family: 'Inter', sans-serif; background: var(--luxury-black); color: white; scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--luxury-black); color: white; scroll-behavior: smooth; overflow-x: hidden; }
         h1, h2, h3, .serif { font-family: 'Bodoni Moda', serif; }
 
-        .page { display: none; opacity: 0; transition: opacity 0.5s ease; }
-        .page.active { display: block; opacity: 1; }
+        /* Animation fluide des pages */
+        .page { display: none; opacity: 0; transform: translateY(10px); transition: all 0.5s ease; }
+        .page.active { display: block; opacity: 1; transform: translateY(0); }
 
         .gold-gradient { background: linear-gradient(135deg, #c5a059 0%, #f9f295 50%, #c5a059 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); transition: 0.4s; }
-        .glass:hover { border-color: var(--luxury-gold); }
+        .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .glass:hover { border-color: var(--luxury-gold); background: rgba(255,255,255,0.06); }
 
         .admin-panel { display: none; }
         body.admin-mode .admin-panel { display: block; }
         body.admin-mode .public-view { display: none; }
 
         .command-badge { font-size: 10px; padding: 2px 8px; border-radius: 99px; background: #c5a059; color: black; font-weight: bold; }
+        
+        /* Skeleton loading effect */
+        .skeleton { background: linear-gradient(90deg, #121212 25%, #1a1a1a 50%, #121212 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
+        @keyframes loading { from { background-position: 200% 0; } to { background-position: -200% 0; } }
     </style>
 </head>
 <body>
 
     <nav class="fixed w-full z-[100] bg-black/80 backdrop-blur-lg border-b border-white/5">
         <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-            <div class="cursor-pointer flex items-center space-x-3" onclick="showPage('home')">
+            <div class="cursor-pointer flex items-center space-x-3" id="nav-logo">
                 <div class="w-8 h-8 border border-gold flex items-center justify-center text-gold text-xs">A</div>
                 <span class="text-xl tracking-[0.4em] uppercase serif">Arcadia</span>
             </div>
             <div class="hidden md:flex items-center space-x-8 text-[10px] tracking-[0.2em] font-bold uppercase">
-                <a href="#" onclick="showPage('home')" class="hover:text-gold transition">Accueil</a>
-                <a href="#" onclick="showPage('catalogue-page')" class="hover:text-gold transition">Propriétés</a>
-                <a href="#" onclick="showPage('services')" class="hover:text-gold transition">Sécurité</a>
-                <a href="#" onclick="showPage('contact')" class="hover:text-gold transition">Contact</a>
-                <button onclick="toggleAdmin()" class="bg-white text-black px-4 py-2 hover:bg-gold transition">Accès Privé</button>
+                <button data-page="home" class="nav-link hover:text-gold transition">Accueil</button>
+                <button data-page="catalogue-page" class="nav-link hover:text-gold transition">Propriétés</button>
+                <button data-page="services" class="nav-link hover:text-gold transition">Sécurité</button>
+                <button data-page="contact" class="nav-link hover:text-gold transition">Contact</button>
+                <button id="admin-toggle-btn" class="bg-white text-black px-4 py-2 hover:bg-gold transition duration-300">Accès Privé</button>
             </div>
         </div>
     </nav>
@@ -49,107 +54,87 @@
     <div class="public-view">
         <div id="home" class="page active">
             <header class="relative h-[90vh] flex items-center justify-center">
-                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070" class="absolute inset-0 w-full h-full object-cover opacity-30">
+                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070" loading="eager" alt="Villas de luxe" class="absolute inset-0 w-full h-full object-cover opacity-30">
                 <div class="relative z-10 text-center space-y-6 px-4">
                     <h2 class="text-6xl md:text-8xl serif italic gold-gradient">L'Art de Vivre <br> Absolu</h2>
                     <p class="max-w-xl mx-auto text-gray-400 font-light tracking-widest text-sm leading-relaxed">
                         Bienvenue chez Arcadia Immobilier. Plus qu'une agence, nous sommes les gardiens de votre patrimoine et les architectes de votre sérénité.
                     </p>
-                    <button onclick="showPage('catalogue-page')" class="border border-gold text-gold px-10 py-4 hover:bg-gold hover:text-black transition text-xs tracking-widest uppercase">Découvrir le catalogue</button>
+                    <button data-page="catalogue-page" class="nav-link border border-gold text-gold px-10 py-4 hover:bg-gold hover:text-black transition text-xs tracking-widest uppercase">Découvrir le catalogue</button>
                 </div>
             </header>
 
             <section class="py-24 max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
                 <div class="relative">
-                    <img src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=2070" class="w-full h-[600px] object-cover grayscale hover:grayscale-0 transition duration-1000">
+                    <img src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=2070" loading="lazy" class="w-full h-[600px] object-cover grayscale hover:grayscale-0 transition duration-1000">
                     <div class="absolute -bottom-10 -right-10 bg-zinc-900 p-8 border border-white/10 hidden lg:block">
                         <p class="serif italic text-3xl gold-gradient">130+</p>
-                        <p class="text-[10px] tracking-widest text-gray-400">RÉSIDENCES D'EXCEPTION <br> EN LIGNE</p>
+                        <p class="text-[10px] tracking-widest text-gray-400 uppercase">Résidences <br> d'Exception</p>
                     </div>
                 </div>
                 <div class="space-y-8">
                     <span class="text-gold text-xs font-bold tracking-[0.5em] uppercase">Notre Philosophie</span>
                     <h3 class="text-4xl serif leading-tight">Chaque pierre raconte une histoire, chaque maison devient un sanctuaire.</h3>
                     <p class="text-gray-400 leading-loose font-light">
-                        Nous sélectionnons des propriétés qui défient le temps. Des villas méditerranéennes aux penthouses New-Yorkais, Arcadia offre un accès exclusif aux biens les plus convoités de la planète, protégés par nos protocoles de sécurité de niveau militaire.
+                        Nous sélectionnons des propriétés qui défient le temps. Des villas méditerranéennes aux penthouses New-Yorkais.
                     </p>
-                    <div class="grid grid-cols-2 gap-8 pt-6">
-                        <div class="border-l border-gold pl-4">
-                            <h4 class="font-bold text-xs uppercase mb-2">Prestige</h4>
-                            <p class="text-[11px] text-gray-500">Accès aux ventes "Off-Market" les plus secrètes.</p>
-                        </div>
-                        <div class="border-l border-gold pl-4">
-                            <h4 class="font-bold text-xs uppercase mb-2">Sécurité</h4>
-                            <p class="text-[11px] text-gray-500">Protection domiciliaire intégrée dès l'achat.</p>
-                        </div>
-                    </div>
                 </div>
             </section>
         </div>
 
         <div id="catalogue-page" class="page pt-32 min-h-screen">
             <div class="max-w-7xl mx-auto px-6 py-12">
-                <div class="mb-12 flex justify-between items-end border-b border-white/10 pb-8">
+                <div class="mb-12 flex flex-col md:flex-row justify-between items-end border-b border-white/10 pb-8 gap-4">
                     <h2 class="text-5xl serif italic">La Collection</h2>
-                    <div class="flex space-x-4">
-                        <input type="text" id="searchInput" onkeyup="filterProperties()" placeholder="Ville..." class="bg-transparent border border-white/20 px-4 py-2 text-xs outline-none focus:border-gold">
+                    <div class="flex space-x-4 w-full md:w-auto">
+                        <input type="text" id="searchInput" placeholder="Rechercher une ville..." class="w-full bg-transparent border border-white/20 px-4 py-2 text-xs outline-none focus:border-gold">
                     </div>
                 </div>
-                <div id="property-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"></div>
+                <div id="property-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                    <div class="skeleton h-80 w-full rounded"></div>
+                    <div class="skeleton h-80 w-full rounded"></div>
+                    <div class="skeleton h-80 w-full rounded"></div>
+                </div>
             </div>
         </div>
 
         <div id="services" class="page pt-32">
             <div class="max-w-7xl mx-auto px-6 py-12 text-center">
                 <h2 class="text-5xl serif italic gold-gradient mb-12">Systèmes de Haute Sécurité</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="security-options">
                     <div class="glass p-10 space-y-6">
                         <h4 class="text-xl serif italic">Niveau I</h4>
                         <div class="h-px w-10 bg-gold mx-auto"></div>
-                        <p class="text-xs text-gray-400">Protection basique contre les tentatives d'effraction.</p>
-                        <p class="text-2xl font-bold italic">850 000 €</p>
-                        <button onclick="placeOrder('Alarme Niveau 1', '850.000 €')" class="w-full py-4 border border-gold text-gold hover:bg-gold hover:text-black transition font-bold text-[10px] tracking-widest">COMMANDER</button>
+                        <p class="text-xs text-gray-400 italic">850 000 €</p>
+                        <button class="order-btn w-full py-4 border border-gold text-gold hover:bg-gold hover:text-black transition font-bold text-[10px] tracking-widest" data-item="Alarme Niveau 1" data-price="850.000 €">COMMANDER</button>
                     </div>
                     <div class="glass p-10 border-gold/50 space-y-6 relative overflow-hidden">
                         <div class="absolute top-0 right-0 bg-gold text-black px-4 py-1 text-[8px] font-bold uppercase tracking-tighter">Populaire</div>
                         <h4 class="text-xl serif italic">Niveau II</h4>
                         <div class="h-px w-10 bg-gold mx-auto"></div>
-                        <p class="text-xs text-gray-400">Alerte immédiate Gendarmerie et Propriétaire.</p>
-                        <p class="text-2xl font-bold italic">2 000 000 €</p>
-                        <button onclick="placeOrder('Alarme Niveau 2', '2.000.000 €')" class="w-full py-4 bg-gold text-black transition font-bold text-[10px] tracking-widest">COMMANDER</button>
+                        <p class="text-xs text-gray-400 italic">2 000 000 €</p>
+                        <button class="order-btn w-full py-4 bg-gold text-black transition font-bold text-[10px] tracking-widest" data-item="Alarme Niveau 2" data-price="2.000.000 €">COMMANDER</button>
                     </div>
                     <div class="glass p-10 space-y-6">
                         <h4 class="text-xl serif italic">Niveau III</h4>
                         <div class="h-px w-10 bg-gold mx-auto"></div>
-                        <p class="text-xs text-gray-400">Alerte directe et exclusive propriétaire.</p>
-                        <p class="text-2xl font-bold italic">5 000 000 €</p>
-                        <button onclick="placeOrder('Alarme Niveau 3', '5.000.000 €')" class="w-full py-4 border border-gold text-gold hover:bg-gold hover:text-black transition font-bold text-[10px] tracking-widest">COMMANDER</button>
-                    </div>
-                </div>
-
-                <div class="mt-20 glass p-12 flex flex-col md:flex-row items-center justify-between gap-8 text-left">
-                    <div class="space-y-4">
-                        <h3 class="text-3xl serif italic">Extension de Stockage</h3>
-                        <p class="text-gray-400 text-sm">+20 000 places pour optimiser votre rentabilité dès aujourd'hui.</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-3xl font-bold mb-4">10 000 000 €</p>
-                        <button onclick="placeOrder('Amélioration Stockage (+20k)', '10.000.000 €')" class="btn-gold px-10 py-4 text-xs font-bold uppercase">Améliorer maintenant</button>
+                        <p class="text-xs text-gray-400 italic">5 000 000 €</p>
+                        <button class="order-btn w-full py-4 border border-gold text-gold hover:bg-gold hover:text-black transition font-bold text-[10px] tracking-widest" data-item="Alarme Niveau 3" data-price="5.000.000 €">COMMANDER</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="contact" class="page pt-32">
+        <div id="contact" class="page pt-32 pb-20">
             <div class="max-w-4xl mx-auto px-6 py-20 bg-zinc-950 border border-white/5">
                 <h2 class="text-4xl serif italic mb-8 text-center">Bureau Arcadia</h2>
-                <form class="space-y-6">
+                <form id="contact-form" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <input type="text" placeholder="NOM COMPLET" class="bg-black/50 border border-white/10 p-4 text-xs tracking-widest outline-none focus:border-gold">
-                        <input type="email" placeholder="EMAIL SÉCURISÉ" class="bg-black/50 border border-white/10 p-4 text-xs tracking-widest outline-none focus:border-gold">
+                        <input type="text" name="name" placeholder="NOM COMPLET" required class="bg-black/50 border border-white/10 p-4 text-xs tracking-widest outline-none focus:border-gold">
+                        <input type="email" name="email" placeholder="EMAIL SÉCURISÉ" required class="bg-black/50 border border-white/10 p-4 text-xs tracking-widest outline-none focus:border-gold">
                     </div>
-                    <textarea placeholder="MESSAGE" rows="5" class="w-full bg-black/50 border border-white/10 p-4 text-xs tracking-widest outline-none focus:border-gold"></textarea>
-                    <button class="w-full py-5 bg-gold text-black font-bold uppercase tracking-widest text-[10px]">Envoyer la demande</button>
+                    <textarea name="message" placeholder="MESSAGE" rows="5" required class="w-full bg-black/50 border border-white/10 p-4 text-xs tracking-widest outline-none focus:border-gold"></textarea>
+                    <button type="submit" class="w-full py-5 bg-gold text-black font-bold uppercase tracking-widest text-[10px] hover:brightness-110 transition">Envoyer la demande</button>
                 </form>
             </div>
         </div>
@@ -157,26 +142,30 @@
 
     <div class="admin-panel pt-32 pb-20 px-6">
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12">
-            
             <div class="lg:col-span-2 space-y-8">
                 <div class="bg-zinc-900 p-8 border border-white/10">
-                    <h3 class="serif italic text-2xl mb-6">Gestion des Biens</h3>
+                    <h3 class="serif italic text-2xl mb-6" id="form-title">Gestion des Biens</h3>
                     <form id="propForm" class="grid grid-cols-2 gap-4">
-                        <input type="hidden" id="editIndex">
-                        <input type="text" id="title" placeholder="NOM" class="bg-black p-3 text-xs border border-white/10 outline-none focus:border-gold" required>
+                        <input type="hidden" id="editId">
+                        <input type="text" id="title" placeholder="NOM DU BIEN" class="bg-black p-3 text-xs border border-white/10 outline-none focus:border-gold" required>
                         <input type="number" id="price" placeholder="PRIX (€)" class="bg-black p-3 text-xs border border-white/10 outline-none focus:border-gold" required>
                         <input type="text" id="loc" placeholder="VILLE" class="bg-black p-3 text-xs border border-white/10 outline-none focus:border-gold" required>
                         <select id="type" class="bg-black p-3 text-xs border border-white/10 outline-none focus:border-gold">
                             <option value="Vente">Vente</option>
                             <option value="Location">Location</option>
                         </select>
-                        <input type="file" id="imgFile" class="text-[10px] text-gray-500 col-span-2 py-2">
+                        <div class="col-span-2">
+                            <label for="imgFile" class="block text-[10px] text-gray-500 mb-1 uppercase">Image (Max 2Mo)</label>
+                            <input type="file" id="imgFile" accept="image/*" class="text-[10px] text-gray-400 w-full file:mr-4 file:py-2 file:px-4 file:border-0 file:text-[10px] file:bg-gold file:text-black">
+                        </div>
                         <input type="hidden" id="existingImg">
-                        <textarea id="desc" placeholder="DESCRIPTION" class="col-span-2 bg-black p-3 text-xs border border-white/10 outline-none focus:border-gold" required></textarea>
-                        <button type="submit" id="submitBtn" class="col-span-2 py-4 bg-gold text-black font-bold text-[10px] uppercase">Enregistrer</button>
+                        <textarea id="desc" placeholder="DESCRIPTION DÉTAILLÉE" class="col-span-2 bg-black p-3 text-xs border border-white/10 outline-none focus:border-gold h-32" required></textarea>
+                        <div class="col-span-2 flex gap-2">
+                            <button type="submit" id="submitBtn" class="flex-1 py-4 bg-gold text-black font-bold text-[10px] uppercase hover:brightness-110 transition">Enregistrer</button>
+                            <button type="button" id="cancelEdit" class="hidden px-6 py-4 border border-white/20 text-[10px] uppercase hover:bg-white/5">Annuler</button>
+                        </div>
                     </form>
                 </div>
-
                 <div id="admin-list" class="space-y-2"></div>
             </div>
 
@@ -184,13 +173,11 @@
                 <div class="bg-zinc-900 p-8 border border-gold/30">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="serif italic text-2xl">Commandes</h3>
-                        <button onclick="clearOrders()" class="text-[8px] text-red-500 uppercase font-bold">Vider la liste</button>
+                        <button id="clear-orders-btn" class="text-[8px] text-red-500 uppercase font-bold hover:underline">Vider</button>
                     </div>
-                    <div id="order-list" class="space-y-4 max-h-[600px] overflow-y-auto pr-2">
-                        </div>
+                    <div id="order-list" class="space-y-4 max-h-[600px] overflow-y-auto pr-2"></div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -199,6 +186,7 @@
         import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
+        // Configuration sécurisée par environnement (ici statique pour l'exemple)
         const firebaseConfig = {
             apiKey: "AIzaSyBg9JIb2XAFacftazyDcAXOnCpfvaQ2PYI",
             authDomain: "arcadiaimmobilier-ee335.firebaseapp.com",
@@ -213,137 +201,226 @@
         const db = getDatabase(app);
         const storage = getStorage(app);
 
-        // DATA HANDLERS
-        let properties = [];
-        onValue(ref(db, 'properties'), (snap) => {
-            const data = snap.val();
-            properties = data ? Object.keys(data).map(k => ({id:k, ...data[k]})) : [];
-            window.renderPublic(properties);
-            window.renderAdmin();
-        });
+        let localProperties = [];
 
-        onValue(ref(db, 'orders'), (snap) => {
-            const data = snap.val();
-            const orders = data ? Object.keys(data).map(k => ({id:k, ...data[k]})) : [];
-            renderOrders(orders);
-        });
+        // --- DOM ELEMENTS ---
+        const propertyGrid = document.getElementById('property-grid');
+        const adminList = document.getElementById('admin-list');
+        const orderList = document.getElementById('order-list');
+        const propForm = document.getElementById('propForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelEditBtn = document.getElementById('cancelEdit');
 
-        // NAVIGATION
-        window.showPage = (id) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            window.scrollTo(0,0);
+        // --- INITIALISATION & TEMPS RÉEL ---
+        const init = () => {
+            // Écoute des propriétés
+            onValue(ref(db, 'properties'), (snap) => {
+                const data = snap.val();
+                localProperties = data ? Object.keys(data).map(k => ({id:k, ...data[k]})) : [];
+                renderPublic(localProperties);
+                renderAdmin();
+            }, (err) => console.error("Erreur DB Properties:", err));
+
+            // Écoute des commandes
+            onValue(ref(db, 'orders'), (snap) => {
+                const data = snap.val();
+                const orders = data ? Object.keys(data).map(k => ({id:k, ...data[k]})) : [];
+                renderOrders(orders);
+            });
         };
-        window.toggleAdmin = () => document.body.classList.toggle('admin-mode');
 
-        // RENDERING
-        window.renderPublic = (data) => {
-            const grid = document.getElementById('property-grid');
-            grid.innerHTML = data.map(p => `
+        // --- RENDU FONCTIONS ---
+        const renderPublic = (data) => {
+            if (data.length === 0) {
+                propertyGrid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10 uppercase text-[10px] tracking-widest">Aucune propriété trouvée</p>`;
+                return;
+            }
+            propertyGrid.innerHTML = data.map(p => `
                 <div class="glass overflow-hidden group">
-                    <div class="h-80 overflow-hidden relative">
-                        <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                    <div class="h-80 overflow-hidden relative bg-zinc-900">
+                        <img src="${p.img}" loading="lazy" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-110 transition duration-[1.5s]">
                         <div class="absolute top-4 left-4 bg-white text-black px-3 py-1 text-[8px] font-bold uppercase tracking-widest">${p.type}</div>
                     </div>
                     <div class="p-6">
                         <div class="flex justify-between items-center mb-4">
-                            <h4 class="text-xl serif italic">${p.title}</h4>
-                            <span class="text-xs font-bold">${parseInt(p.price).toLocaleString()} €</span>
+                            <h4 class="text-xl serif italic">${escapeHtml(p.title)}</h4>
+                            <span class="text-xs font-bold">${Number(p.price).toLocaleString()} €</span>
                         </div>
-                        <p class="text-[9px] uppercase tracking-widest text-gray-500 mb-4">${p.loc}</p>
-                        <p class="text-[11px] text-gray-400 line-clamp-2">${p.desc}</p>
+                        <p class="text-[9px] uppercase tracking-widest text-gray-500 mb-4">${escapeHtml(p.loc)}</p>
+                        <p class="text-[11px] text-gray-400 line-clamp-2">${escapeHtml(p.desc)}</p>
                     </div>
                 </div>
             `).join('');
         };
 
-        window.renderAdmin = () => {
-            const list = document.getElementById('admin-list');
-            list.innerHTML = properties.map(p => `
-                <div class="bg-black p-4 flex justify-between items-center border border-white/5">
-                    <span class="text-xs font-bold">${p.title}</span>
-                    <div class="space-x-4">
-                        <button onclick="editProperty('${p.id}')" class="text-gold text-[10px] uppercase">Editer</button>
-                        <button onclick="deleteProperty('${p.id}')" class="text-red-500 text-[10px] uppercase">Suppr</button>
+        const renderAdmin = () => {
+            adminList.innerHTML = localProperties.map(p => `
+                <div class="bg-black/40 p-4 flex justify-between items-center border border-white/5 hover:border-gold/30 transition">
+                    <div class="flex items-center gap-4">
+                        <img src="${p.img}" class="w-10 h-10 object-cover rounded-sm">
+                        <span class="text-xs font-bold tracking-wider">${escapeHtml(p.title)}</span>
+                    </div>
+                    <div class="flex gap-4">
+                        <button class="edit-btn text-gold text-[10px] uppercase font-bold" data-id="${p.id}">Editer</button>
+                        <button class="delete-btn text-red-500 text-[10px] uppercase font-bold" data-id="${p.id}">Supprimer</button>
                     </div>
                 </div>
             `).join('');
+            
+            // Re-bind events
+            document.querySelectorAll('.edit-btn').forEach(btn => btn.onclick = () => editProperty(btn.dataset.id));
+            document.querySelectorAll('.delete-btn').forEach(btn => btn.onclick = () => deleteProperty(btn.dataset.id));
         };
 
         const renderOrders = (orders) => {
-            const list = document.getElementById('order-list');
-            if(orders.length === 0) { list.innerHTML = "<p class='text-gray-500 text-xs italic text-center py-10'>Aucune commande en attente.</p>"; return; }
-            list.innerHTML = orders.map(o => `
-                <div class="bg-black p-4 border-l-2 border-gold space-y-2">
-                    <div class="flex justify-between">
-                        <span class="command-badge">COMMANDE</span>
-                        <span class="text-[9px] text-gray-500">${new Date(o.ts).toLocaleTimeString()}</span>
+            if(orders.length === 0) {
+                orderList.innerHTML = `<p class='text-gray-600 text-[10px] italic text-center py-10 uppercase tracking-widest'>Silence Radio</p>`;
+                return;
+            }
+            orderList.innerHTML = orders.sort((a,b) => b.ts - a.ts).map(o => `
+                <div class="bg-black p-4 border-l-2 border-gold space-y-2 animate-in slide-in-from-right duration-300">
+                    <div class="flex justify-between items-start">
+                        <span class="command-badge">CMD</span>
+                        <span class="text-[8px] text-gray-500">${new Date(o.ts).toLocaleString()}</span>
                     </div>
-                    <p class="text-xs font-bold uppercase tracking-widest">${o.item}</p>
+                    <p class="text-xs font-bold uppercase tracking-widest">${escapeHtml(o.item)}</p>
                     <p class="text-[10px] text-gold italic">${o.price}</p>
-                    <button onclick="deleteOrder('${o.id}')" class="text-[8px] text-gray-500 hover:text-red-500 uppercase mt-2">Terminer / Supprimer</button>
+                    <button class="delete-order-btn text-[8px] text-gray-500 hover:text-red-400 uppercase font-bold transition" data-id="${o.id}">Clôturer</button>
                 </div>
             `).join('');
+            document.querySelectorAll('.delete-order-btn').forEach(btn => btn.onclick = () => remove(ref(db, `orders/${btn.dataset.id}`)));
         };
 
-        // ACTIONS
-        window.placeOrder = (item, price) => {
-            push(ref(db, 'orders'), { item, price, ts: Date.now() });
-            alert("Commande envoyée au panel Arcadia. Nos services reviendront vers vous.");
-        };
+        // --- LOGIQUE METIER ---
 
-        window.deleteOrder = (id) => remove(ref(db, `orders/${id}`));
-        window.clearOrders = () => { if(confirm("Supprimer toutes les commandes ?")) remove(ref(db, 'orders')); };
-
-        window.deleteProperty = (id) => remove(ref(db, `properties/${id}`));
-
-        window.editProperty = (id) => {
-            const p = properties.find(x => x.id === id);
-            document.getElementById('editIndex').value = p.id;
+        const editProperty = (id) => {
+            const p = localProperties.find(x => x.id === id);
+            if(!p) return;
+            document.getElementById('editId').value = p.id;
             document.getElementById('title').value = p.title;
             document.getElementById('price').value = p.price;
             document.getElementById('loc').value = p.loc;
             document.getElementById('existingImg').value = p.img;
             document.getElementById('desc').value = p.desc;
-            document.getElementById('submitBtn').innerText = "Mettre à jour";
+            document.getElementById('form-title').innerText = "Modifier le bien";
+            submitBtn.innerText = "Mettre à jour";
+            cancelEditBtn.classList.remove('hidden');
+            window.scrollTo({top: 0, behavior: 'smooth'});
         };
 
-        document.getElementById('propForm').addEventListener('submit', async (e) => {
+        const deleteProperty = async (id) => {
+            if(confirm("Confirmer la suppression définitive ?")) {
+                try {
+                    await remove(ref(db, `properties/${id}`));
+                } catch (e) { alert("Erreur suppression"); }
+            }
+        };
+
+        // --- EVENTS ---
+
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(btn => {
+            btn.onclick = () => {
+                const pageId = btn.dataset.page;
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(pageId).classList.add('active');
+                window.scrollTo(0, 0);
+            };
+        });
+
+        document.getElementById('nav-logo').onclick = () => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('home').classList.add('active');
+        };
+
+        document.getElementById('admin-toggle-btn').onclick = () => document.body.classList.toggle('admin-mode');
+
+        // Formulaire
+        propForm.onsubmit = async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const id = document.getElementById('editIndex').value;
+            const id = document.getElementById('editId').value;
             const file = document.getElementById('imgFile').files[0];
             let url = document.getElementById('existingImg').value;
 
-            btn.disabled = true;
-            btn.innerHTML = "Traitement...";
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Synchro...`;
 
             try {
                 if(file) {
-                    const snap = await uploadBytes(sRef(storage, `p/${Date.now()}`), file);
+                    if (file.size > 2 * 1024 * 1024) throw new Error("Image trop lourde (Max 2Mo)");
+                    const storagePath = `properties/${Date.now()}_${file.name}`;
+                    const snap = await uploadBytes(sRef(storage, storagePath), file);
                     url = await getDownloadURL(snap.ref);
                 }
+
+                if(!url) url = "https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=1000";
+
                 const data = {
-                    title: document.getElementById('title').value,
-                    price: document.getElementById('price').value,
-                    loc: document.getElementById('loc').value,
+                    title: document.getElementById('title').value.trim(),
+                    price: Number(document.getElementById('price').value),
+                    loc: document.getElementById('loc').value.trim(),
                     type: document.getElementById('type').value,
-                    img: url || "https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=1000",
-                    desc: document.getElementById('desc').value
+                    img: url,
+                    desc: document.getElementById('desc').value.trim(),
+                    updatedAt: Date.now()
                 };
+
                 if(id) await update(ref(db, `properties/${id}`), data);
                 else await push(ref(db, 'properties'), data);
 
-                document.getElementById('propForm').reset();
-                document.getElementById('editIndex').value = "";
-                btn.innerText = "Enregistrer";
-            } catch(e) { alert("Erreur."); } finally { btn.disabled = false; }
+                resetForm();
+            } catch(e) { 
+                alert(e.message || "Une erreur est survenue"); 
+            } finally { 
+                submitBtn.disabled = false; 
+                submitBtn.innerText = "Enregistrer";
+            }
+        };
+
+        const resetForm = () => {
+            propForm.reset();
+            document.getElementById('editId').value = "";
+            document.getElementById('existingImg').value = "";
+            document.getElementById('form-title').innerText = "Gestion des Biens";
+            submitBtn.innerText = "Enregistrer";
+            cancelEditBtn.classList.add('hidden');
+        };
+
+        cancelEditBtn.onclick = resetForm;
+
+        // Commandes public
+        document.querySelectorAll('.order-btn').forEach(btn => {
+            btn.onclick = () => {
+                const { item, price } = btn.dataset;
+                push(ref(db, 'orders'), { item, price, ts: Date.now() });
+                alert("Commande transmise à la conciergerie Arcadia.");
+            };
         });
 
-        window.filterProperties = () => {
-            const s = document.getElementById('searchInput').value.toLowerCase();
-            window.renderPublic(properties.filter(p => p.loc.toLowerCase().includes(s) || p.title.toLowerCase().includes(s)));
+        document.getElementById('clear-orders-btn').onclick = () => {
+            if(confirm("Vider toutes les commandes ?")) remove(ref(db, 'orders'));
         };
+
+        // Filtre de recherche optimisé
+        document.getElementById('searchInput').oninput = (e) => {
+            const val = e.target.value.toLowerCase();
+            const filtered = localProperties.filter(p => 
+                p.loc.toLowerCase().includes(val) || 
+                p.title.toLowerCase().includes(val)
+            );
+            renderPublic(filtered);
+        };
+
+        // Sécurité de base : Escape HTML
+        const escapeHtml = (text) => {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        };
+
+        // Init App
+        init();
+
     </script>
 </body>
 </html>
