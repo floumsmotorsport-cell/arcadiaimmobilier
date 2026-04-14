@@ -8,21 +8,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
-        
         :root { --primary: #065f46; --accent: #10b981; }
         body { font-family: 'Montserrat', sans-serif; scroll-behavior: smooth; }
         h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
-
-        /* Animations */
-        .fade-in { animation: fadeIn 0.8s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Admin States */
         .admin-panel { display: none; }
         .admin-active .admin-panel { display: block; }
         .admin-active .public-view { display: none; }
-        
-        /* Glassmorphism */
         .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
         .card-hover:hover { transform: translateY(-10px); transition: all 0.3s ease; }
     </style>
@@ -35,11 +26,8 @@
                 <div class="w-10 h-10 bg-emerald-800 rounded-lg flex items-center justify-center text-white font-bold text-xl">A</div>
                 <h1 class="text-2xl font-bold text-emerald-900 tracking-tighter">ARCADIA</h1>
             </div>
-            
             <div class="hidden md:flex items-center space-x-10 text-sm font-semibold uppercase tracking-widest">
-                <a href="#propos" class="hover:text-emerald-600 transition">À Propos</a>
                 <a href="#catalogue" class="hover:text-emerald-600 transition">Propriétés</a>
-                <a href="#contact" class="hover:text-emerald-600 transition">Contact</a>
                 <button onclick="toggleAdmin()" id="adminBtn" class="bg-emerald-900 text-white px-5 py-2 rounded-full hover:bg-emerald-700 transition shadow-lg">
                     <i class="fas fa-lock-open mr-2"></i>Espace Admin
                 </button>
@@ -48,13 +36,11 @@
     </nav>
 
     <div class="public-view">
-        <header class="relative h-screen flex items-center justify-center overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1600607687940-4e524cb3529a?auto=format&fit=crop&q=80" class="absolute inset-0 w-full h-full object-cover scale-105" alt="Luxury Home">
-            <div class="absolute inset-0 bg-black/50"></div>
-            <div class="relative z-10 text-center text-white px-4 fade-in">
-                <span class="uppercase tracking-[0.5em] text-sm mb-6 block text-emerald-400 font-bold">L'immobilier de Haute Couture</span>
-                <h2 class="text-6xl md:text-8xl font-bold mb-8">Trouvez votre <br><span class="italic">Havre de Paix</span></h2>
-                <a href="#catalogue" class="bg-emerald-600 hover:bg-emerald-500 text-white px-10 py-4 rounded-full text-lg font-bold transition-all hover:px-12 shadow-2xl">Explorer la Collection</a>
+        <header class="relative h-[60vh] flex items-center justify-center overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1600607687940-4e524cb3529a?auto=format&fit=crop&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Luxury Home">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="relative z-10 text-center text-white px-4">
+                <h2 class="text-5xl md:text-7xl font-bold mb-4">Votre Havre de Paix</h2>
             </div>
         </header>
 
@@ -62,27 +48,21 @@
             <div class="bg-white p-8 rounded-2xl shadow-2xl flex flex-wrap gap-4 items-end border border-emerald-50">
                 <div class="flex-1 min-w-[200px]">
                     <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Recherche</label>
-                    <input type="text" id="searchInput" onkeyup="filterProperties()" placeholder="Ville, Type..." class="w-full p-3 bg-gray-50 border-none rounded-xl focus:ring-2 ring-emerald-500">
+                    <input type="text" id="searchInput" onkeyup="filterProperties()" placeholder="Ville, Nom..." class="w-full p-3 bg-gray-50 border rounded-xl focus:ring-2 ring-emerald-500 outline-none">
                 </div>
                 <div class="flex-1 min-w-[200px]">
                     <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Budget Max</label>
-                    <select id="priceFilter" onchange="filterProperties()" class="w-full p-3 bg-gray-50 border-none rounded-xl focus:ring-2 ring-emerald-500">
+                    <select id="priceFilter" onchange="filterProperties()" class="w-full p-3 bg-gray-50 border rounded-xl focus:ring-2 ring-emerald-500 outline-none">
                         <option value="all">Tous les prix</option>
-                        <option value="500000">Sous 500k €</option>
-                        <option value="1000000">Sous 1M €</option>
+                        <option value="500000">Sous 500 000 €</option>
+                        <option value="1000000">Sous 1 000 000 €</option>
+                        <option value="2000000">Sous 2 000 000 €</option>
                     </select>
                 </div>
             </div>
         </section>
 
-        <section id="catalogue" class="py-32 px-6 max-w-7xl mx-auto">
-            <div class="flex justify-between items-end mb-16">
-                <div>
-                    <h2 class="text-4xl font-bold text-emerald-950 mb-2">Propriétés Vedettes</h2>
-                    <div class="h-1 w-20 bg-emerald-600"></div>
-                </div>
-                <p class="text-gray-500 max-w-md hidden md:block">Chaque demeure de notre collection a été sélectionnée pour son architecture unique et son emplacement privilégié.</p>
-            </div>
+        <section id="catalogue" class="py-20 px-6 max-w-7xl mx-auto">
             <div id="property-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 </div>
         </section>
@@ -90,57 +70,45 @@
 
     <div class="admin-panel pt-32 pb-20 bg-slate-100 min-h-screen">
         <div class="max-w-5xl mx-auto px-6">
-            <div class="bg-white rounded-3xl p-10 shadow-xl border border-emerald-100">
+            <div class="bg-white rounded-3xl p-10 shadow-xl border">
                 <div class="flex justify-between items-center mb-10">
-                    <h2 id="formTitle" class="text-3xl font-bold text-emerald-900 italic">Ajouter un Joyau</h2>
-                    <button onclick="toggleAdmin()" class="text-gray-400 hover:text-red-500 transition"><i class="fas fa-times-circle text-2xl"></i></button>
+                    <h2 id="formTitle" class="text-3xl font-bold text-emerald-900">Gestion de l'annonce</h2>
+                    <button onclick="toggleAdmin()" class="text-red-500 font-bold">Quitter l'admin</button>
                 </div>
-
                 <form id="propForm" class="space-y-6">
                     <input type="hidden" id="editIndex">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <input type="text" id="title" placeholder="Nom de la propriété" class="p-4 bg-slate-50 rounded-xl border-none focus:ring-2 ring-emerald-500" required>
-                        <input type="text" id="price" placeholder="Prix (ex: 1 250 000 €)" class="p-4 bg-slate-50 rounded-xl border-none focus:ring-2 ring-emerald-500" required>
-                        <input type="text" id="loc" placeholder="Localisation" class="p-4 bg-slate-50 rounded-xl border-none focus:ring-2 ring-emerald-500" required>
-                        <select id="type" class="p-4 bg-slate-50 rounded-xl border-none focus:ring-2 ring-emerald-500">
-                            <option value="Vente">À Vendre</option>
-                            <option value="Location">À Louer</option>
-                            <option value="Prestige">Collection Prestige</option>
+                        <input type="text" id="title" placeholder="Nom" class="p-4 bg-slate-50 rounded-xl border" required>
+                        <input type="number" id="price" placeholder="Prix (Nombre seul, ex: 1200000)" class="p-4 bg-slate-50 rounded-xl border" required>
+                        <input type="text" id="loc" placeholder="Localisation" class="p-4 bg-slate-50 rounded-xl border" required>
+                        <select id="type" class="p-4 bg-slate-50 rounded-xl border">
+                            <option value="Vente">Vente</option>
+                            <option value="Location">Location</option>
                         </select>
                     </div>
-
-                    <div class="border-2 border-dashed border-emerald-200 rounded-2xl p-8 text-center bg-emerald-50/50">
-                        <i class="fas fa-cloud-upload-alt text-emerald-600 text-3xl mb-4"></i>
-                        <input type="file" id="imgFile" accept="image/*" class="block w-full text-sm text-emerald-900 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700">
+                    <div class="border-2 border-dashed p-4 rounded-xl text-center">
+                        <input type="file" id="imgFile" accept="image/*">
                         <input type="hidden" id="existingImg">
                     </div>
-
-                    <textarea id="desc" rows="4" placeholder="Description émotionnelle du bien..." class="w-full p-4 bg-slate-50 rounded-xl border-none focus:ring-2 ring-emerald-500" required></textarea>
-
+                    <textarea id="desc" rows="3" placeholder="Description" class="w-full p-4 bg-slate-50 rounded-xl border" required></textarea>
                     <div class="flex gap-4">
-                        <button type="submit" id="submitBtn" class="flex-1 bg-emerald-800 text-white py-4 rounded-xl font-bold hover:bg-emerald-900 transition shadow-lg">Publier l'annonce</button>
-                        <button type="button" id="cancelBtn" onclick="resetForm()" class="hidden px-8 bg-gray-200 text-gray-600 py-4 rounded-xl font-bold hover:bg-gray-300 transition">Annuler</button>
+                        <button type="submit" id="submitBtn" class="flex-1 bg-emerald-800 text-white py-4 rounded-xl font-bold">Enregistrer</button>
+                        <button type="button" id="cancelBtn" onclick="resetForm()" class="hidden px-8 bg-gray-200 py-4 rounded-xl">Annuler</button>
                     </div>
                 </form>
             </div>
-
-            <div class="mt-12 bg-white rounded-3xl shadow-xl overflow-hidden border border-emerald-100">
-                <div class="p-6 bg-emerald-900 text-white font-bold flex justify-between">
-                    <span>Gestion des Biens</span>
-                    <span id="statsCount">0 Propriétés</span>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <tbody id="admin-list" class="divide-y divide-gray-100"></tbody>
-                    </table>
-                </div>
+            <div class="mt-8 bg-white rounded-xl shadow-lg overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-emerald-900 text-white"><tr><th class="p-4">Bien</th><th class="p-4">Prix</th><th class="p-4">Actions</th></tr></thead>
+                    <tbody id="admin-list" class="divide-y"></tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
@@ -163,62 +131,65 @@
         onValue(dbRef, (snapshot) => {
             const data = snapshot.val();
             properties = data ? Object.keys(data).map(key => ({ id: key, ...data[key] })) : [];
-            renderPublic(properties);
-            renderAdmin();
-            document.getElementById('statsCount').innerText = `${properties.length} Propriétés`;
+            window.renderPublic(properties);
+            window.renderAdmin();
         });
 
-        propForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = document.getElementById('submitBtn');
-            const id = document.getElementById('editIndex').value;
-            const file = document.getElementById('imgFile').files[0];
-            let imageUrl = document.getElementById('existingImg').value;
-
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Traitement...';
-            submitBtn.disabled = true;
-
-            try {
-                if (file) {
-                    const storageRef = sRef(storage, `properties/${Date.now()}_${file.name}`);
-                    const snap = await uploadBytes(storageRef, file);
-                    imageUrl = await getDownloadURL(snap.ref);
-                }
-
-                const payload = {
-                    title: document.getElementById('title').value,
-                    price: document.getElementById('price').value,
-                    loc: document.getElementById('loc').value,
-                    type: document.getElementById('type').value,
-                    img: imageUrl,
-                    desc: document.getElementById('desc').value,
-                    ts: Date.now()
-                };
-
-                if (id) await update(ref(db, `properties/${id}`), payload);
-                else await push(dbRef, payload);
-
-                alert("Opération réussie !");
-                resetForm();
-            } catch (err) {
-                alert("Erreur : " + err.message);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerText = "Publier l'annonce";
-            }
-        });
-
+        // --- FONCTIONS EXPOSÉES AU WINDOW POUR LES ONCLICK ---
+        
         window.toggleAdmin = () => {
             document.body.classList.toggle('admin-active');
-            window.scrollTo(0,0);
         };
 
         window.resetForm = () => {
             document.getElementById('propForm').reset();
             document.getElementById('editIndex').value = "";
             document.getElementById('existingImg').value = "";
-            document.getElementById('formTitle').innerText = "Ajouter un Joyau";
             document.getElementById('cancelBtn').classList.add('hidden');
+        };
+
+        window.filterProperties = () => {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const maxPrice = document.getElementById('priceFilter').value;
+            
+            const filtered = properties.filter(p => {
+                const matchText = p.title.toLowerCase().includes(search) || p.loc.toLowerCase().includes(search);
+                const matchPrice = maxPrice === "all" || parseInt(p.price) <= parseInt(maxPrice);
+                return matchText && matchPrice;
+            });
+            window.renderPublic(filtered);
+        };
+
+        window.renderPublic = (data) => {
+            const grid = document.getElementById('property-grid');
+            if(data.length === 0) { grid.innerHTML = "<p>Aucun bien trouvé.</p>"; return; }
+            grid.innerHTML = data.map(p => `
+                <div class="bg-white rounded-3xl overflow-hidden shadow-lg card-hover border border-gray-100">
+                    <img src="${p.img}" class="h-64 w-full object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-xl font-bold">${p.title}</h3>
+                            <span class="text-emerald-600 font-bold">${parseInt(p.price).toLocaleString()} €</span>
+                        </div>
+                        <p class="text-gray-500 text-sm mb-4">${p.desc}</p>
+                        <div class="text-xs text-gray-400 font-bold"><i class="fas fa-map-marker-alt mr-1"></i>${p.loc}</div>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        window.renderAdmin = () => {
+            const list = document.getElementById('admin-list');
+            list.innerHTML = properties.map(p => `
+                <tr>
+                    <td class="p-4 font-bold">${p.title}</td>
+                    <td class="p-4">${p.price} €</td>
+                    <td class="p-4 space-x-2">
+                        <button onclick="editProperty('${p.id}')" class="text-blue-600">Editer</button>
+                        <button onclick="deleteProperty('${p.id}')" class="text-red-600">Supprimer</button>
+                    </td>
+                </tr>
+            `).join('');
         };
 
         window.editProperty = (id) => {
@@ -230,58 +201,52 @@
             document.getElementById('type').value = p.type;
             document.getElementById('existingImg').value = p.img;
             document.getElementById('desc').value = p.desc;
-            document.getElementById('formTitle').innerText = "Modifier la fiche";
             document.getElementById('cancelBtn').classList.remove('hidden');
-            window.scrollTo(0,0);
         };
 
         window.deleteProperty = (id) => {
-            if(confirm("Retirer définitivement cette propriété ?")) remove(ref(db, `properties/${id}`));
+            if(confirm("Supprimer ?")) remove(ref(db, `properties/${id}`));
         };
 
-        function renderPublic(data) {
-            const grid = document.getElementById('property-grid');
-            grid.innerHTML = data.map(p => `
-                <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 card-hover border border-gray-100 group">
-                    <div class="relative h-72 overflow-hidden">
-                        <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                        <div class="absolute top-6 left-6 bg-white/90 backdrop-blur px-4 py-1 rounded-full text-xs font-bold text-emerald-900 shadow-sm uppercase tracking-tighter">${p.type}</div>
-                    </div>
-                    <div class="p-8">
-                        <div class="flex justify-between items-start mb-4">
-                            <h3 class="text-2xl font-bold text-emerald-950">${p.title}</h3>
-                            <span class="text-emerald-600 font-bold text-xl">${p.price}</span>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-6 line-clamp-2 font-medium">${p.desc}</p>
-                        <div class="flex items-center justify-between text-gray-400 text-xs font-bold uppercase tracking-widest border-t pt-6">
-                            <span><i class="fas fa-map-marker-alt text-emerald-500 mr-2"></i>${p.loc}</span>
-                            <button class="text-emerald-700 hover:text-emerald-500 transition">Voir Détails <i class="fas fa-arrow-right ml-1"></i></button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
+        // --- GESTION DU FORMULAIRE ---
+        document.getElementById('propForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const id = document.getElementById('editIndex').value;
+            const file = document.getElementById('imgFile').files[0];
+            let imageUrl = document.getElementById('existingImg').value;
 
-        function renderAdmin() {
-            const list = document.getElementById('admin-list');
-            list.innerHTML = properties.map(p => `
-                <tr class="hover:bg-slate-50 transition">
-                    <td class="p-4 w-20"><img src="${p.img}" class="w-12 h-12 rounded-lg object-cover"></td>
-                    <td class="p-4 font-semibold text-emerald-900">${p.title}</td>
-                    <td class="p-4 text-gray-500 text-sm">${p.price}</td>
-                    <td class="p-4 text-right space-x-2">
-                        <button onclick="editProperty('${p.id}')" class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition"><i class="fas fa-pen"></i></button>
-                        <button onclick="deleteProperty('${p.id}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('');
-        }
+            btn.disabled = true;
+            btn.innerText = "Chargement...";
 
-        window.filterProperties = () => {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = properties.filter(p => p.title.toLowerCase().includes(search) || p.loc.toLowerCase().includes(search));
-            renderPublic(filtered);
-        };
+            try {
+                if (file) {
+                    const storageRef = sRef(storage, `properties/${Date.now()}_${file.name}`);
+                    const snap = await uploadBytes(storageRef, file);
+                    imageUrl = await getDownloadURL(snap.ref);
+                }
+
+                const data = {
+                    title: document.getElementById('title').value,
+                    price: document.getElementById('price').value,
+                    loc: document.getElementById('loc').value,
+                    type: document.getElementById('type').value,
+                    img: imageUrl || "https://via.placeholder.com/400",
+                    desc: document.getElementById('desc').value
+                };
+
+                if (id) await update(ref(db, `properties/${id}`), data);
+                else await push(dbRef, data);
+
+                window.resetForm();
+                alert("Terminé !");
+            } catch (err) {
+                alert("Erreur: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Enregistrer";
+            }
+        });
     </script>
 </body>
 </html>
